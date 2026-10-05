@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 320" width="320" height="320"><title>PACIFIC ASH emblem</title>
+<rect x="8" y="8" width="304" height="304" fill="#0B1117" stroke="#7F8E9B" stroke-width="3"/>
+<path d="M8 40V8H40M280 312H312V280" fill="none" stroke="#E8742A" stroke-width="6"/>
+<defs><mask id="me"><rect width="320" height="320" fill="#fff"/><rect x="80" y="196" width="160" height="6" fill="#000" transform="rotate(-8 160 199)"/></mask></defs>
+<g transform="translate(86,52) scale(1.28)" mask="url(#me)"><path d="M38 0H72L110 140H76L70 112H40L34 140H0Z M47 86H63L55 46Z" fill="#E9EFF4" fill-rule="evenodd"/></g>
+<path d="M44 252H276" stroke="#7F8E9B" stroke-width="2"/>
+<g transform="translate(88,254) scale(.24)" fill="#C9D4DC"><path d="M0 34 H500 L560 8 H590 L540 48 H22Z"/><path d="M286 34 V10 H338 L350 34Z M300 10 V-6 H328 V10Z M312 -6 V-34" stroke="#C9D4DC" stroke-width="4" fill="#C9D4DC"/><path d="M110 34 V22 H146 V34Z M452 34 V20 H482 V34Z M482 24 H520 V28 H482Z"/><rect x="316" y="-40" width="10" height="6" fill="#E8742A"/></g>
+</svg>

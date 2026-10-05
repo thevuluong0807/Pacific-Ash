@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1240 722" width="1240" height="722" font-family="monospace" font-size="12"><title>sinking timelines</title><rect width="1240" height="722" fill="#0B1117"/>
+<text x="20" y="30" fill="#4FC3E8" font-size="15">Hoạt cảnh chìm 3D: mỗi loại tàu một kiểu, dài 7200 ms (x1)</text>
+<path d="M250 50V672" stroke="#1B2630"/><text x="250" y="46" fill="#7F8E9B" text-anchor="middle">0</text>
+<path d="M400 50V672" stroke="#1B2630"/><text x="400" y="46" fill="#7F8E9B" text-anchor="middle">1200</text>
+<path d="M550 50V672" stroke="#1B2630"/><text x="550" y="46" fill="#7F8E9B" text-anchor="middle">2400</text>
+<path d="M700 50V672" stroke="#1B2630"/><text x="700" y="46" fill="#7F8E9B" text-anchor="middle">3600</text>
+<path d="M850 50V672" stroke="#1B2630"/><text x="850" y="46" fill="#7F8E9B" text-anchor="middle">4800</text>
+<path d="M1000 50V672" stroke="#1B2630"/><text x="1000" y="46" fill="#7F8E9B" text-anchor="middle">6000</text>
+<path d="M1150 50V672" stroke="#1B2630"/><text x="1150" y="46" fill="#7F8E9B" text-anchor="middle">7200</text>
+<text x="20" y="92" fill="#C9D4DC" font-size="14" font-weight="700">Khu trục hạm</text><text x="20" y="110" fill="#7F8E9B">lao mũi, đuôi dựng đứng</text>
+<rect x="250" y="70" width="123" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="91" fill="#0B1117" font-weight="700" font-size="11">nổ thứ phát, tháp …</text>
+<rect x="375" y="70" width="323" height="34" fill="#C9A227" fill-opacity=".85"/><text x="380" y="91" fill="#0B1117" font-weight="700" font-size="11">mũi chúi mạnh</text>
+<rect x="700" y="70" width="298" height="34" fill="#4FC3E8" fill-opacity=".85"/><text x="705" y="91" fill="#0B1117" font-weight="700" font-size="11">đuôi dựng, chân vịt lộ</text>
+<rect x="1000" y="70" width="148" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="1005" y="91" fill="#0B1117" font-weight="700" font-size="11">trượt hẳn, xoáy nước</text>
+<text x="20" y="178" fill="#C9D4DC" font-size="14" font-weight="700">Tuần dương</text><text x="20" y="196" fill="#7F8E9B">lật úp nặng nề</text>
+<rect x="250" y="156" width="148" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="177" fill="#0B1117" font-weight="700" font-size="11">nổ dây chuyền 3 tháp</text>
+<rect x="400" y="156" width="448" height="34" fill="#C9A227" fill-opacity=".85"/><text x="405" y="177" fill="#0B1117" font-weight="700" font-size="11">nghiêng rất chậm</text>
+<rect x="850" y="156" width="148" height="34" fill="#4FC3E8" fill-opacity=".85"/><text x="855" y="177" fill="#0B1117" font-weight="700" font-size="11">lật úp</text>
+<rect x="1000" y="156" width="148" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="1005" y="177" fill="#0B1117" font-weight="700" font-size="11">nổi úp, chìm</text>
+<text x="20" y="264" fill="#C9D4DC" font-size="14" font-weight="700">Tàu tên lửa</text><text x="20" y="282" fill="#7F8E9B">cháy dây chuyền, đuôi chìm trước</text>
+<rect x="250" y="242" width="148" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="263" fill="#0B1117" font-weight="700" font-size="11">nắp VLS bật tung</text>
+<rect x="400" y="242" width="348" height="34" fill="#FF3B2F" fill-opacity=".85"/><text x="405" y="263" fill="#0B1117" font-weight="700" font-size="11">tên lửa phóng loạn</text>
+<rect x="750" y="242" width="398" height="34" fill="#4FC3E8" fill-opacity=".85"/><text x="755" y="263" fill="#0B1117" font-weight="700" font-size="11">đuôi chìm trước, mũi chổng</text>
+<text x="20" y="350" fill="#C9D4DC" font-size="14" font-weight="700">Tàu ngầm</text><text x="20" y="368" fill="#7F8E9B">nén vỡ dưới sâu</text>
+<rect x="250" y="328" width="173" height="34" fill="#4FC3E8" fill-opacity=".85"/><text x="255" y="349" fill="#0B1117" font-weight="700" font-size="11">tiềm vọng thụt, xả ballast</text>
+<rect x="425" y="328" width="373" height="34" fill="#3A4856" fill-opacity=".85"/><text x="430" y="349" fill="#0B1117" font-weight="700" font-size="11">lặn sâu, mờ dần</text>
+<rect x="800" y="328" width="123" height="34" fill="#FFE9A0" fill-opacity=".85"/><text x="805" y="349" fill="#0B1117" font-weight="700" font-size="11">nén vỡ + sóng</text>
+<rect x="925" y="328" width="223" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="930" y="349" fill="#0B1117" font-weight="700" font-size="11">bọt khí và dầu</text>
+<text x="20" y="436" fill="#C9D4DC" font-size="14" font-weight="700">Tàu sân bay</text><text x="20" y="454" fill="#7F8E9B">boong nổ liên hoàn, nghiêng lớn</text>
+<rect x="250" y="414" width="173" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="435" fill="#0B1117" font-weight="700" font-size="11">nổ boong</text>
+<rect x="425" y="414" width="373" height="34" fill="#FF3B2F" fill-opacity=".85"/><text x="430" y="435" fill="#0B1117" font-weight="700" font-size="11">máy bay nổ lần lượt</text>
+<rect x="800" y="414" width="273" height="34" fill="#C9A227" fill-opacity=".85"/><text x="805" y="435" fill="#0B1117" font-weight="700" font-size="11">nghiêng 45°, đuôi nhấc</text>
+<rect x="1075" y="414" width="73" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="1080" y="435" fill="#0B1117" font-weight="700" font-size="11">bắt đầu ch…</text>
+<text x="20" y="522" fill="#C9D4DC" font-size="14" font-weight="700">Tàu cắn lén</text><text x="20" y="540" fill="#7F8E9B">lật nhanh, nổi úp, chìm</text>
+<rect x="250" y="500" width="98" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="521" fill="#0B1117" font-weight="700" font-size="11">giật</text>
+<rect x="350" y="500" width="248" height="34" fill="#C9A227" fill-opacity=".85"/><text x="355" y="521" fill="#0B1117" font-weight="700" font-size="11">lật úp</text>
+<rect x="600" y="500" width="248" height="34" fill="#4FC3E8" fill-opacity=".85"/><text x="605" y="521" fill="#0B1117" font-weight="700" font-size="11">nổi úp</text>
+<rect x="850" y="500" width="298" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="855" y="521" fill="#0B1117" font-weight="700" font-size="11">chìm thẳng</text>
+<text x="20" y="608" fill="#C9D4DC" font-size="14" font-weight="700">Tàu hộ vệ</text><text x="20" y="626" fill="#7F8E9B">vỡ phòng thủ, chìm lệch</text>
+<rect x="250" y="586" width="148" height="34" fill="#E8742A" fill-opacity=".85"/><text x="255" y="607" fill="#0B1117" font-weight="700" font-size="11">CIWS bắn loạn rồi tắt</text>
+<rect x="400" y="586" width="298" height="34" fill="#FF3B2F" fill-opacity=".85"/><text x="405" y="607" fill="#0B1117" font-weight="700" font-size="11">vòm radar bật, mồi nhử nổ</text>
+<rect x="700" y="586" width="298" height="34" fill="#C9A227" fill-opacity=".85"/><text x="705" y="607" fill="#0B1117" font-weight="700" font-size="11">một thân chìm trước</text>
+<rect x="1000" y="586" width="148" height="34" fill="#7F8E9B" fill-opacity=".85"/><text x="1005" y="607" fill="#0B1117" font-weight="700" font-size="11">thân còn lại chìm</text>
+<text x="250" y="700" fill="#7F8E9B">Sau 7200 ms game cho chơi tiếp (hoặc sau 2400 ms nếu bật "Tàu chìm chạy nền"); tàu còn chìm nốt tối đa 4000 ms (không chặn). Có nút bỏ qua riêng cho cảnh chìm.</text></svg>

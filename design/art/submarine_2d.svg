@@ -1,0 +1,34 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 100" width="1200" height="400">
+  <!-- Tàu ngầm nổi nửa thân, 3 ô, nhìn từ trên xuống, mũi hướng +x. Thấp, thon, tối hơn tàu nổi. -->
+  <title>submarine 2D</title>
+  <defs>
+    <linearGradient id="sub" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#2F3B46"/><stop offset="0.3" stop-color="#9AA8B5"/><stop offset="0.55" stop-color="#5E6D7B"/><stop offset="1" stop-color="#26313B"/></linearGradient>
+    <linearGradient id="subt" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9D3DC"/><stop offset="1" stop-color="#6F7D8A"/></linearGradient>
+  </defs>
+  <!-- bọt nước hai bên thân -->
+  <path d="M30 30 Q80 24 150 27 Q230 25 280 36 M30 70 Q80 76 150 73 Q230 75 280 64" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2.4" stroke-linecap="round" stroke-dasharray="14 7 5 7"/>
+  <path d="M20 44 Q20 39 44 38 L252 36 Q292 40 298 55 Q292 66 252 70 L44 68 Q20 66 20 62 Z" fill="#000" opacity=".32"/>
+  <!-- cánh đuôi -->
+  <path d="M22 40 L8 28 L38 33 Z M22 60 L8 72 L38 67 Z" fill="#46525E" stroke="#0B1117" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M10 46 H26 V54 H10 Z" fill="#46525E" stroke="#0B1117" stroke-width="2" stroke-linejoin="round"/>
+  <!-- thân -->
+  <path d="M16 50 Q16 37 42 35 L250 33 Q292 37 297 50 Q292 63 250 67 L42 65 Q16 63 16 50 Z" fill="url(#sub)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M40 38 L250 36.4 Q280 40 290 47" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="2" stroke-linecap="round"/>
+  <!-- nắp ống phóng ngư lôi ở mũi -->
+  <path d="M280 44 Q292 50 280 56" fill="none" stroke="#0B1117" stroke-width="1.8"/>
+  <circle cx="287" cy="45" r="1.6" fill="#0B1117"/><circle cx="287" cy="55" r="1.6" fill="#0B1117"/>
+  <!-- nắp hầm trên boong -->
+  <rect x="60" y="43" width="16" height="14" rx="3" fill="#B7C3CE" stroke="#0B1117" stroke-width="1.8"/>
+  <rect x="86" y="44" width="12" height="12" rx="3" fill="#B7C3CE" stroke="#0B1117" stroke-width="1.8"/>
+  <rect x="108" y="44" width="12" height="12" rx="3" fill="#B7C3CE" stroke="#0B1117" stroke-width="1.8"/>
+  <rect x="236" y="45" width="14" height="10" rx="3" fill="#B7C3CE" stroke="#0B1117" stroke-width="1.8"/>
+  <!-- cánh lái nước (hydroplane) trên tháp chỉ huy -->
+  <path d="M182 40 L192 28 L204 30 L198 40 Z M182 60 L192 72 L204 70 L198 60 Z" fill="#46525E" stroke="#0B1117" stroke-width="2" stroke-linejoin="round"/>
+  <!-- tháp chỉ huy (khối cao: đổ bóng nhỏ) -->
+  <rect x="166" y="41" width="44" height="22" rx="10" fill="#000" opacity=".28"/>
+  <rect x="163" y="38" width="44" height="22" rx="10" fill="url(#subt)" stroke="#0B1117" stroke-width="2.4"/>
+  <rect x="167" y="43" width="24" height="12" rx="6" fill="#4C5A67" stroke="#0B1117" stroke-width="1.4"/>
+  <circle cx="198" cy="46" r="3.2" fill="#E9EFF4" stroke="#0B1117" stroke-width="1.4"/>
+  <circle cx="198" cy="55" r="2.2" fill="#2B343C" stroke="#0B1117" stroke-width="1.2"/>
+  <path d="M170 41 Q185 39 200 41" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="1.6" stroke-linecap="round"/>
+</svg>

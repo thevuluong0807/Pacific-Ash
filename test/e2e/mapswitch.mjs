@@ -1,0 +1,24 @@
+// E2E giao diện, xem hướng dẫn chạy ở playthrough.mjs. Đổi map giữa trận (cần WebGL, dùng ?debug).
+import puppeteer from 'puppeteer-core';
+const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage(); await page.setViewport({ width: 1280, height: 800 });
+const errs = []; page.on('pageerror', (e) => errs.push(e.message)); page.on('console', (m) => m.type() === 'error' && errs.push(m.text().slice(0, 200)));
+await page.evaluateOnNewDocument(() => { localStorage.setItem('pacific-ash.settings', JSON.stringify({ anim: 'off', quality: 'medium' })); localStorage.setItem('pacific-ash.map', 'truong_sa'); });
+await page.goto('http://localhost:4599/?debug');
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const click = (s) => page.waitForSelector(s).then(() => page.click(s));
+await sleep(3000);
+await click('[data-id="play"]'); await sleep(700); await click('[data-start="pve"]'); await sleep(1500);
+await click('[data-random]'); await sleep(500); await page.screenshot({ path: `${process.env.OUT}/map_place_truong_sa.png` });
+await click('[data-confirm]'); await page.waitForSelector('.battle'); await sleep(2500);
+await page.screenshot({ path: `${process.env.OUT}/map_battle_truong_sa.png` });
+const r = {};
+r.mapBefore = await page.evaluate(() => window.__pa.battleScene.currentMap);
+await click('[data-settings]'); await sleep(400); await click('.dd__btn'); await sleep(300); await click('[data-map="hai_phong"]'); await sleep(400);
+await page.keyboard.press('Escape'); await sleep(2500);
+r.mapAfter = await page.evaluate(() => window.__pa.battleScene.currentMap);
+r.stillBattle = !!(await page.$('.battle'));
+r.fleetCards = (await page.$$('.frow')).length;
+await page.screenshot({ path: `${process.env.OUT}/map_battle_hai_phong.png` });
+console.log(JSON.stringify({ ...r, errs: errs.slice(0, 5) }));
+await browser.close();

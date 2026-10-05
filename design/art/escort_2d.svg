@@ -1,0 +1,43 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="800" height="800">
+  <!-- Tàu hộ vệ, 2x2, nhìn từ trên xuống, mũi hướng +x. Hai thân song song nối boong trung tâm, vòm radar lớn, bốn CIWS, giàn mồi nhử. -->
+  <title>escort 2D</title>
+  <defs>
+    <linearGradient id="eh" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7F8C98"/><stop offset=".28" stop-color="#E9EFF4"/><stop offset=".55" stop-color="#B4BFC9"/><stop offset="1" stop-color="#6B7885"/></linearGradient>
+    <linearGradient id="ed" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AEB9C3"/><stop offset=".45" stop-color="#D5DDE4"/><stop offset="1" stop-color="#97A3AE"/></linearGradient>
+    <linearGradient id="eb" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F6F9"/><stop offset="1" stop-color="#B9C4CE"/></linearGradient>
+    <radialGradient id="dome" cx=".4" cy=".35" r=".7"><stop offset="0" stop-color="#FFFFFF"/><stop offset=".5" stop-color="#C9D4DC"/><stop offset="1" stop-color="#6F7D8A"/></radialGradient>
+    <g id="cw"><circle r="6.4" fill="#F1F4F7" stroke="#0B1117" stroke-width="2.4"/><circle cx="-1.8" cy="-1.8" r="1.8" fill="#fff"/><rect x="2" y="-1.4" width="9" height="2.8" rx="1" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/></g>
+    <g id="ch"><rect width="22" height="12" rx="2" fill="#5C6975" stroke="#0B1117" stroke-width="1.8"/><path d="M4 0V12 M8 0V12 M12 0V12 M16 0V12 M0 6H22" stroke="#2B343C" stroke-width=".9"/><path d="M1 1l5 0l-5 5Z M21 11l-5 0l5 -5Z" fill="#E08A2E"/></g>
+  </defs>
+  <!-- bóng -->
+  <path d="M16 22 L24 14 L184 14 L198 36 L198 78 L170 84 L170 126 L198 132 L198 176 L184 198 L24 198 L16 190 Z" fill="#000" opacity=".3" transform="translate(5,6)"/>
+  <!-- bọt nước giữa hai thân -->
+  <path d="M30 100 H170" stroke="#fff" stroke-opacity=".45" stroke-width="3" stroke-dasharray="14 8" stroke-linecap="round"/>
+  <!-- hai thân (mũi nhọn bên phải) -->
+  <path d="M12 22 Q12 14 22 14 L150 14 Q184 16 196 40 Q184 64 150 68 L22 68 Q12 68 12 60 Z" fill="url(#eh)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M12 140 Q12 132 22 132 L150 132 Q184 136 196 160 Q184 184 150 186 L22 186 Q12 186 12 178 Z" fill="url(#eh)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round" transform="translate(0,12)"/>
+  <path d="M26 17 L150 17 Q178 19 190 38" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+  <path d="M26 161 L150 161 Q178 163 190 182" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round" transform="translate(0,0)"/>
+  <!-- boong thân trên và thân dưới -->
+  <path d="M20 26 L150 22 Q178 26 188 40 Q178 54 150 58 L20 60Z" fill="url(#ed)" stroke="#4E5A66" stroke-width="1.5" stroke-linejoin="round"/>
+  <path d="M20 140 L150 136 Q178 140 188 152 Q178 164 150 168 L20 170Z" fill="url(#ed)" stroke="#4E5A66" stroke-width="1.5" stroke-linejoin="round" transform="translate(0,12)"/>
+  <!-- boong trung tâm nối hai thân -->
+  <rect x="38" y="58" width="128" height="94" rx="6" fill="url(#ed)" stroke="#0B1117" stroke-width="3"/>
+  <path d="M38 105 H166" stroke="#4E5A66" stroke-width="1.2" stroke-dasharray="8 6"/>
+  <!-- giàn mồi nhử trên hai thân -->
+  <use href="#ch" x="40" y="29"/><use href="#ch" x="68" y="29"/><use href="#ch" x="40" y="159"/><use href="#ch" x="68" y="159"/>
+  <!-- khối cầu chỉ huy + vòm radar lớn (đổ bóng) -->
+  <rect x="102" y="70" width="52" height="64" rx="4" fill="#000" opacity=".25" transform="translate(3,4)"/>
+  <rect x="100" y="68" width="52" height="64" rx="4" fill="url(#eb)" stroke="#0B1117" stroke-width="3"/>
+  <rect x="146" y="76" width="6" height="48" rx="1.5" fill="#142431" stroke="#0B1117" stroke-width="1.4"/>
+  <circle cx="122" cy="100" r="22" fill="#000" opacity=".25" transform="translate(3,4)"/>
+  <circle cx="122" cy="100" r="22" fill="url(#dome)" stroke="#0B1117" stroke-width="3"/>
+  <path d="M104 92 Q122 80 140 92" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M122 78 V122 M100 100 H144" stroke="#8793A0" stroke-width="1" stroke-opacity=".7"/><circle cx="122" cy="100" r="4" fill="#0B1117"/>
+  <!-- bốn CIWS quanh boong -->
+  <use href="#cw" x="60" y="82"/><use href="#cw" x="60" y="122"/><use href="#cw" x="164" y="76"/><use href="#cw" x="164" y="128"/>
+  <!-- cầu thang mồi nhử giữa, điểm nhấn cam -->
+  <rect x="44" y="96" width="32" height="10" rx="3" fill="#E08A2E" stroke="#0B1117" stroke-width="1.6"/>
+  <!-- chấm đèn mũi -->
+  <circle cx="186" cy="52" r="2.6" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/><circle cx="186" cy="148" r="2.6" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/>
+</svg>

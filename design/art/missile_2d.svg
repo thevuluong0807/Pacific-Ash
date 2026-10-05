@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="1600" height="400">
+  <!-- Tàu tên lửa, 4 ô, nhìn từ trên xuống, mũi hướng +x. Hai dãy ô phóng thẳng đứng. -->
+  <title>missile ship 2D</title>
+  <defs>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7F8C98"/><stop offset="0.28" stop-color="#E9EFF4"/><stop offset="0.55" stop-color="#B4BFC9"/><stop offset="1" stop-color="#6B7885"/></linearGradient>
+    <linearGradient id="deck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AEB9C3"/><stop offset="0.45" stop-color="#D5DDE4"/><stop offset="1" stop-color="#97A3AE"/></linearGradient>
+    <linearGradient id="block" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F6F9"/><stop offset="1" stop-color="#B9C4CE"/></linearGradient>
+    <g id="ciws"><circle r="3.6" fill="#F1F4F7" stroke="#0B1117" stroke-width="1.6"/><circle cx="-1" cy="-1" r="1.1" fill="#fff"/></g>
+    <g id="heavy"><circle r="9" fill="#7E8B97" stroke="#0B1117" stroke-width="2.4"/><circle r="6" fill="#CBD4DC" stroke="#0B1117" stroke-width="1.4"/><rect x="5" y="-5" width="24" height="3.6" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.4"/><rect x="5" y="1.4" width="24" height="3.6" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.4"/><rect x="27" y="-5.6" width="4.5" height="4.8" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1.2"/><rect x="27" y="0.8" width="4.5" height="4.8" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1.2"/><path d="M-4 -4.6 Q0 -6.6 4 -4.6" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.4" stroke-linecap="round"/></g>
+    <g id="gun"><circle r="7" fill="#7E8B97" stroke="#0B1117" stroke-width="2.2"/><circle r="4.6" fill="#CBD4DC" stroke="#0B1117" stroke-width="1.4"/><rect x="4" y="-1.8" width="17" height="3.6" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.4"/><rect x="19" y="-2.4" width="4.5" height="4.8" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1.2"/></g>
+  </defs>
+  <path d="M18 41 Q18 36 24 35 L264 31 Q349 33 398 55 Q349 77 264 79 L24 75 Q18 74 18 69 Z" fill="#000" opacity=".32"/>
+  <path d="M14 36 Q14 31 20 30 L260 26 Q345 28 395 50 Q345 72 260 74 L20 70 Q14 69 14 64 Z" fill="url(#hull)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M26 31 L260 27.6 Q340 29.5 385 45" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 40 L260 33 Q340 35 384 50 Q340 65 260 67 L20 60 Z" fill="url(#deck)" stroke="#4E5A66" stroke-width="1.6" stroke-linejoin="round"/>
+  <rect x="15" y="40" width="28" height="20" rx="2" fill="#8E99A4" stroke="#0B1117" stroke-width="1.8"/>
+  <circle cx="29" cy="50" r="8.2" fill="none" stroke="#F4F7FA" stroke-width="1.4"/>
+  <path d="M26 46 V54 M32 46 V54 M26 50 H32" stroke="#F4F7FA" stroke-width="1.8" stroke-linecap="round"/>
+  <!-- dãy ô phóng sau -->
+  <rect x="54" y="36" width="78" height="28" rx="2" fill="#5C6975" stroke="#0B1117" stroke-width="2.2"/>
+  <path d="M63 36V64 M72 36V64 M81 36V64 M90 36V64 M99 36V64 M108 36V64 M117 36V64 M54 43H132 M54 50H132 M54 57H132" stroke="#2B343C" stroke-width="1"/>
+  <path d="M56 38 l6 0 l-6 6 Z M130 62 l-6 0 l6 -6 Z" fill="#E08A2E"/>
+  <!-- nhà boong giữa + radar mảng pha -->
+  <rect x="146" y="38" width="42" height="24" rx="2.5" fill="url(#block)" stroke="#0B1117" stroke-width="2.2"/>
+  <rect x="150" y="44" width="10" height="12" rx="2" fill="#39434D" stroke="#0B1117" stroke-width="1.6"/>
+  <rect x="164" y="44" width="10" height="12" rx="2" fill="#39434D" stroke="#0B1117" stroke-width="1.6"/>
+  <rect x="152" y="32.6" width="16" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+  <rect x="152" y="62.4" width="16" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+  <rect x="200.5" y="36.5" width="40" height="30" rx="3" fill="#000" opacity=".25"/>
+  <rect x="198" y="34" width="40" height="30" rx="3" fill="url(#block)" stroke="#0B1117" stroke-width="2.4"/>
+  <rect x="200" y="37" width="12" height="9" rx="1.5" fill="#222D36" stroke="#0B1117" stroke-width="1.2"/>
+  <rect x="200" y="52" width="12" height="9" rx="1.5" fill="#222D36" stroke="#0B1117" stroke-width="1.2"/>
+  <rect x="230" y="38" width="5" height="22" rx="1.5" fill="#142431" stroke="#0B1117" stroke-width="1.2"/>
+  <circle cx="220" cy="49" r="5" fill="#C2CCD5" stroke="#0B1117" stroke-width="1.6"/><circle cx="220" cy="49" r="1.8" fill="#0B1117"/>
+  <use href="#ciws" x="190" y="50"/>
+  <!-- dãy ô phóng trước -->
+  <rect x="252" y="36" width="78" height="28" rx="2" fill="#5C6975" stroke="#0B1117" stroke-width="2.2"/>
+  <path d="M261 36V64 M270 36V64 M279 36V64 M288 36V64 M297 36V64 M306 36V64 M315 36V64 M252 43H330 M252 50H330 M252 57H330" stroke="#2B343C" stroke-width="1"/>
+  <path d="M254 38 l6 0 l-6 6 Z M328 62 l-6 0 l6 -6 Z" fill="#E08A2E"/>
+  <use href="#gun" x="352" y="50"/>
+  <circle cx="378" cy="50" r="2.2" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/>
+</svg>

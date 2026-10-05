@@ -1,0 +1,214 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1562 1086" width="1562" height="1086" font-family="monospace" font-size="11"><title>cinematic plan</title>
+<rect width="100%" height="100%" fill="#0B1117"/><text x="14" y="26" fill="#4FC3E8" font-size="15">Sơ đồ camera (nhìn từ trên xuống, mũi tàu hướng phải; số = shot; u = độ cao camera; chấm xanh = tàu bắn, lưới = vùng mục tiêu)</text>
+<g transform="translate(14,40)"><rect width="760" height="330" fill="#121A22" stroke="#3A4856"/><text x="12" y="22" fill="#C9D4DC" font-size="14" font-weight="700">KHU TRỤC HẠM — rapid (2800 ms)</text>
+<rect x="157.75" y="136" width="104.5" height="28" rx="3" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><path d="M262.25 136 L276.25 150 L262.25 164" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><text x="210" y="180" fill="#7F8E9B" text-anchor="middle">tàu bắn</text>
+<rect x="560" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="599" y="122" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="651" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<text x="625" y="246" fill="#7F8E9B" text-anchor="middle">mục tiêu</text>
+<path d="M284.25 150 Q385 114 554 161" fill="none" stroke="#E8742A" stroke-opacity=".55" stroke-dasharray="6 5" stroke-width="2"/>
+<path d="M88.99999999999999 216 L107.32585615918626 192.24788438827366 L118.99720618489283 215.5905844396868Z" fill="#4FC3E8" fill-opacity=".22" stroke="#4FC3E8"/><circle cx="88.99999999999999" cy="216" r="10" fill="#4FC3E8"/><text x="88.99999999999999" y="220" fill="#0B1117" text-anchor="middle" font-weight="700">1</text><text x="88.99999999999999" y="202" fill="#4FC3E8" text-anchor="middle" font-size="10">u=3</text>
+<path d="M240.25 174.75 L246.53440112869473 145.415612287732 L267.1348616586734 161.43819269993762Z" fill="#E8742A" fill-opacity=".22" stroke="#E8742A"/><circle cx="240.25" cy="174.75" r="10" fill="#E8742A"/><text x="240.25" y="178.75" fill="#0B1117" text-anchor="middle" font-weight="700">2</text><text x="240.25" y="160.75" fill="#E8742A" text-anchor="middle" font-size="10">u=0.16</text>
+<path d="M190.75 126.9 L217.06960783716062 141.2971609457585 L195.83284700150324 156.4662758283709Z" fill="#5BD98A" fill-opacity=".22" stroke="#5BD98A"/><circle cx="190.75" cy="126.9" r="10" fill="#5BD98A"/><text x="190.75" y="130.9" fill="#0B1117" text-anchor="middle" font-weight="700">3</text><text x="190.75" y="112.9" fill="#5BD98A" text-anchor="middle" font-size="10">u=0.16</text>
+<path d="M559 172 L583.5006297151697 154.6876014498237 L587.7911033144069 180.4304430452469Z" fill="#C9A227" fill-opacity=".22" stroke="#C9A227"/><circle cx="559" cy="172" r="10" fill="#C9A227"/><text x="559" y="176" fill="#0B1117" text-anchor="middle" font-weight="700">4</text><text x="559" y="158" fill="#C9A227" text-anchor="middle" font-size="10">u=3.2</text>
+<text x="14" y="264" fill="#7F8E9B">thời gian (ms)</text>
+<rect x="14" y="270" width="259.42857142857144" height="22" fill="#4FC3E8" fill-opacity=".85"/><text x="18" y="285" fill="#0B1117" font-weight="700">1</text><text x="14" y="308" fill="#C9D4DC" font-size="10">0–1000 nghiêng trên xuống</text>
+<rect x="275.42857142857144" y="270" width="141.78571428571428" height="22" fill="#E8742A" fill-opacity=".85"/><text x="279.42857142857144" y="285" fill="#0B1117" font-weight="700">2</text><text x="275.42857142857144" y="308" fill="#C9D4DC" font-size="10">1000–1550 cận tháp trước</text>
+<rect x="419.2142857142857" y="270" width="115.64285714285715" height="22" fill="#5BD98A" fill-opacity=".85"/><text x="423.2142857142857" y="285" fill="#0B1117" font-weight="700">3</text><text x="419.2142857142857" y="308" fill="#C9D4DC" font-size="10">1550–2000 cận tháp sau</text>
+<rect x="536.8571428571429" y="270" width="207.14285714285714" height="22" fill="#C9A227" fill-opacity=".85"/><text x="540.8571428571429" y="285" fill="#0B1117" font-weight="700">4</text><text x="536.8571428571429" y="308" fill="#C9D4DC" font-size="10">2000–2800 trúng đích</text>
+</g>
+<g transform="translate(788,40)"><rect width="760" height="330" fill="#121A22" stroke="#3A4856"/><text x="12" y="22" fill="#C9D4DC" font-size="14" font-weight="700">TUẦN DƯƠNG — precision (3200 ms)</text>
+<rect x="130.25" y="136" width="159.5" height="28" rx="3" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><path d="M289.75 136 L303.75 150 L289.75 164" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><text x="210" y="180" fill="#7F8E9B" text-anchor="middle">tàu bắn</text>
+<rect x="560" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="625" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<text x="625" y="246" fill="#7F8E9B" text-anchor="middle">mục tiêu</text>
+<path d="M311.75 150 Q385 114 554 161" fill="none" stroke="#E8742A" stroke-opacity=".55" stroke-dasharray="6 5" stroke-width="2"/>
+<path d="M138.5 177.5 L160.73375780491358 157.35899670144397 L168.0977153543048 182.39645236937415Z" fill="#4FC3E8" fill-opacity=".22" stroke="#4FC3E8"/><circle cx="138.5" cy="177.5" r="10" fill="#4FC3E8"/><text x="138.5" y="181.5" fill="#0B1117" text-anchor="middle" font-weight="700">1</text><text x="138.5" y="163.5" fill="#4FC3E8" text-anchor="middle" font-size="10">u=5.6</text>
+<path d="M248.5 224.25 L241.6218002838839 195.04913753559288 L267.098263845407 200.710573882598Z" fill="#E8742A" fill-opacity=".22" stroke="#E8742A"/><circle cx="248.5" cy="224.25" r="10" fill="#E8742A"/><text x="248.5" y="228.25" fill="#0B1117" text-anchor="middle" font-weight="700">2</text><text x="248.5" y="210.25" fill="#E8742A" text-anchor="middle" font-size="10">u=0.12</text>
+<path d="M537 161 L564.0134130705803 147.9510339766631 L564.0134130705803 174.0489660233369Z" fill="#5BD98A" fill-opacity=".22" stroke="#5BD98A"/><circle cx="537" cy="161" r="10" fill="#5BD98A"/><text x="537" y="165" fill="#0B1117" text-anchor="middle" font-weight="700">3</text><text x="537" y="147" fill="#5BD98A" text-anchor="middle" font-size="10">u=3</text>
+<text x="14" y="264" fill="#7F8E9B">thời gian (ms)</text>
+<rect x="14" y="270" width="249.625" height="22" fill="#4FC3E8" fill-opacity=".85"/><text x="18" y="285" fill="#0B1117" font-weight="700">1</text><text x="14" y="308" fill="#C9D4DC" font-size="10">0–1100 đỉnh, chéo sau</text>
+<rect x="265.625" y="270" width="226.75" height="22" fill="#E8742A" fill-opacity=".85"/><text x="269.625" y="285" fill="#0B1117" font-weight="700">2</text><text x="265.625" y="308" fill="#C9D4DC" font-size="10">1100–2100 cận mạn tàu, khai hỏa</text>
+<rect x="494.375" y="270" width="249.625" height="22" fill="#5BD98A" fill-opacity=".85"/><text x="498.375" y="285" fill="#0B1117" font-weight="700">3</text><text x="494.375" y="308" fill="#C9D4DC" font-size="10">2100–3200 trúng đích</text>
+</g>
+<g transform="translate(14,384)"><rect width="760" height="330" fill="#121A22" stroke="#3A4856"/><text x="12" y="22" fill="#C9D4DC" font-size="14" font-weight="700">TÀU TÊN LỬA — cross (3800 ms)</text>
+<rect x="102.75" y="136" width="214.5" height="28" rx="3" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><path d="M317.25 136 L331.25 150 L317.25 164" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><text x="210" y="180" fill="#7F8E9B" text-anchor="middle">tàu bắn</text>
+<rect x="560" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="625" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="599" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="651" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="625" y="122" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="625" y="174" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<text x="625" y="246" fill="#7F8E9B" text-anchor="middle">mục tiêu</text>
+<path d="M339.25 150 Q385 30 554 161" fill="none" stroke="#E8742A" stroke-opacity=".55" stroke-dasharray="6 5" stroke-width="2"/>
+<path d="M215.5 240 L202.4510339766631 212.9865869294197 L228.5489660233369 212.9865869294197Z" fill="#4FC3E8" fill-opacity=".22" stroke="#4FC3E8"/><circle cx="215.5" cy="240" r="10" fill="#4FC3E8"/><text x="215.5" y="244" fill="#0B1117" text-anchor="middle" font-weight="700">1</text><text x="215.5" y="226" fill="#4FC3E8" text-anchor="middle" font-size="10">u=0.6</text>
+<path d="M188 240 L183.41442085200262 210.35253022807086 L208.3732191660302 217.9788297129126Z" fill="#E8742A" fill-opacity=".22" stroke="#E8742A"/><circle cx="188" cy="240" r="10" fill="#E8742A"/><text x="188" y="244" fill="#0B1117" text-anchor="middle" font-weight="700">2</text><text x="188" y="226" fill="#E8742A" text-anchor="middle" font-size="10">u=0.4</text>
+<path d="M449 161 L476.0134130705803 147.9510339766631 L476.0134130705803 174.0489660233369Z" fill="#5BD98A" fill-opacity=".22" stroke="#5BD98A"/><circle cx="449" cy="161" r="10" fill="#5BD98A"/><text x="449" y="165" fill="#0B1117" text-anchor="middle" font-weight="700">3</text><text x="449" y="147" fill="#5BD98A" text-anchor="middle" font-size="10">u=9</text>
+<path d="M548 161 L575.0134130705803 147.9510339766631 L575.0134130705803 174.0489660233369Z" fill="#C9A227" fill-opacity=".22" stroke="#C9A227"/><circle cx="548" cy="161" r="10" fill="#C9A227"/><text x="548" y="165" fill="#0B1117" text-anchor="middle" font-weight="700">4</text><text x="548" y="147" fill="#C9A227" text-anchor="middle" font-size="10">u=2.4</text>
+<text x="14" y="264" fill="#7F8E9B">thời gian (ms)</text>
+<rect x="14" y="270" width="248.42105263157896" height="22" fill="#4FC3E8" fill-opacity=".85"/><text x="18" y="285" fill="#0B1117" font-weight="700">1</text><text x="14" y="308" fill="#C9D4DC" font-size="10">0–1300 mạn tàu, tháp ngẩng</text>
+<rect x="264.42105263157896" y="270" width="113.57894736842104" height="22" fill="#E8742A" fill-opacity=".85"/><text x="268.42105263157896" y="285" fill="#0B1117" font-weight="700">2</text><text x="264.42105263157896" y="308" fill="#C9D4DC" font-size="10">1300–1900 khai hỏa</text>
+<rect x="380" y="270" width="209.89473684210526" height="22" fill="#5BD98A" fill-opacity=".85"/><text x="384" y="285" fill="#0B1117" font-weight="700">3</text><text x="380" y="308" fill="#C9D4DC" font-size="10">1900–3400 chùm parabol</text>
+<rect x="591.8947368421053" y="270" width="152.10526315789474" height="22" fill="#C9A227" fill-opacity=".85"/><text x="595.8947368421053" y="285" fill="#0B1117" font-weight="700">4</text><text x="591.8947368421053" y="308" fill="#C9D4DC" font-size="10">3000–3800 chạm đích</text>
+</g>
+<g transform="translate(788,384)"><rect width="760" height="330" fill="#121A22" stroke="#3A4856"/><text x="12" y="22" fill="#C9D4DC" font-size="14" font-weight="700">TÀU NGẦM — torpedo (4600 ms)</text>
+<rect x="130.25" y="136" width="159.5" height="28" rx="3" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><path d="M289.75 136 L303.75 150 L289.75 164" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><text x="210" y="180" fill="#7F8E9B" text-anchor="middle">tàu bắn</text>
+<rect x="560" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="599" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="625" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="651" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<path d="M552 161 H690" stroke="#E8742A" stroke-dasharray="5 4" stroke-width="2"/>
+<text x="625" y="246" fill="#7F8E9B" text-anchor="middle">mục tiêu</text>
+<path d="M311.75 150 Q385 114 554 161" fill="none" stroke="#E8742A" stroke-opacity=".55" stroke-dasharray="6 5" stroke-width="2"/>
+<path d="M265 130.75 L242.72083393877725 150.84076304216592 L235.41341296570857 125.78674827735905Z" fill="#4FC3E8" fill-opacity=".22" stroke="#4FC3E8"/><circle cx="265" cy="130.75" r="10" fill="#4FC3E8"/><text x="265" y="134.75" fill="#0B1117" text-anchor="middle" font-weight="700">1</text><text x="265" y="116.75" fill="#4FC3E8" text-anchor="middle" font-size="10">u=-0.16</text>
+<path d="M303.5 143.4 L283.2649399398398 165.54819054373763 L273.5724113055822 141.31686895809358Z" fill="#E8742A" fill-opacity=".22" stroke="#E8742A"/><circle cx="303.5" cy="143.4" r="10" fill="#E8742A"/><text x="303.5" y="147.4" fill="#0B1117" text-anchor="middle" font-weight="700">2</text><text x="303.5" y="129.4" fill="#E8742A" text-anchor="middle" font-size="10">u=-0.12</text>
+<path d="M243 150 L270.0134130705803 136.9510339766631 L270.0134130705803 163.0489660233369Z" fill="#5BD98A" fill-opacity=".22" stroke="#5BD98A"/><circle cx="243" cy="150" r="10" fill="#5BD98A"/><text x="243" y="154" fill="#0B1117" text-anchor="middle" font-weight="700">3</text><text x="243" y="136" fill="#5BD98A" text-anchor="middle" font-size="10">u=0.55</text>
+<path d="M581 161 L608.0134130705803 147.9510339766631 L608.0134130705803 174.0489660233369Z" fill="#C9A227" fill-opacity=".22" stroke="#C9A227"/><circle cx="581" cy="161" r="10" fill="#C9A227"/><text x="581" y="165" fill="#0B1117" text-anchor="middle" font-weight="700">4</text><text x="581" y="147" fill="#C9A227" text-anchor="middle" font-size="10">u=4.5</text>
+<text x="14" y="264" fill="#7F8E9B">thời gian (ms)</text>
+<rect x="14" y="270" width="236.69565217391306" height="22" fill="#4FC3E8" fill-opacity=".85"/><text x="18" y="285" fill="#0B1117" font-weight="700">1</text><text x="14" y="308" fill="#C9D4DC" font-size="10">0–1500 dưới nước, trồi lên</text>
+<rect x="252.69565217391306" y="270" width="93.47826086956522" height="22" fill="#E8742A" fill-opacity=".85"/><text x="256.69565217391306" y="285" fill="#0B1117" font-weight="700">2</text><text x="252.69565217391306" y="308" fill="#C9D4DC" font-size="10">1500–2100 mở nắp ống</text>
+<rect x="348.17391304347825" y="270" width="93.47826086956522" height="22" fill="#5BD98A" fill-opacity=".85"/><text x="352.17391304347825" y="285" fill="#0B1117" font-weight="700">3</text><text x="348.17391304347825" y="308" fill="#C9D4DC" font-size="10">2100–2700 bám ngư lôi</text>
+<rect x="443.6521739130435" y="270" width="300.3478260869565" height="22" fill="#C9A227" fill-opacity=".85"/><text x="447.6521739130435" y="285" fill="#0B1117" font-weight="700">4</text><text x="443.6521739130435" y="308" fill="#C9D4DC" font-size="10">2700–4600 toàn cảnh đường đi, trúng</text>
+</g>
+<g transform="translate(14,728)"><rect width="760" height="330" fill="#121A22" stroke="#3A4856"/><text x="12" y="22" fill="#C9D4DC" font-size="14" font-weight="700">TÀU SÂN BAY — line3 (5000 ms)</text>
+<rect x="75.25" y="136" width="269.5" height="28" rx="3" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><path d="M344.75 136 L358.75 150 L344.75 164" fill="#8F9BA6" fill-opacity=".5" stroke="#C9D4DC"/><text x="210" y="180" fill="#7F8E9B" text-anchor="middle">tàu bắn</text>
+<rect x="560" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="96" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="122" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="148" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="174" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="560" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="586" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="612" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="638" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="664" y="200" width="26" height="26" fill="#0B1117" stroke="rgba(79,195,232,.3)"/>
+<rect x="599" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="625" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<rect x="651" y="148" width="26" height="26" fill="#E8742A" fill-opacity=".45" stroke="#E8742A"/>
+<text x="625" y="246" fill="#7F8E9B" text-anchor="middle">mục tiêu</text>
+<path d="M366.75 150 Q385 114 554 161" fill="none" stroke="#E8742A" stroke-opacity=".55" stroke-dasharray="6 5" stroke-width="2"/>
+<path d="M303.5 174.75 L273.55836773491734 172.87953019202078 L286.35317225196593 150.13321105060106Z" fill="#4FC3E8" fill-opacity=".22" stroke="#4FC3E8"/><circle cx="303.5" cy="174.75" r="10" fill="#4FC3E8"/><text x="303.5" y="178.75" fill="#0B1117" text-anchor="middle" font-weight="700">1</text><text x="303.5" y="160.75" fill="#4FC3E8" text-anchor="middle" font-size="10">u=0.15</text>
+<path d="M353 216 L349.1630551446313 186.24638082221156 L373.92172739096804 194.49927157099046Z" fill="#E8742A" fill-opacity=".22" stroke="#E8742A"/><circle cx="353" cy="216" r="10" fill="#E8742A"/><text x="353" y="220" fill="#0B1117" text-anchor="middle" font-weight="700">2</text><text x="353" y="202" fill="#E8742A" text-anchor="middle" font-size="10">u=1</text>
+<path d="M471 227 L490.68900482455246 204.36500300378307 L500.969483910745 228.3527875382323Z" fill="#5BD98A" fill-opacity=".22" stroke="#5BD98A"/><circle cx="471" cy="227" r="10" fill="#5BD98A"/><text x="471" y="231" fill="#0B1117" text-anchor="middle" font-weight="700">3</text><text x="471" y="213" fill="#5BD98A" text-anchor="middle" font-size="10">u=6.5</text>
+<path d="M592 187.4 L604.9423072529323 160.3353240741609 L621.2455561539014 180.71438520037216Z" fill="#C9A227" fill-opacity=".22" stroke="#C9A227"/><circle cx="592" cy="187.4" r="10" fill="#C9A227"/><text x="592" y="191.4" fill="#0B1117" text-anchor="middle" font-weight="700">4</text><text x="592" y="173.4" fill="#C9A227" text-anchor="middle" font-size="10">u=1.4</text>
+<path d="M493 161 L520.0134130705803 147.9510339766631 L520.0134130705803 174.0489660233369Z" fill="#FF3B2F" fill-opacity=".22" stroke="#FF3B2F"/><circle cx="493" cy="161" r="10" fill="#FF3B2F"/><text x="493" y="165" fill="#0B1117" text-anchor="middle" font-weight="700">5</text><text x="493" y="147" fill="#FF3B2F" text-anchor="middle" font-size="10">u=8</text>
+<path d="M374.75 142 Q464.75 80 514.75 120" fill="none" stroke="#E8742A" stroke-dasharray="4 4"/>
+<text x="14" y="264" fill="#7F8E9B">thời gian (ms)</text>
+<rect x="14" y="270" width="173.68" height="22" fill="#4FC3E8" fill-opacity=".85"/><text x="18" y="285" fill="#0B1117" font-weight="700">1</text><text x="14" y="308" fill="#C9D4DC" font-size="10">0–1200 cất cánh trên boong</text>
+<rect x="189.68" y="270" width="144.4" height="22" fill="#E8742A" fill-opacity=".85"/><text x="193.68" y="285" fill="#0B1117" font-weight="700">2</text><text x="189.68" y="308" fill="#C9D4DC" font-size="10">1200–2200 bám, đổi góc</text>
+<rect x="336.08" y="270" width="173.68" height="22" fill="#5BD98A" fill-opacity=".85"/><text x="340.08" y="285" fill="#0B1117" font-weight="700">3</text><text x="336.08" y="308" fill="#C9D4DC" font-size="10">2200–3400 tổng thể</text>
+<rect x="511.76000000000005" y="270" width="144.4" height="22" fill="#C9A227" fill-opacity=".85"/><text x="515.76" y="285" fill="#0B1117" font-weight="700">4</text><text x="511.76000000000005" y="308" fill="#C9D4DC" font-size="10">3400–4400 rải tên lửa</text>
+<rect x="658.16" y="270" width="85.84" height="22" fill="#FF3B2F" fill-opacity=".85"/><text x="662.16" y="285" fill="#0B1117" font-weight="700">5</text><text x="658.16" y="308" fill="#C9D4DC" font-size="10">4400–5000 rút lên</text>
+</g>
+</svg>

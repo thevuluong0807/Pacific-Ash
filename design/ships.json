@@ -1,0 +1,128 @@
+{
+  "grid": {
+    "width": 10,
+    "height": 10
+  },
+  "fleet": [
+    "destroyer",
+    "cruiser",
+    "submarine",
+    "missile",
+    "carrier"
+  ],
+  "ships": {
+    "destroyer": {
+      "nameVi": "Khu trục hạm",
+      "size": 2,
+      "cooldown": 0,
+      "attack": "rapid",
+      "attackNameVi": "Pháo nhanh",
+      "descVi": "Hai phát pháo vào hai ô bất kỳ.",
+      "anim": "rapid",
+      "model": "ship_destroyer",
+      "placeholderColor": "#4A5A68",
+      "shape": "line"
+    },
+    "cruiser": {
+      "nameVi": "Tuần dương",
+      "size": 3,
+      "cooldown": 1,
+      "attack": "precision",
+      "attackNameVi": "Pháo chính",
+      "descVi": "Một phát chính xác. Trúng thì lộ loại tàu.",
+      "anim": "precision",
+      "model": "ship_cruiser",
+      "placeholderColor": "#56677A",
+      "shape": "line"
+    },
+    "submarine": {
+      "nameVi": "Tàu ngầm",
+      "size": 3,
+      "cooldown": 2,
+      "attack": "torpedo",
+      "attackNameVi": "Ngư lôi",
+      "descVi": "Bắn dọc một hàng hoặc cột từ mép lưới, nổ ở tàu đầu tiên gặp. Lộ các ô trống trên đường đi.",
+      "anim": "torpedo",
+      "model": "ship_submarine",
+      "placeholderColor": "#2E3B47",
+      "shape": "line"
+    },
+    "missile": {
+      "nameVi": "Tàu tên lửa",
+      "size": 4,
+      "cooldown": 2,
+      "attack": "cross",
+      "attackNameVi": "Tên lửa chùm",
+      "descVi": "Đánh vùng chữ thập 5 ô.",
+      "anim": "cross",
+      "model": "ship_missile",
+      "placeholderColor": "#5E6D5C",
+      "shape": "line"
+    },
+    "carrier": {
+      "nameVi": "Tàu sân bay",
+      "size": 5,
+      "cooldown": 3,
+      "attack": "line3",
+      "attackNameVi": "Không kích",
+      "descVi": "Đánh dải 3 ô theo hàng hoặc cột.",
+      "anim": "line3",
+      "model": "ship_carrier",
+      "placeholderColor": "#6A6F76",
+      "shape": "line"
+    },
+    "raider": {
+      "nameVi": "Tàu cắn lén",
+      "size": 1,
+      "shape": "line",
+      "cooldown": 0,
+      "attack": "none",
+      "attackNameVi": "Cắn lén (nội tại)",
+      "descVi": "Không có đòn chủ động. Khi bắt đầu trận và sau đó cứ cách một lượt của mình, tự bắn thêm 1 ô ngẫu nhiên lên lưới địch.",
+      "passive": {
+        "kind": "sneak",
+        "trigger": "ownTurnStart",
+        "atMatchStart": true,
+        "period": 2,
+        "shots": 1
+      },
+      "anim": "sneak",
+      "model": "ship_raider",
+      "placeholderColor": "#3C4A56"
+    },
+    "escort": {
+      "nameVi": "Tàu hộ vệ",
+      "size": 2,
+      "shape": "square",
+      "cooldown": 0,
+      "attack": "none",
+      "attackNameVi": "Hộ tống (nội tại)",
+      "descVi": "Không có đòn chủ động. Cứ cách một đòn địch đánh vào đội mình, triệt tiêu ngẫu nhiên 30% số ô của đòn đó (làm tròn lên). Đòn 1 ô bị triệt tiêu hoàn toàn.",
+      "passive": {
+        "kind": "guard",
+        "trigger": "incomingAttack",
+        "period": 2,
+        "ratio": 0.3,
+        "round": "ceil"
+      },
+      "anim": "guard",
+      "model": "ship_escort",
+      "placeholderColor": "#4A5A68"
+    }
+  },
+  "roster": [
+    "destroyer",
+    "cruiser",
+    "submarine",
+    "missile",
+    "carrier",
+    "raider",
+    "escort"
+  ],
+  "fleetSize": 5,
+  "_notes": {
+    "fleet": "Đội hình mặc định (5 tàu cổ điển). Các tàu trong `roster` mà không thuộc `fleet` chỉ dùng được khi người chơi tự chọn trong Khí tài/profile (chọn tối đa `fleetSize` tàu, mỗi loại một chiếc).",
+    "shape": "`line` (mặc định): xếp thẳng hàng ngang hoặc dọc, số ô = size. `square`: khối vuông size×size, không xoay (size 2 = 4 ô).",
+    "passive": "Kỹ năng nội tại, tự kích hoạt, không cần chọn tàu. `period` = chu kỳ: kích hoạt rồi nghỉ period−1 lần. Tàu có attack `none` không bao giờ là tàu sẵn sàng (xem rules.md mục 10)."
+  }
+}

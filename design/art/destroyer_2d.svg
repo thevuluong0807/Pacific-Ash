@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 100" width="800" height="400">
+  <!-- Khu trục hạm, nhìn từ trên xuống, cartoon. Chiếm 2x1 ô (mỗi ô 100x100). Mũi hướng +x (phải). -->
+  <title>destroyer 2D</title>
+  <defs>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#7F8C98"/>
+      <stop offset="0.28" stop-color="#E9EFF4"/>
+      <stop offset="0.55" stop-color="#B4BFC9"/>
+      <stop offset="1" stop-color="#6B7885"/>
+    </linearGradient>
+    <linearGradient id="deck" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#AEB9C3"/>
+      <stop offset="0.45" stop-color="#D5DDE4"/>
+      <stop offset="1" stop-color="#97A3AE"/>
+    </linearGradient>
+    <linearGradient id="block" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F3F6F9"/>
+      <stop offset="1" stop-color="#B9C4CE"/>
+    </linearGradient>
+    <g id="turret">
+      <circle r="7" fill="#7E8B97" stroke="#0B1117" stroke-width="2.2"/>
+      <circle r="4.6" fill="#CBD4DC" stroke="#0B1117" stroke-width="1.4"/>
+      <rect x="4" y="-1.8" width="17" height="3.6" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.4"/>
+      <rect x="19" y="-2.4" width="4.5" height="4.8" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1.2"/>
+      <path d="M-3 -3.4 Q0 -5 3 -3.4" fill="none" stroke="#fff" stroke-opacity=".8" stroke-width="1.2" stroke-linecap="round"/>
+    </g>
+    <g id="ciws">
+      <circle r="3.6" fill="#F1F4F7" stroke="#0B1117" stroke-width="1.6"/>
+      <circle cx="-1" cy="-1" r="1.1" fill="#fff"/>
+    </g>
+  </defs>
+
+  <!-- bóng đổ trên mặt nước -->
+  <path d="M18 41 Q18 36 24 35 L124 31 Q168 33 198 55 Q168 77 124 79 L24 75 Q18 74 18 69 Z" fill="#000" opacity=".32"/>
+
+  <!-- thân tàu -->
+  <path d="M14 36 Q14 31 20 30 L120 26 Q165 28 195 50 Q165 72 120 74 L20 70 Q14 69 14 64 Z" fill="url(#hull)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M26 31 L120 27.6 Q158 29.5 185 45" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+
+  <!-- boong -->
+  <path d="M20 40 L120 33 Q158 35 184 50 Q158 65 120 67 L20 60 Z" fill="url(#deck)" stroke="#4E5A66" stroke-width="1.6" stroke-linejoin="round"/>
+
+  <!-- sàn trực thăng -->
+  <rect x="15" y="40" width="26" height="20" rx="2" fill="#8E99A4" stroke="#0B1117" stroke-width="1.8"/>
+  <circle cx="28" cy="50" r="8.2" fill="none" stroke="#F4F7FA" stroke-width="1.4"/>
+  <path d="M25 46 V54 M31 46 V54 M25 50 H31" stroke="#F4F7FA" stroke-width="1.8" stroke-linecap="round"/>
+
+  <!-- nhà chứa trực thăng -->
+  <rect x="40" y="36" width="22" height="28" rx="2.5" fill="url(#block)" stroke="#0B1117" stroke-width="2.2"/>
+  <path d="M41 50 H61" stroke="#4E5A66" stroke-width="1.4"/>
+  <use href="#ciws" x="52" y="50"/>
+
+  <!-- tháp pháo sau -->
+  <use href="#turret" x="68" y="50"/>
+
+  <!-- nhà boong giữa + ống khói -->
+  <rect x="78" y="40" width="28" height="20" rx="2.5" fill="url(#block)" stroke="#0B1117" stroke-width="2.2"/>
+  <rect x="82" y="44" width="9" height="12" rx="2" fill="#39434D" stroke="#0B1117" stroke-width="1.6"/>
+  <rect x="94" y="44" width="9" height="12" rx="2" fill="#39434D" stroke="#0B1117" stroke-width="1.6"/>
+  <path d="M84 46 H89 M96 46 H101" stroke="#8793A0" stroke-width="1.2" stroke-linecap="round"/>
+
+  <!-- xuồng cứu sinh -->
+  <rect x="86" y="34.6" width="13" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+  <rect x="86" y="60.4" width="13" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+
+  <!-- cầu chỉ huy (khối cao: đổ bóng nhỏ) -->
+  <rect x="108.5" y="39.5" width="27" height="26" rx="3" fill="#000" opacity=".25"/>
+  <rect x="106" y="37" width="27" height="26" rx="3" fill="url(#block)" stroke="#0B1117" stroke-width="2.4"/>
+  <rect x="127" y="40" width="4.5" height="20" rx="1.5" fill="#142431" stroke="#0B1117" stroke-width="1.2"/>
+  <path d="M110 41 L120 41 M110 59 L120 59" stroke="#4E5A66" stroke-width="2.4" stroke-linecap="round"/>
+  <circle cx="118" cy="50" r="4.4" fill="#C2CCD5" stroke="#0B1117" stroke-width="1.6"/>
+  <circle cx="118" cy="50" r="1.6" fill="#0B1117"/>
+
+  <!-- ô phóng VLS -->
+  <rect x="141" y="43" width="14" height="14" rx="1.5" fill="#5C6975" stroke="#0B1117" stroke-width="1.8"/>
+  <path d="M144.5 43 V57 M148 43 V57 M151.5 43 V57 M141 46.5 H155 M141 50 H155 M141 53.5 H155" stroke="#2B343C" stroke-width="1"/>
+
+  <!-- tháp pháo trước -->
+  <use href="#turret" x="166" y="50"/>
+
+  <!-- neo -->
+  <circle cx="183" cy="50" r="2.2" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/>
+</svg>
