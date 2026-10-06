@@ -5,6 +5,7 @@ import { newMatch } from '../../core/match';
 import { mulberry32, pick } from '../../core/rng';
 import { MAX_FLEET, ROSTER, loadSpecs } from '../../core/specs';
 import { mirrorStart } from '../../core/mirror';
+import { resumeStore } from '../../net/client';
 import type { S2C } from '../../net/protocol';
 import type { ScreenFactory } from '../app';
 import { showToast } from '../toast';
@@ -272,7 +273,7 @@ export const placementScreen: ScreenFactory<'placement'> = (app, root, { player 
     else if ('confirm' in d) confirm();
     else if ('back' in d) back();
   });
-  const back = () => (ses.mode === 'online' ? (ses.online?.net.send({ t: 'leave' }), ses.online?.net.close(), app.go('online')) : ses.mode === 'pve' || player === 0 ? app.go('modeSelect') : app.go('passDevice', { to: 1, next: 'placement' }));
+  const back = () => (ses.mode === 'online' ? (ses.online?.net.send({ t: 'leave' }), ses.online?.net.close(), resumeStore.clear(), app.go('online')) : ses.mode === 'pve' || player === 0 ? app.go('modeSelect') : app.go('passDevice', { to: 1, next: 'placement' }));
   selected = bring[0] ?? null;
   render();
   return {

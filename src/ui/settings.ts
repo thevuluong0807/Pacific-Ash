@@ -11,6 +11,7 @@ export interface Settings {
   anim: AnimSpeed;
   shake: boolean;
   shortCinematic: boolean; // chỉ phát cảnh trúng đích (~1.2 s), dùng ở P4
+  turnLimit: number;       // giây mỗi lượt, 0 = không giới hạn
   equipDamage: boolean;    // chế độ "hỏng hóc khí tài" (nhớ lựa chọn lần trước)
   battleView: '2d' | '3d'; // cách xem trận
   onlineServer: string;    // địa chỉ server online (ws://...); rỗng = mặc định
@@ -19,7 +20,7 @@ export interface Settings {
 
 const KEY = 'pacific-ash.settings';
 const MAP_KEY = 'pacific-ash.map';
-export const defaultSettings: Settings = { master: 0.8, sfx: 1, music: 0.6, quality: 'medium', anim: 'x1', shake: true, shortCinematic: false, equipDamage: false, battleView: '2d', onlineServer: '', map: DEFAULT_MAP };
+export const defaultSettings: Settings = { master: 0.8, sfx: 1, music: 0.6, quality: 'medium', anim: 'x1', shake: true, shortCinematic: false, turnLimit: 0, equipDamage: false, battleView: '2d', onlineServer: '', map: DEFAULT_MAP };
 
 function loadMap(): MapId {
   try {

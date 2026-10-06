@@ -363,3 +363,7 @@ h1, h2, h3 { font-family: var(--font-heading); letter-spacing: var(--tracking-he
 .battle[data-view="3d"] { grid-template-areas: "bar bar" "fleet side"; grid-template-columns: 19rem minmax(0, 1fr); align-items: start; }
 .battle[data-view="3d"] .b-side { justify-self: end; width: 19rem; }
 @media (max-width: 767px) { .battle[data-view="3d"] { grid-template-areas: "bar" "fleet" "side"; grid-template-columns: minmax(0, 1fr); } .battle[data-view="3d"] .b-side { width: auto; } }
+.opt--col { flex-direction: column; align-items: flex-start; gap: .4rem; } .opt--col .seg { flex-wrap: wrap; } .opt--col { cursor: default; }
+.turnclock { font-family: var(--font-mono, monospace); letter-spacing: .08em; padding: .15rem .5rem; border: 1px solid var(--color-steel500); } .turnclock.is-low { color: var(--color-alert); border-color: var(--color-alert); animation: pulse 1s ease-in-out infinite; }
+@keyframes pulse { 50% { opacity: .5; } }
+.netbar { position: fixed; top: 4.2rem; left: 50%; transform: translateX(-50%); z-index: 30; padding: .4rem .9rem; background: rgba(11, 17, 23, .92); border: 1px solid var(--color-alert); color: var(--color-alert); font-family: var(--font-mono, monospace); pointer-events: none; }

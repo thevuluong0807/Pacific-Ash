@@ -91,12 +91,13 @@ Tất cả đặt phía −Z. Đây là cảnh của map **Hải Phòng hoang t�
 - Skyline là phông: không bao giờ bị tàu hay hiệu ứng che hoàn toàn.
 
 ## 7. Đạn và vật bay
+> **Hiển thị trong cinematic:** vật bắn hạng nặng phải thấy rõ. Cảnh cận dùng kích thước thật ×1.2, cảnh rộng vẽ **phóng đại ×2.5** (tên lửa dài 0.12 thành 0.30, đạn pháo 0.08 thành 0.20) kèm quầng sáng; xem `cinematics.md` mục 1 "Quy tắc hiển thị vật bắn".
 
 | Vật | Kích thước | Vận tốc | Vệt / hiệu ứng | Ghi chú |
 |---|---|---|---|---|
 | **Đạn pháo** | vệt sáng dài 0.3, đầu sáng trắng–vàng | 18 ô/giây | vệt 12 khung, cam `#FFD27A` + viền `#FF8A1F` độ mờ 0.25, phát sáng nhẹ | không có model, dùng sprite vệt |
 | **Tên lửa** (`fx_missile`) | dài 0.12, đường kính 0.018 | bay thẳng lên 6 ô/giây, bay vòng 9, lao xuống 14 | ngọn lửa đuôi cam, vệt khói trắng sống 1.2 s | thân trắng xám, đầu tối; xoay theo hướng bay |
-| **Ngư lôi** (`fx_torpedo`) | dài 0.15, đường kính 0.02 | 7 ô/giây | vệt bọt trắng sủi, dải nước lõm theo sau (sống 1 s) | dưới nước, tối màu, đèn nhỏ ở đầu |
+| **Tên lửa-ngư lôi** (`fx_torpedo`) | dài 0.15, đường kính 0.02 | 7 ô/giây | lửa đuôi cam, vệt khói trắng và vệt nước; phóng ra từ ống ở mũi, **vọt lên khỏi mặt nước và bay sát mặt biển (cao 0.12–0.2)** dọc đường đã chọn rồi lao xuống đích | thân tối có sọc cam, đèn nhỏ ở đầu; thay cho ngư lôi dưới nước cũ (xem `cinematics.md` mục 5) |
 | **Máy bay** (`fx_plane`) | sải cánh 0.16, dài 0.2 | cất cánh 8 → 12 ô/giây, bay qua mục tiêu 14 | đèn hành trình đỏ/xanh nhấp nháy, vệt khói mỏng cuối cánh | dùng lại model đang đậu trên tàu sân bay |
 | **Bom** (`fx_bomb`) | dài 0.04 | rơi 10 ô/giây có gia tốc | cánh đuôi nhỏ, không vệt | rơi từ máy bay, nổ khi chạm ô |
 

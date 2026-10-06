@@ -50,7 +50,7 @@ test('phòng bằng mã: tạo, vào, xếp tàu, chơi trọn ván; mỗi bên 
   try {
     const a = await new Bot().open(srv.port), b = await new Bot().open(srv.port);
     b.mine = randomPlacement(9);
-    a.send({ t: 'create', equipDamage: false });
+    a.send({ t: 'create', equipDamage: false, turnLimit: 0 });
     const { code } = await a.expect('room');
     assert.match(code, /^[A-Z0-9]{5}$/);
     b.send({ t: 'join', code: code.toLowerCase() });
@@ -73,8 +73,8 @@ test('ghép ngẫu nhiên: hai người cùng vào hàng đợi được ghép; 
     const a = await new Bot().open(srv.port), b = await new Bot().open(srv.port), c = await new Bot().open(srv.port);
     c.send({ t: 'join', code: 'ZZZZZ' });
     await assert.rejects(c.expect('matched'), /Không tìm thấy phòng/);
-    a.send({ t: 'quick' }); await a.expect('queued');
-    b.send({ t: 'quick' });
+    a.send({ t: 'quick', turnLimit: 0 }); await a.expect('queued');
+    b.send({ t: 'quick', turnLimit: 0 });
     const [ma, mb] = await Promise.all([a.expect('matched'), b.expect('matched')]);
     assert.equal(ma.code, mb.code);
     a.send({ t: 'place', ships: [{ ...a.mine[0], origin: { x: 9, y: 9 } }] });
@@ -87,12 +87,81 @@ test('đối thủ thoát giữa chừng: bên còn lại nhận opponentLeft', 
   const srv = await startServer(0);
   try {
     const a = await new Bot().open(srv.port), b = await new Bot().open(srv.port);
-    a.send({ t: 'create', equipDamage: true });
+    a.send({ t: 'create', equipDamage: true, turnLimit: 0 });
     const { code } = await a.expect('room');
     b.send({ t: 'join', code });
     await Promise.all([a.expect('matched'), b.expect('matched')]);
-    b.ws.close();
+    b.send({ t: 'leave' }); // thoát chủ động: thua ngay (rớt mạng thì được nối lại, xem test bên dưới)
     await a.expect('opponentLeft');
     a.ws.close();
+  } finally { srv.close(); }
+});
+
+/** Tạo phòng 15 "giây" (mỗi giây = 20 ms) và đưa hai bot tới lúc bắt đầu. */
+async function startedRoom(srv: { port: number }) {
+  const a = await new Bot().open(srv.port), b = await new Bot().open(srv.port);
+  b.mine = randomPlacement(9);
+  a.send({ t: 'create', equipDamage: false, turnLimit: 15 });
+  const { code } = await a.expect('room');
+  b.send({ t: 'join', code });
+  const [ma, mb] = await Promise.all([a.expect('matched'), b.expect('matched')]);
+  a.send({ t: 'place', ships: a.mine }); b.send({ t: 'place', ships: b.mine });
+  const [sa, sb] = await Promise.all([a.expect('start'), b.expect('start')]);
+  return { a, b, ma, mb, sa, sb, code };
+}
+
+test('giới hạn thời gian: hết giờ server tự bắn thay người chơi và lượt chuyển sang đối thủ', async () => {
+  const srv = await startServer(0, { unitMs: 20 });
+  try {
+    const { a, b, sa } = await startedRoom(srv);
+    assert.ok(sa.update.remainMs !== null && sa.update.remainMs <= 300);
+    const idle = sa.update.turn === 0 ? a : b;
+    const up = await idle.expect('update');
+    assert.ok(up.update.events.some((e) => e.type === 'ShotFired' && e.player === sa.update.turn), 'server tự bắn cho bên hết giờ');
+    assert.notEqual(up.update.turn, sa.update.turn);
+    a.ws.close(); b.ws.close();
+  } finally { srv.close(); }
+});
+
+test('nối lại: rớt mạng giữa trận, nối lại bằng mã đúng nhận ảnh chụp; mã sai bị từ chối', async () => {
+  const srv = await startServer(0, { unitMs: 20 });
+  try {
+    const { a, b, ma, code } = await startedRoom(srv);
+    a.ws.close();
+    const drop = await b.expect('opponentDropped');
+    assert.ok(drop.graceMs > 0);
+    const a2 = await new Bot().open(srv.port);
+    a2.send({ t: 'resume', code, token: 'sai' });
+    await a2.expect('resumeFailed');
+    a2.send({ t: 'resume', code, token: ma.token });
+    const r = await a2.expect('resumed');
+    assert.equal(r.snapshot.phase, 'playing'); assert.equal(r.snapshot.you, 0);
+    assert.equal(r.snapshot.update!.board.ships.length, a.mine.length);
+    await b.expect('opponentBack');
+    a2.ws.close(); b.ws.close();
+  } finally { srv.close(); }
+});
+
+test('nối lại: quá thời gian cho phép thì bên còn lại thắng', async () => {
+  const srv = await startServer(0, { unitMs: 20 });
+  try {
+    const { a, b } = await startedRoom(srv);
+    a.ws.close();
+    await b.expect('opponentDropped');
+    await b.expect('opponentLeft'); // grace = 30 "giây" = 600 ms
+    b.ws.close();
+  } finally { srv.close(); }
+});
+
+test('ghép ngẫu nhiên chỉ ghép người cùng giới hạn thời gian', async () => {
+  const srv = await startServer(0);
+  try {
+    const a = await new Bot().open(srv.port), b = await new Bot().open(srv.port), c = await new Bot().open(srv.port);
+    a.send({ t: 'quick', turnLimit: 30 }); await a.expect('queued');
+    b.send({ t: 'quick', turnLimit: 60 }); await b.expect('queued');
+    c.send({ t: 'quick', turnLimit: 30 });
+    const [ma, mc] = await Promise.all([a.expect('matched'), c.expect('matched')]);
+    assert.equal(ma.code, mc.code); assert.equal(ma.turnLimit, 30);
+    a.ws.close(); b.ws.close(); c.ws.close();
   } finally { srv.close(); }
 });

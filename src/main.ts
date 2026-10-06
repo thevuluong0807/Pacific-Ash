@@ -16,6 +16,7 @@ import type { ScreenId } from './ui/app';
 import type { RenderScene } from './render3d/renderScene';
 import { BattleScene } from './render3d/battleScene';
 import { loadShipModels } from './render3d/shipGlb';
+import { resumeStore } from './net/client';
 import { BlankScene } from './render3d/blankScene';
 import { tokens } from './ui/tokens';
 import { menuScreen } from './ui/screens/menu';
@@ -109,4 +110,7 @@ if (new URLSearchParams(location.search).has('debug')) (window as unknown as { _
 // Link mời: ?room=MÃ (và tùy chọn ?server=ws://...) mở thẳng sảnh online và tự vào phòng.
 const qs = new URLSearchParams(location.search);
 if (qs.get('server')) app.updateSettings({ onlineServer: qs.get('server')! });
-if (qs.get('room')) { app.pendingRoom = qs.get('room')!; app.go('online'); } else app.go('menu');
+const saved = resumeStore.load();
+if (qs.get('room')) { app.pendingRoom = qs.get('room')!; app.go('online'); }
+else if (saved) { app.pendingResume = saved; app.go('online'); } // trận online đang dở: tự nối lại
+else app.go('menu');

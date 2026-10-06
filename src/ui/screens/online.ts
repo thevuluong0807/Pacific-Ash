@@ -1,4 +1,5 @@
-import { OnlineClient, defaultServer } from '../../net/client';
+import { mirrorResume } from '../../core/mirror';
+import { OnlineClient, defaultServer, resumeStore } from '../../net/client';
 import { normalizeCode, type S2C } from '../../net/protocol';
 import { newSession, type ScreenFactory } from '../app';
 import { strings as S } from '../strings';
@@ -13,6 +14,8 @@ export const onlineScreen: ScreenFactory<'online'> = (app, root) => {
   let msg = '';
   let handedOver = false; // đã giao kết nối cho màn Đặt tàu: không đóng khi rời sảnh
   let equip = app.settings.equipDamage;
+  const stored = app.pendingResume;
+  app.pendingResume = undefined;
   const server = () => app.settings.onlineServer || defaultServer();
   const link = () => {
     const u = new URL(location.href);
@@ -55,6 +58,7 @@ export const onlineScreen: ScreenFactory<'online'> = (app, root) => {
             <button class="btn btn--small btn--primary" data-quick ${busy ? 'disabled' : ''}>${S.online.quick}</button>
           </article>`}
         </div>
+        <p class="hint">${S.online.limitInfo(app.settings.turnLimit)}</p>
         ${msg ? `<p class="hint online__msg" role="alert">${esc(msg)}</p>` : ''}
         <details class="online__adv"><summary>${S.online.server}</summary>
           <label class="field"><input data-server value="${esc(server())}" placeholder="ws://localhost:8787"></label>
@@ -70,11 +74,24 @@ export const onlineScreen: ScreenFactory<'online'> = (app, root) => {
       case 'queued': state = 'queue'; msg = ''; render(); break;
       case 'matched': {
         handedOver = true;
-        app.session = newSession('online', 'medium', m.equipDamage);
-        app.session.online = { net: net!, me: m.you, code: m.code, equipDamage: m.equipDamage };
+        app.session = newSession('online', 'medium', m.equipDamage, m.turnLimit);
+        app.session.online = { net: net!, me: m.you, code: m.code, equipDamage: m.equipDamage, turnLimit: m.turnLimit };
+        net!.setResume(m.code, m.token, m.graceMs); // rớt mạng giữa trận: tự nối lại trong thời gian cho phép
+        resumeStore.save({ server: server(), code: m.code, token: m.token, graceMs: m.graceMs });
         app.go('placement', { player: 0 });
         break;
       }
+      case 'resumed': { // mở lại trang giữa trận: dựng lại từ ảnh chụp của server
+        const sn = m.snapshot;
+        handedOver = true;
+        app.session = newSession('online', 'medium', sn.equipDamage, sn.turnLimit);
+        app.session.online = { net: net!, me: sn.you, code: sn.code, equipDamage: sn.equipDamage, turnLimit: sn.turnLimit, resumed: sn };
+        net!.setResume(sn.code, stored!.token, sn.graceMs);
+        if (sn.phase === 'playing') { app.session.match = mirrorResume(sn); app.session.started = true; app.go('battle'); }
+        else app.go('placement', { player: 0 });
+        break;
+      }
+      case 'resumeFailed': resumeStore.clear(); state = 'idle'; msg = S.online.resumeFailed; render(); break;
       case 'error': state = 'idle'; msg = m.msg; render(); break;
       default: break;
     }
@@ -106,9 +123,9 @@ export const onlineScreen: ScreenFactory<'online'> = (app, root) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('button');
     if (!t) return;
     if (t.hasAttribute('data-back')) return app.go('modeSelect');
-    if (t.hasAttribute('data-create')) void act(() => net!.send({ t: 'create', equipDamage: equip }));
+    if (t.hasAttribute('data-create')) void act(() => net!.send({ t: 'create', equipDamage: equip, turnLimit: app.settings.turnLimit }));
     else if (t.hasAttribute('data-join')) { if (code.length === 5) void act(() => net!.send({ t: 'join', code })); else { msg = S.online.needCode; render(); } }
-    else if (t.hasAttribute('data-quick')) void act(() => net!.send({ t: 'quick' }));
+    else if (t.hasAttribute('data-quick')) void act(() => net!.send({ t: 'quick', turnLimit: app.settings.turnLimit }));
     else if (t.hasAttribute('data-cancel')) { net?.send({ t: 'cancel' }); state = 'idle'; msg = ''; render(); }
     else if (t.hasAttribute('data-copy')) {
       void navigator.clipboard?.writeText(link()).then(() => { msg = S.online.copied; render(); }, () => { root.querySelector<HTMLInputElement>('[data-link]')?.select(); });
@@ -116,7 +133,10 @@ export const onlineScreen: ScreenFactory<'online'> = (app, root) => {
   });
 
   render();
-  if (app.pendingRoom) { // mở bằng link mời: tự vào phòng
+  if (stored) { // mở lại trang giữa trận: nối lại bằng mã đã lưu
+    app.updateSettings({ onlineServer: stored.server === defaultServer() ? '' : stored.server });
+    void act(() => net!.send({ t: 'resume', code: stored.code, token: stored.token }));
+  } else if (app.pendingRoom) { // mở bằng link mời: tự vào phòng
     code = normalizeCode(app.pendingRoom);
     app.pendingRoom = undefined;
     if (code.length === 5) void act(() => net!.send({ t: 'join', code }));

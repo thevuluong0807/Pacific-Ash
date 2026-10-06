@@ -67,6 +67,10 @@ Nút **2D / 3D** (phím `V`) ở thanh trên của trận:
 
 Mỗi đòn đánh có cảnh quay điện ảnh riêng, có thể **Bỏ qua**, đổi tốc độ x1 / x2 hoặc tắt trong **Cài đặt**. Cài đặt cũng có chất lượng đồ họa, âm lượng, rung màn hình và chọn **map** (Trường Sa hoàng hôn hoặc Hải Phòng đêm mưa).
 
+### Giới hạn thời gian mỗi lượt (tùy chọn)
+
+Ở màn chọn chế độ có thể đặt giới hạn mỗi lượt: không giới hạn, 15, 30, 60, 90 hoặc 120 giây. Đồng hồ đếm ngược hiện ở thanh trên của trận; hết giờ, hệ thống tự bắn một phát ngẫu nhiên hợp lệ thay bạn. Khi chơi online, người tạo phòng quyết định giới hạn này.
+
 ### Hỏng hóc khí tài (tùy chọn)
 
 Ở màn chọn chế độ có thể bật **Hỏng hóc khí tài**: tàu bị trúng quá 50% số ô sẽ mất kỹ năng đặc biệt. Tàu có đòn chủ động chỉ còn bắn 1 ô thường (hồi chiêu giữ nguyên), tàu hộ vệ ngừng chặn đòn.
@@ -77,9 +81,11 @@ Vào **Chơi → Online**, có ba cách:
 
 - **Tạo phòng**: nhận mã phòng 5 ký tự và một **link mời**. Gửi cho bạn bè; họ mở link là tự vào phòng.
 - **Vào phòng**: nhập mã phòng bạn bè gửi.
-- **Ghép ngẫu nhiên**: hai người cùng bấm tìm trận ở cùng thời điểm sẽ được ghép với nhau.
+- **Ghép ngẫu nhiên**: hai người cùng bấm tìm trận ở cùng thời điểm và cùng mức giới hạn thời gian sẽ được ghép với nhau.
 
-Khi đủ hai người, mỗi bên xếp tàu rồi chờ đối thủ xếp xong là bắt đầu. Máy chủ giữ luật và chỉ gửi cho mỗi bên những gì họ được biết, nên không thể nhìn lén lưới đối thủ. Thoát giữa trận thì bên còn lại thắng.
+Khi đủ hai người, mỗi bên xếp tàu rồi chờ đối thủ xếp xong là bắt đầu. Máy chủ giữ luật và chỉ gửi cho mỗi bên những gì họ được biết, nên không thể nhìn lén lưới đối thủ. Thoát chủ động giữa trận thì bên còn lại thắng.
+
+**Mất kết nối:** nếu rớt mạng, game tự thử nối lại và trả bạn về đúng trận đang chơi, kể cả khi bạn tải lại trang. Thời gian chờ nối lại bằng giới hạn mỗi lượt của phòng (tối thiểu 30 giây; phòng không giới hạn thì 90 giây). Trong lúc đó đối thủ thấy thông báo chờ; quá hạn mà chưa nối lại được thì đối thủ thắng. Nếu rớt đúng lượt của bạn và phòng có giới hạn thời gian, hết giờ máy chủ vẫn tự bắn thay bạn.
 
 ## Giấy phép
 

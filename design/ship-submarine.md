@@ -58,6 +58,8 @@ submarine
            cam_under (-0.35,-0.16,+1.00, nhìn về +Z)   (camera dưới nước cho cinematic)
 ```
 - Tàu ngầm **không có pháo**, nên `muzzle` chỉ là bí danh của `launch` để đủ bộ neo chuẩn. Ngư lôi xuất phát từ `launch`.
+- **Trước khi phóng, tàu nổi cao hơn bình thường (nâng `ship_submarine` lên Δy +0.05)** để các nắp ống phóng nằm trên mặt nước và nhìn thấy được; sau khi phóng tàu hạ về mớn nước thường trong 800 ms.
+- Đạn của tàu ngầm hiển thị là **tên lửa-ngư lôi** (`env-and-fx.md` mục 7): phóng từ `launch`, vọt khỏi mặt nước, bay sát mặt biển dọc đường. Camera và nhịp cảnh: `cinematics.md` mục 5.
 - Đòn `torpedo`: ngư lôi bắn từ **mép lưới** vào, không phải từ tàu. Animation 4.3 trong `animations.md` thể hiện hai thứ: (1) tàu mình mở nắp ống, ngư lôi xuất hiện từ `launch`; (2) cảnh ngư lôi chạy dọc đường đã chọn do mã dựng, không cần model riêng. Không bắt buộc ngư lôi phải chạy từ vị trí tàu tới mép lưới.
 - Tàu ngầm chìm: dùng nguyên model, mã hạ cả thân xuống dưới mặt nước kèm bọt khí và dầu (khác tàu nổi: không nghiêng nhiều).
 

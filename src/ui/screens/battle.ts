@@ -1,5 +1,7 @@
 import type { Board, Cell, CellMark, CellView, FireAction, GameEvent, MatchState, Orientation, PlayerId, ShipId } from '../../../design/core-api';
-import { applyUpdate } from '../../core/mirror';
+import { applyUpdate, mirrorResume } from '../../core/mirror';
+import { createAi } from '../../core';
+import { resumeStore } from '../../net/client';
 import type { S2C, Update } from '../../net/protocol';
 import { applyAction, effectiveAttack, isDamaged, isValidAction, previewCells, readyShips, runPassivesAtMatchStart, runPassivesAtTurnStart, skipTurn, sunkShips, viewOfEnemy } from '../../core';
 import { cloneBoard, shipCells } from '../../core/board';
@@ -61,6 +63,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
         </div>
         <span class="bar__right">
           <button class="btn btn--tiny" data-view-toggle aria-pressed="false" title="${S.battle.viewTitle}"></button>
+          <span class="turnclock" data-clock hidden></span>
           <button class="btn btn--tiny" data-skip hidden>${S.battle.skip}</button>
           <span class="speed"><span>${S.battle.speed.toUpperCase()}</span><button class="btn btn--tiny" data-speed></button></span>
           <button class="iconbtn" data-settings aria-label="${S.menu.settings}">${icon('i-gear')}</button>
@@ -381,6 +384,11 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
   async function fire() {
     const action = buildAction();
     if (!action || !myTurn() || !isValidAction(state, viewer, action)) return;
+    await perform(action);
+  }
+
+  async function perform(action: FireAction) {
+    deadlineAt = null; tick();
     if (online) { // server giữ luật: gửi hành động, kết quả về qua `update`
       selected = null; aim = freshAim(); awaiting = true;
       online.net.send({ t: 'fire', action });
@@ -391,6 +399,35 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     selected = null; aim = freshAim();
     await run(r.events, r.state, true);
     if (!disposed) await advance();
+  }
+
+  // ---------- đồng hồ lượt ----------
+  let deadlineAt: number | null = null;
+  const clockEl = q('[data-clock]');
+  /** Cập nhật đồng hồ; chế độ cục bộ hết giờ thì tự bắn ngẫu nhiên hợp lệ (online: server tự bắn). */
+  function tick() {
+    const left = deadlineAt === null ? null : Math.max(0, Math.ceil((deadlineAt - performance.now()) / 1000));
+    clockEl.hidden = left === null || state.winner !== null;
+    if (left !== null) { clockEl.textContent = `⏱ ${left}s`; clockEl.classList.toggle('is-low', left <= 5); }
+    if (left === 0 && !online && myTurn()) {
+      deadlineAt = null;
+      showToast(battleEl, S.battle.timeUp, 'alert');
+      void createAi('easy', (Math.random() * 1e9) >>> 0).chooseAction({ state, me: viewer }).then((a) => { if (!disposed && myTurn()) void perform(a); });
+    }
+  }
+  const clockTimer = setInterval(tick, 250);
+  /** Lượt của người chơi cục bộ bắt đầu: đặt hạn. */
+  const startLocalClock = () => { deadlineAt = ses.turnLimit > 0 ? performance.now() + ses.turnLimit * 1000 : null; tick(); };
+
+  /** Dựng lại mọi bộ nhớ đệm hiển thị từ `state` (sau khi nối lại, không phát hoạt cảnh). */
+  function syncFromState() {
+    const v = viewOfEnemy(state, viewer);
+    enemyView = v.cells; enemyMarks = v.marks; enemyRevealed = new Set(v.revealed); enemySunk = new Set(sunkShips(state, viewer));
+    ownBoard = cloneBoard(state.boards[viewer]);
+    sunkDraws.clear();
+    for (const s of state.boards[foe].ships) if (s.sunk) sunkDraws.set(s.id, { id: s.id, origin: s.origin, orientation: s.orientation, sunk: true });
+    turnNo = state.turnNumber; selected = null; aim = freshAim(); awaiting = false; playing = false;
+    update();
   }
 
   /** Chạy tới khi tới lượt người điều khiển cần thao tác, hoặc rời màn hình. */
@@ -431,6 +468,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
         continue;
       }
       battleEl.dataset.tab = 'enemy';
+      startLocalClock();
       update();
       return;
     }
@@ -492,8 +530,31 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     draining = false;
     if (!disposed) await advance();
   }
+  let bar: HTMLElement | null = null;
+  const setBar = (text: string | null) => {
+    if (!text) { bar?.remove(); bar = null; return; }
+    if (!bar) { bar = document.createElement('div'); bar.className = 'netbar'; battleEl.appendChild(bar); }
+    bar.textContent = text;
+  };
+  let dropTimer: ReturnType<typeof setInterval> | null = null;
   function onNet(m: S2C) {
-    if (m.t === 'update') { netQueue.push(m.update); void drain(); }
+    if (m.t === 'update') { deadlineAt = m.update.remainMs === null ? null : performance.now() + m.update.remainMs; netQueue.push(m.update); void drain(); }
+    else if (m.t === 'resumed' && m.snapshot.phase === 'playing') { // nối lại: bỏ hàng đợi cũ, dựng lại từ ảnh chụp của server
+      netQueue.length = 0;
+      state = mirrorResume(m.snapshot); ses.match = state;
+      deadlineAt = m.snapshot.update!.remainMs === null ? null : performance.now() + m.snapshot.update!.remainMs;
+      syncFromState();
+      showToast(battleEl, S.online.backOnline, 'ok');
+      if (state.winner !== null) void advance();
+    }
+    else if (m.t === 'opponentDropped') {
+      let left = Math.round(m.graceMs / 1000);
+      if (dropTimer) clearInterval(dropTimer);
+      setBar(S.online.foeDropped(left));
+      dropTimer = setInterval(() => { left = Math.max(0, left - 1); setBar(S.online.foeDropped(left)); }, 1000);
+    }
+    else if (m.t === 'opponentBack') { if (dropTimer) clearInterval(dropTimer); dropTimer = null; setBar(null); showToast(battleEl, S.online.foeBack, 'ok'); }
+    else if (m.t === 'resumeFailed') { online!.net.close(); state = { ...state, winner: foe }; ses.match = state; showToast(battleEl, S.online.lost, 'alert'); void advance(); }
     else if (m.t === 'error') { awaiting = false; showToast(battleEl, m.msg, 'alert'); update(); }
     else if (m.t === 'opponentLeft' && state.winner === null) {
       state = { ...state, winner: viewer }; ses.match = state; showToast(battleEl, S.online.opponentLeft, 'ok');
@@ -502,12 +563,22 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
   }
   if (online) {
     online.net.subscribe(onNet);
-    online.net.onClose = () => { if (!disposed && state.winner === null) { state = { ...state, winner: viewer }; ses.match = state; showToast(battleEl, S.online.lost, 'alert'); void advance(); } };
+    online.net.onStatus = (re) => setBar(re ? S.online.reconnecting : null);
+    if (online.net.reconnecting) setBar(S.online.reconnecting);
+    // hết thời gian nối lại mà chưa được: coi như thua
+    online.net.onClose = () => { if (!disposed && state.winner === null) { state = { ...state, winner: foe }; ses.match = state; showToast(battleEl, S.online.lost, 'alert'); void advance(); } };
   }
 
   async function begin() {
     if (online) {
-      if (!ses.started && online.start) { ses.started = true; netQueue.push(online.start.update); }
+      if (online.resumed) { // mở lại trang: trạng thái đã có từ ảnh chụp, không phát lại hoạt cảnh
+        const r = online.resumed; online.resumed = undefined;
+        deadlineAt = r.update?.remainMs == null ? null : performance.now() + r.update.remainMs;
+        syncFromState();
+        await advance();
+        return;
+      }
+      if (!ses.started && online.start) { ses.started = true; const r = online.start.update.remainMs; deadlineAt = r === null ? null : performance.now() + r; netQueue.push(online.start.update); }
       await drain();
       return;
     }
@@ -529,7 +600,8 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
   return {
     dispose() {
       disposed = true; skipFn?.(); app.battleScene?.setView('2d');
-      if (online) { online.net.subscribe(null); online.net.onClose = undefined; online.net.send({ t: 'leave' }); online.net.close(); } // rời trận / sang màn kết quả: đóng kết nối
+      clearInterval(clockTimer); if (dropTimer) clearInterval(dropTimer);
+      if (online) { online.net.subscribe(null); online.net.onClose = undefined; online.net.onStatus = undefined; online.net.send({ t: 'leave' }); online.net.close(); resumeStore.clear(); } // rời trận / sang màn kết quả: đóng kết nối
     },
     key(e) {
       if (e.key === 'Escape') clearAim();

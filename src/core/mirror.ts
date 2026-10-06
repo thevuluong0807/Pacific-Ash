@@ -1,5 +1,5 @@
 import type { MatchState, PlacedShip, PlayerId } from '../../design/core-api';
-import type { Update } from '../net/protocol';
+import type { ResumeSnapshot, Update } from '../net/protocol';
 import { cloneBoard, emptyShots, freshShip, other, setBlocked } from './board';
 import { ROSTER } from './specs';
 
@@ -43,4 +43,15 @@ export function applyUpdate(state: MatchState, u: Update, me: PlayerId): MatchSt
   }
   boards[me] = cloneBoard(u.board);
   return { ...(state as Mirror), boards, revealed: [[...u.revealed[0]], [...u.revealed[1]]], turn: u.turn, turnNumber: u.turnNumber, winner: u.winner };
+}
+
+/** Dựng lại trạng thái phía người chơi từ ảnh chụp của server (nối lại sau khi rớt mạng hoặc mở lại trang). */
+export function mirrorResume(snap: ResumeSnapshot): MatchState {
+  const u = snap.update!, f = snap.foe!, me = snap.you;
+  const sunk = f.sunk.map((s) => ({ ...s, origin: { ...s.origin }, hits: [...s.hits] }));
+  const holders = Array.from({ length: Math.max(0, snap.foeCount - sunk.length) }, (_, i) => freshShip(ROSTER[i % ROSTER.length], OFF, 'h'));
+  const foe: MatchState['boards'][0] & { blocked?: boolean[][] } = { ships: [...holders, ...sunk], shots: f.shots.map((r) => [...r]), blocked: f.blocked.map((r) => [...r]) };
+  const own = cloneBoard(u.board);
+  const st: Mirror = { boards: me === 0 ? [own, foe] : [foe, own], turn: u.turn, turnNumber: u.turnNumber, revealed: [[...u.revealed[0]], [...u.revealed[1]]], winner: u.winner, seed: snap.seed, equipDamage: snap.equipDamage };
+  return st;
 }

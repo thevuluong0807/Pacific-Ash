@@ -1,7 +1,7 @@
 import type { AiLevel, Cell, CellMark, CellView, ShipAttack, ShipId, GameEvent, MatchState, PlacedShip, Player, PlayerId } from '../../design/core-api';
 import type { ShipPose } from '../render3d/shipModels';
 import type { OnlineClient } from '../net/client';
-import type { Update } from '../net/protocol';
+import type { ResumeSnapshot, Update } from '../net/protocol';
 import { ProfileStore } from './profiles';
 import { loadSettings, saveSettings, type Settings } from './settings';
 
@@ -46,7 +46,7 @@ export interface BattleView3D {
 export type Mode = 'pve' | 'hotseat' | 'online';
 
 /** Thông tin phiên online: kết nối, chỗ ngồi, bản cập nhật khởi đầu của server. */
-export interface OnlineSession { net: OnlineClient; me: PlayerId; code: string; equipDamage: boolean; start?: { first: PlayerId; seed: number; foeCount: number; update: Update } }
+export interface OnlineSession { net: OnlineClient; me: PlayerId; code: string; equipDamage: boolean; turnLimit: number; resumed?: ResumeSnapshot; start?: { first: PlayerId; seed: number; foeCount: number; update: Update } }
 export interface Tally { hit: number; miss: number }
 
 /** Phiên chơi hiện tại, sống qua các màn hình. */
@@ -62,12 +62,14 @@ export interface Session {
   started: boolean;
   /** Hỏng hóc khí tài: tàu bị trúng quá 50% ô mất kỹ năng đặc biệt. */
   equipDamage: boolean;
+  /** Giây mỗi lượt, 0 = không giới hạn. */
+  turnLimit: number;
   online?: OnlineSession;
 }
 
-export const newSession = (mode: Mode, difficulty: AiLevel, equipDamage = false): Session => ({
+export const newSession = (mode: Mode, difficulty: AiLevel, equipDamage = false, turnLimit = 0): Session => ({
   mode, difficulty, seed: (Date.now() ^ (Math.random() * 0x7fffffff)) >>> 0,
-  placements: [null, null], match: null, ai: null, stats: [{ hit: 0, miss: 0 }, { hit: 0, miss: 0 }], started: false, equipDamage,
+  placements: [null, null], match: null, ai: null, stats: [{ hit: 0, miss: 0 }, { hit: 0, miss: 0 }], started: false, equipDamage, turnLimit,
 });
 
 /** State machine màn hình: enum + hàm chuyển (screens.md mục 1). */
@@ -81,6 +83,8 @@ export class App {
   session: Session = newSession('pve', 'medium');
   /** Mã phòng từ link mời (`?room=`): sảnh online tự vào khi mở. */
   pendingRoom?: string;
+  /** Thông tin nối lại lưu từ lần trước (mở lại trang giữa trận online). */
+  pendingResume?: { server: string; code: string; token: string; graceMs: number };
   private current?: ScreenInstance;
   private screens: { [K in ScreenId]?: ScreenFactory<K> } = {};
 
