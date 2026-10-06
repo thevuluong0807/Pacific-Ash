@@ -44,7 +44,7 @@ Phần chung cho mọi tàu: `ship-destroyer.md` (hệ tọa độ 2.2, vật li
 ```
 escort
   hull_port  hull_stbd  deck  bridge  radome  lights
-  ciws_1..4 (yaw/pitch, mỗi cái có muzzle)
+  ciws_1..4: mỗi khẩu là cây `ciws_N` (yaw) -> `ciws_N_pitch` (pitch) -> `ciws_N_spin` (cụm 6 nòng, quay quanh trục nòng) và neo `ciws_N_muzzle` (đầu nòng, nơi phát vệt đạn)
   decoy_1..4 (nắp mở được, mỗi giàn có launch)
   dmg_cell0..3
   anchors: muzzle(=ciws_1.muzzle)  launch(=decoy_1.launch)  bow(+0.95,0.06,0)  stern(-0.92,0.06,0)  deck(0,0.07,0)
@@ -54,7 +54,7 @@ escort
 ```
 - Mô hình luôn đặt mũi hướng +X; khi đặt trên lưới không xoay.
 - `dmg_cell0..3` ứng với bốn ô: mỗi ô trúng cháy phần tương ứng (thân trên/dưới, boong, cầu).
-- Kỹ năng `guard`: CIWS xoay và bắn về hướng đạn tới, giàn mồi nhử bung nắp và phóng chaff; vòm radar sáng viền. Chi tiết: `cinematics.md` mục 9.2.
+- Kỹ năng `guard` gồm **hai cảnh**: (1) **phát hiện**: vòm radar sáng viền, tia quét radar quét tròn, khóa từng đạn tới bằng khung ngắm; (2) **chế áp**: bốn CIWS cụm 6 nòng xả đạn cực nhanh (hàng ngàn viên/phút), vệt đạn dày như tia sáng liên tục, vỏ đạn văng, nổ lửng lơ khi trúng đạn tới. Chi tiết: `cinematics.md` mục 9.2.
 
 ### 2.4 Vật liệu: khác gì khu trục hạm
 Cùng bộ vật liệu bạc (`ship-destroyer.md` 2.4). Thêm `mat_radome` bóng hơn (roughness 0.2) cho vòm lớn; vạch hazard vàng–cam ở viền giàn mồi nhử; `mat_emissive_guard` (`#FFB347`, cường độ 0 → 1 trong 200 ms khi kích hoạt) cho vòm radar.

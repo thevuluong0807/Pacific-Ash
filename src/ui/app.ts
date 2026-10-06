@@ -33,10 +33,14 @@ export interface BattleView3D {
   setOverlay(own: CellView[][], enemy: CellView[][], marks: CellMark[][]): void;
   setAim(a: { shipId: ShipId | null; attack: ShipAttack | null; cells: Cell[]; valid: boolean }): void;
   resetOrbit(): void;
+  /** Dời tâm xem 3D sang giữa trận / lưới địch / lưới mình. */
+  setFocus(f: 'center' | 'enemy' | 'own'): void;
   /** Lửa kéo dài ở các ô đã trúng (ô của mình / ô địch). */
-  syncHits(own: { x: number; y: number }[], enemy: { x: number; y: number }[]): void;
+  syncHits(own: { x: number; y: number; ship?: ShipId }[], enemy: { x: number; y: number }[]): void;
+  /** Tàu chìm khi tắt cinematic: hoạt cảnh chìm rút gọn ở nền. */
+  sinkOnly(e: GameEvent, opts: { viewer: PlayerId; speed: number; short: boolean; shake: boolean; reduced: boolean; onEvent(e: GameEvent): void }): void;
   /** Phát cinematic cho các event của một hành động; gọi `onEvent` đúng mốc (chạm ô -> CellResolved...). */
-  play(events: GameEvent[], opts: { viewer: PlayerId; speed: number; short: boolean; shake: boolean; reduced: boolean; onEvent(e: GameEvent): void }): Promise<void>;
+  play(events: GameEvent[], opts: { viewer: PlayerId; speed: number; short: boolean; shake: boolean; reduced: boolean; bars?: boolean; sinkBg?: boolean; onEvent(e: GameEvent): void }): Promise<void>;
   skip(): void;
   endShot(): Promise<void>;
   /** Màn kết quả: thắng/thua đổi độ sáng cảnh (map truong_sa); null = bình thường. */

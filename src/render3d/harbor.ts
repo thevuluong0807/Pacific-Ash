@@ -67,13 +67,17 @@ export class Harbor {
   private blinkers: { m: THREE.Sprite; phase: number; color: THREE.Color }[] = [];
   private fireLight: THREE.PointLight;
 
-  constructor(private heightAt: (x: number, z: number, t: number) => number, private layout: Layout = 'play') {
+  /** `scale`: nhóm này bị phóng `scale` lần; PointLight cần khoảng chiếu và cường độ phóng theo. */
+  private lk: number;
+
+  constructor(private heightAt: (x: number, z: number, t: number) => number, private layout: Layout = 'play', scale = 1) {
+    this.lk = scale ** 1.6;
     const rng = mulberry32(20261005);
     const rnd = (a: number, b: number) => a + rng() * (b - a);
     this.buildSkyline(rnd);
     this.buildPort(rnd);
     // đèn động: một PointLight cam yếu phía skyline, nhấp nháy (tối đa 3 đèn thật trong cảnh)
-    this.fireLight = new THREE.PointLight(0xff7a1a, 0, 120, 1.6);
+    this.fireLight = new THREE.PointLight(0xff7a1a, 0, 120 * scale, 1.6);
     this.fireLight.position.set(0, 12, -50);
     this.group.add(this.fireLight);
   }
@@ -244,7 +248,7 @@ export class Harbor {
       f.s.scale.set(f.base * 0.7 * k, f.base * k, 1);
       flicker += k;
     }
-    this.fireLight.intensity = (flicker / Math.max(1, this.fires.length)) * 60 + flash * 20;
+    this.fireLight.intensity = ((flicker / Math.max(1, this.fires.length)) * 60 + flash * 20) * this.lk;
     // khói bốc lên, nghiêng theo gió 12° về +X
     const wind = Math.tan((12 * Math.PI) / 180);
     for (const sm of this.smoke) {

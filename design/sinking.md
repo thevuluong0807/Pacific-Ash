@@ -41,6 +41,8 @@ Hàng tàu của mình bị chìm: nội dung mờ 40%, **thêm dấu X nhỏ đ
 
 ---
 
+> **Tỉ lệ ×10 (`world-scale.md`):** các giá trị Δy và dịch chuyển theo ô trong mục này nhân 10 khi ra thế giới.
+
 ## 2. Hoạt cảnh chìm 3D: mỗi loại tàu một kiểu, dài gấp đôi (10800 ms)
 
 > **Cập nhật:** thời lượng chặn **10800 ms** (gấp 1.5 lần bản 7200 ms; bản đầu là 1800 ms), mỗi loại tàu có **kiểu chìm riêng**. Mọi mốc thời gian, độ trễ giữa các nổ và thời gian chìm nốt (6000 ms) trong mục này đã nhân 1.5 theo bản 7200 ms.
@@ -79,7 +81,7 @@ Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn l�
 | 1500–5400 | mũi chúi mạnh 18° → 34°, nghiêng nhẹ; sóng trắng dồn lên boong mũi; lửa phụt từ cầu |
 | 5400–9000 | **đuôi dựng cao**, chúi 52° → 68°, **chân vịt lộ ra khỏi nước** (mảnh vỡ và nước chảy từ đuôi); sàn bay trượt dốc, xuồng cam bong ra rơi xuống |
 | 9000–10800 | gần thẳng đứng (78°) trượt hẳn xuống; xoáy nước và bọt khí lớn; mảnh vỡ nổi |
-- Hiệu ứng riêng: tia lửa từ mất tháp pháo, dầu phun từ ống khói. Âm: loạt nổ sắc ngắn rồi tiếng kim loại rít, tiếng "ục" khi chìm. Máy quay: cận mạn tàu lúc tháp bay (0–3600 ms, FOV 34°), rồi lùi xa.
+- Hiệu ứng riêng: tia lửa từ mất tháp pháo, dầu phun từ ống khói. Âm: loạt nổ sắc ngắn rồi tiếng kim loại rít, tiếng "ục" khi chìm. Máy quay: cận mạn tàu lúc tháp bay (0–2400 ms, FOV 34°), rồi lùi xa.
 
 #### Tuần dương: "lật úp nặng nề" (chậm, nặng)
 | Mốc | Diễn biến |
@@ -94,7 +96,7 @@ Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn l�
 | Mốc | Diễn biến |
 |---|---|
 | 0–1800 | nổ thứ phát ở **hai dãy ô phóng**: nắp VLS bật tung theo lưới (từng hàng nắp bay lên, cách 180 ms) |
-| 1800–6000 | **các tên lửa tự phóng loạn**: từ `launcher_N` và `vls_slot_N` vút lên theo hướng lung tung (vệt khói trắng xoắn, vài quả bay xuống nước rồi nổ), mỗi quả cách 225–1125 ms; thân tàu rung |
+| 1800–6000 | **các tên lửa tự phóng loạn**: từ `launcher_N` và `vls_slot_N` vút lên theo hướng lung tung (vệt khói trắng xoắn, vài quả bay xuống nước rồi nổ), mỗi quả cách 450–750 ms; thân tàu rung |
 | 6000–10800 | **đuôi chìm trước**: chúi âm 20° → 42° (mũi chổng cao), lửa liếm dọc dãy phóng; thân dần trượt về phía sau |
 - Hiệu ứng riêng: tên lửa bay lung tung (tối đa 8 vệt), nắp VLS bay, lửa đáy phóng; cột khói xoắn. Âm: tiếng rít tên lửa, nổ ngắt quãng. Máy quay: nhìn từ trên cao xéo, theo các vệt tên lửa loạn rồi hạ xuống thân tàu.
 
@@ -132,7 +134,7 @@ Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn l�
 | 1800–5400 | **vòm radar nứt rồi bật tung** (node `radome` tách khỏi tàu, bay lên rồi rơi); các giàn mồi nhử nổ bung chaff cả loạt (`decoy_N`, `fx_chaff`) |
 | 5400–9000 | **một thân chìm trước** (thân gần mạn nghiêng bị trúng: Δy riêng của `hull_port` hoặc `hull_stbd` giảm thêm 0.1 ngay mốc 5400), tàu nghiêng 16° → 28°, boong trượt |
 | 9000–10800 | thân còn lại chìm theo, nghiêng 32°, xoáy nước lớn hơn do mặt cắt rộng |
-- Hiệu ứng riêng: chaff bạc lấp lánh bay khắp, tia lửa điện từ vòm radar, khói trắng nhạt. Âm: tiếng CIWS rít loạn rồi tắt, tiếng điện xẹt, nổ giòn. Máy quay: cận CIWS (0–2700 ms), cắt lên cao xéo khi vòm radar bật, rồi lùi.
+- Hiệu ứng riêng: chaff bạc lấp lánh bay khắp, tia lửa điện từ vòm radar, khói trắng nhạt. Âm: tiếng CIWS rít loạn rồi tắt, tiếng điện xẹt, nổ giòn. Máy quay: cận CIWS (0–1800 ms), cắt lên cao xéo khi vòm radar bật, rồi lùi.
 
 ### 2.4 Chuyển động phụ chung (mọi tàu)
 - **Đèn hành trình** (`nav_*`) tắt ở 3600 ms; **radar quay** (`radar_rotor`) dừng ở 2250 ms.
@@ -150,11 +152,11 @@ Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn l�
 Âm: `sfx_explosion_big` ở 0 ms, `sfx_ship_sink` bắt đầu ở 2700 ms, thêm lớp riêng theo từng tàu như đã ghi. Ducking nhạc −6 dB trong suốt 10800 ms.
 
 ### 2.6 Liên hệ cinematic
-- Cảnh chìm **chèn sau shot "cảnh trúng đích"** của đòn làm chìm (`cinematics.md` mục 8). Tổng thời gian một lượt có thể lên tới 9 s + 10.8 s; vì vậy **có nút bỏ qua riêng**, và "cinematic ngắn" bỏ luôn hoạt cảnh chìm 3D (chỉ giữ sprite xám + X).
+- Cảnh chìm **chèn sau shot "cảnh trúng đích"** của đòn làm chìm (`cinematics.md` mục 8). Tổng thời gian một lượt có thể lên tới 9 s + 10.8 s; vì vậy **có nút bỏ qua riêng**, và "cinematic ngắn" không chặn lượt: hoạt cảnh chìm 3D chạy ở nền bản rút gọn 4000 ms, sprite xám + X vẫn hiện ngay.
 - Đòn kết thúc ván: làm chậm 0.4× lúc tàu cuối chìm (làm chậm 0.4× trong 3600 ms đầu rồi về tốc độ thường, tổng khoảng 16 s; chỉ áp dụng cho tàu cuối, và cho bỏ qua).
 - Chìm do tàu cắn lén (bắn phụ): vẫn phát đủ hoạt cảnh riêng của tàu bị chìm; không có cú giật mạnh của cinematic bắn.
 - Hai tàu chìm cùng một đòn: chìm đồng thời, mỗi tàu một kiểu; máy quay chọn tàu lớn hơn làm trọng tâm.
-- Chế độ "tắt cinematic" hoặc bỏ qua: bỏ hoạt cảnh 3D; chỉ hiện sprite xám + X ở 2D và nhật ký.
+- Chế độ "tắt cinematic", "cinematic ngắn" hoặc bỏ qua: **cảnh 3D phía sau lưới vẫn phát hoạt cảnh chìm ở nền** (bản rút gọn 4000 ms, không chặn lượt; `wreckage.md` mục 2.1); bỏ qua thì tàu biến mất trong 450 ms. Khi tàu địch chìm, model đầy đủ **hiện ra bằng một vụ nổ lớn** rồi cháy nổ và chìm (không còn bị ẩn).
 
 ### 2.7 Chặn lượt và chạy nền (vì hoạt cảnh dài 10.8 s)
 - Mặc định: **chặn** cho tới khi hết 10800 ms (hoặc người chơi bỏ qua).

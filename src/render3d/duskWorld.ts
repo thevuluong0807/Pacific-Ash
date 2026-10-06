@@ -3,6 +3,7 @@ import { floatOnWaves } from './buoyancy';
 import { Embers, FireSpot, glowTexture } from './fx';
 import type { FxStyle, Layout, MapWorld, QualityConfig } from './mapWorld';
 import { Ocean } from './ocean';
+import { CALM_ZONE, CELL, WAVE_UNIT, WORLD_SCALE } from './scale';
 import { buildWarship } from './warship';
 
 /**
@@ -57,6 +58,11 @@ export class DuskWorld implements MapWorld {
   readonly id = 'truong_sa' as const;
   readonly style: FxStyle = { glow: 1.25, smoke: 0x1a1e22, dropTint: 0xffe0c8, vignette: 0.3 };
   private root = new THREE.Group();
+  /** Phóng phông nền (S) và sóng/sương (U) ở chế độ trận; menu giữ nguyên. */
+  private readonly S: number;
+  private readonly U: number;
+  private readonly FD: number;
+  private readonly proxy = new THREE.PerspectiveCamera();
   private ocean: Ocean;
   private skyMat: THREE.ShaderMaterial;
   private skyMesh: THREE.Mesh;
@@ -85,7 +91,9 @@ export class DuskWorld implements MapWorld {
   constructor(private scene: THREE.Scene, private layout: Layout) {
     // menu: mặt trời ở chính giữa chân trời; gameplay: bên phải, sau lưới địch
     this.sun = (layout === 'menu' ? new THREE.Vector3(0.1, 0.04, -0.99) : new THREE.Vector3(0.35, 0.05, -0.93)).normalize();
-    scene.fog = new THREE.FogExp2(FOG.getHex(), 0.008);
+    this.S = layout === 'play' ? WORLD_SCALE : 1; this.U = layout === 'play' ? WAVE_UNIT : 1; this.FD = layout === 'play' ? CELL : 1;
+    scene.fog = new THREE.FogExp2(FOG.getHex(), 0.008 / this.FD);
+    this.root.scale.setScalar(this.S);
 
     this.skyMat = new THREE.ShaderMaterial({ vertexShader: skyVert, fragmentShader: skyFrag, side: THREE.BackSide, depthWrite: false, fog: false, uniforms: { uTime: { value: 0 }, uFlash: { value: 0 }, uSun: { value: this.sun } } });
     this.skyMesh = new THREE.Mesh(new THREE.SphereGeometry(900, 32, 16), this.skyMat);
@@ -93,14 +101,14 @@ export class DuskWorld implements MapWorld {
     this.root.add(this.skyMesh);
 
     // biển sáng hơn bản trước: chân trời #6A3420, giữa #3A1D18, gần #0C070A (vẫn tối ở gần camera cho lưới 2D dễ đọc); biên độ sóng ×0.85
-    this.ocean = new Ocean({ fogColor: FOG, fogDensity: 0.008, waveScale: 0.85 });
+    this.ocean = new Ocean({ fogColor: FOG, fogDensity: 0.008 / this.FD, waveScale: 0.85, unit: this.U, radius: this.S > 1 ? 200 * CELL / this.S : 220, calm: this.S > 1 ? CALM_ZONE : undefined });
     this.ocean.setPalette({ Horizon: '#6A3420', Zenith: '#1A0B14', Deep: '#0C070A', Mid: '#3A1D18', Foam: '#FFD9B0', FireColor: '#FFB15A', MoonColor: '#FFB15A', MoonDir: this.sun.clone(), MoonPow: 60, FireDir: this.sun.clone().setY(0.1) });
     this.root.add(this.ocean.mesh);
 
     this.key = new THREE.DirectionalLight(0xff8a4a, this.baseKey);
     this.key.position.copy(this.sun).multiplyScalar(100);
     this.root.add(this.key, new THREE.HemisphereLight(0x2a1a2a, 0x07050a, layout === 'play' ? 0.35 : 0.5));
-    this.flashLight = new THREE.PointLight(0xff7a2a, 0, 40, 1.6);
+    this.flashLight = new THREE.PointLight(0xff7a2a, 0, 40 * this.S, 1.6);
     this.root.add(this.flashLight);
 
     // môi trường phản chiếu: hoàng hôn tối + vệt mặt trời + ánh lửa (thay `tex_env_truong_sa`)
@@ -124,6 +132,8 @@ export class DuskWorld implements MapWorld {
   }
 
   heightAt = (x: number, z: number, t: number) => this.ocean.heightAt(x, z, t);
+  /** Độ cao sóng theo toạ độ cục bộ của nhóm đã phóng S lần (cho vật nền nhấp nhô). */
+  private localHeight = (x: number, z: number, t: number) => this.ocean.heightAt(x * this.S, z * this.S, t) / this.S;
 
   private blob(len: number, at: THREE.Vector3, thick = 1.5) {
     const g = new THREE.Group();
@@ -338,7 +348,7 @@ export class DuskWorld implements MapWorld {
     mk('fire', 0xffffff, 3, glowTexture('rgba(255,230,160,1)', 'rgba(255,90,20,0)'));
     for (let i = 0; i < 4; i++) mk('dust', 0x2a1612, 3, glowTexture('rgba(30,15,18,0.9)', 'rgba(30,15,18,0)'));
     this.flashLight.position.copy(p).setY(4);
-    this.flashLight.intensity = 80;
+    this.flashLight.intensity = 80 * this.S ** 1.6;
     const n = 6 + ((Math.random() * 7) | 0);
     for (let i = 0; i < n && this.debris.length < 80; i++) {
       this.debris.push({ p: p.clone(), v: new THREE.Vector3((Math.random() - 0.5) * 6, 5 + Math.random() * 6, (Math.random() - 0.5) * 6), born: t, rot: new THREE.Vector3(Math.random() * 6, Math.random() * 6, Math.random() * 6) });
@@ -359,7 +369,7 @@ export class DuskWorld implements MapWorld {
     this.underwater = on;
     this.ocean.setUnderwater(on);
     const fog = this.scene.fog as THREE.FogExp2;
-    const c = on ? new THREE.Color('#0B2A2C') : FOG, d = on ? 0.05 : 0.008; // xanh ngọc ấm, tầm nhìn ~20 (đã nhân CELL)
+    const c = on ? new THREE.Color('#0B2A2C') : FOG, d = (on ? 0.05 : 0.008) / this.FD; // xanh ngọc ấm, tầm nhìn ~20 (đã nhân CELL)
     fog.color.copy(c); fog.density = d;
     this.skyMesh.visible = !on; // dưới nước không thấy bầu trời
     this.scene.background = on ? c : null;
@@ -382,9 +392,11 @@ export class DuskWorld implements MapWorld {
 
   update(dt: number, t: number, camera: THREE.Camera) {
     this.clock = t;
-    this.skyMesh.position.copy(camera.position);
+    this.proxy.position.copy(camera.position).divideScalar(this.S); // vật bám camera nằm trong nhóm đã phóng: dùng toạ độ cục bộ
+    this.proxy.quaternion.copy(camera.quaternion);
+    this.skyMesh.position.copy(this.proxy.position);
     this.skyMat.uniforms.uTime.value = t;
-    this.ocean.update(t, camera);
+    this.ocean.update(t, this.proxy);
     for (const f of this.fires) f.update(t);
     for (const r of this.reef) (r.material as THREE.MeshBasicMaterial).opacity = 0.45 + 0.2 * Math.sin(t * 1.3 + r.position.x);
     const full = this.quality.rain || this.quality.fog;
@@ -392,7 +404,7 @@ export class DuskWorld implements MapWorld {
 
     this.ships.forEach((sh, i) => { sh.obj.visible = full || i < 4 || i >= 6; }); // chất lượng thấp: giữ 4 tàu giao tranh
     for (const s of this.ships) {
-      floatOnWaves(s.obj, s.heading, 4, 1, t, this.ocean.heightAt, false);
+      floatOnWaves(s.obj, s.heading, 4, 1, t, this.localHeight, false);
       s.obj.position.y += s.y0 - (t * 0.02) / 60; // lún chậm 0.02 đơn vị/phút
     }
 
@@ -425,7 +437,7 @@ export class DuskWorld implements MapWorld {
       if (b.kind === 'fire') { b.s.scale.setScalar(3 + 8 * f); (b.s.material as THREE.SpriteMaterial).opacity = 1 - f; }
       else { b.s.position.y += dt * (3 + 6 * (1 - f)); b.s.scale.setScalar(3 + 8 * f * (1 + (i % 3) * 0.3)); (b.s.material as THREE.SpriteMaterial).opacity = (1 - f) * 0.7; }
     }
-    this.flashLight.intensity = Math.max(0, this.flashLight.intensity - dt * 220);
+    this.flashLight.intensity = Math.max(0, this.flashLight.intensity - dt * 220 * this.S ** 1.6);
     const d = new THREE.Object3D();
     for (let i = this.debris.length - 1; i >= 0; i--) {
       const m = this.debris[i], e = t - m.born;

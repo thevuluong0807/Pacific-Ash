@@ -310,7 +310,7 @@ h1, h2, h3 { font-family: var(--font-heading); letter-spacing: var(--tracking-he
 }
 
 /* ===== Cài đặt (art/ui_settings_mock.svg) ===== */
-.overlay { position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; background: var(--color-overlay); padding: var(--space-md); overflow: auto; }
+.overlay { pointer-events: auto; /* xem 3D đặt #ui pointer-events: none: lớp phủ (Cài đặt giữa trận) vẫn phải bấm được */ position: absolute; inset: 0; z-index: 50; display: grid; place-items: center; background: var(--color-overlay); padding: var(--space-md); overflow: auto; }
 .set { width: min(60rem, 100%); display: flex; flex-direction: column; gap: 1.1rem; padding: var(--space-lg) 3rem; }
 .set__title { font-size: 2rem; letter-spacing: .2em; padding-bottom: .75rem; border-bottom: 1px solid rgba(122, 138, 153, .3); }
 .set__row { display: grid; grid-template-columns: 17rem 1fr; align-items: center; gap: var(--space-md); font: var(--size-md) var(--font-mono); }

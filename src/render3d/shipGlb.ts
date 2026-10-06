@@ -24,10 +24,48 @@ export async function loadShipModels(GLB: Record<ShipId, string>): Promise<void>
         const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
         if (m?.isMeshStandardMaterial && m.emissive.getHex() === 0) { m.emissive.copy(m.color).multiplyScalar(0.3); m.emissiveIntensity = 1; }
       });
+      shrinkToCells(gltf.scene);
       cache.set(id, gltf.scene);
     } catch (err) { console.error(`Không nạp được model ${id}`, err); }
   }));
 }
+
+/**
+ * Model glb mới đã nhân 10 sẵn (design/world-scale.md: 1 ô = 10 ĐV, khu trục hạm dài 19). Rig phóng `CELL` lần từ đơn vị "ô",
+ * nên đỉnh và vị trí node được co ×0.1 một lần lúc nạp: kích thước thế giới ra đúng bằng file glb khi CELL = 10 và mọi mã ghi theo ô giữ nguyên.
+ */
+function shrinkToCells(root: THREE.Object3D) {
+  root.traverse((o) => {
+    if (o !== root) o.position.multiplyScalar(0.1);
+    const m = o as THREE.Mesh;
+    if (m.isMesh) m.geometry.scale(0.1, 0.1, 0.1);
+  });
+}
+
+const debris = new Map<string, THREE.Object3D>();
+export const DEBRIS_IDS = ['plate', 'mast', 'turret', 'hullchunk', 'cargo', 'funnel', 'wing', 'vls', 'sail', 'radome'] as const;
+export type DebrisId = (typeof DEBRIS_IDS)[number];
+
+/** Nạp 10 mảnh xác tàu (design/wreckage.md, đã nhân 10 sẵn như model tàu: co về đơn vị ô khi nạp). Mảnh lỗi thì bỏ qua, ô đó không có mảnh. */
+export async function loadDebrisModels(src: Record<string, string>): Promise<void> {
+  const loader = new GLTFLoader();
+  await Promise.all(DEBRIS_IDS.map(async (id) => {
+    try {
+      const uri = src[`debris_${id}`];
+      const b64 = uri.slice(uri.indexOf(',') + 1);
+      const bin = atob(b64), buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      const gltf = await loader.parseAsync(buf.buffer, '');
+      gltf.scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (m?.isMeshStandardMaterial && m.emissive.getHex() === 0) { m.emissive.copy(m.color).multiplyScalar(0.3); m.emissiveIntensity = 1; }
+      });
+      shrinkToCells(gltf.scene);
+      debris.set(id, gltf.scene);
+    } catch (err) { console.error(`Không nạp được mảnh xác ${id}`, err); }
+  }));
+}
+export const debrisModel = (id: DebrisId) => debris.get(id)?.clone(true);
 
 export const hasModel = (id: ShipId) => cache.has(id);
 

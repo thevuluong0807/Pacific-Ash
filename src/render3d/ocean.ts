@@ -10,20 +10,33 @@ const WAVES = [
 const dirOf = (deg: number) => [Math.sin((deg * Math.PI) / 180), Math.cos((deg * Math.PI) / 180)] as const;
 
 /** Độ cao mặt nước tại (x, z) lúc t. Cùng công thức với shader (bỏ phần dịch ngang). */
-export function waveHeight(x: number, z: number, t: number, waveScale = 1): number {
+/** Vùng biển lặng dưới hai lưới (chế độ trận): sóng giảm còn `min` trong hình chữ nhật |x| < hx, |z| < hz rồi tăng dần về 1 sau `ramp` ĐV, để thân tàu không bị sóng tràn che. */
+export interface CalmZone { hx: number; hz: number; min: number; ramp: number }
+export function calmFactor(x: number, z: number, c: CalmZone | undefined): number {
+  if (!c) return 1;
+  const qx = Math.max(Math.abs(x) - c.hx, 0), qz = Math.max(Math.abs(z) - c.hz, 0);
+  const u = Math.min(1, Math.hypot(qx, qz) / c.ramp);
+  return c.min + (1 - c.min) * (u * u * (3 - 2 * u));
+}
+
+export function waveHeight(x: number, z: number, t: number, waveScale = 1, unit = 1, calm?: CalmZone): number {
   let h = 0;
   for (const w of WAVES) {
     const [dx, dz] = dirOf(w.dir);
-    const k = (2 * Math.PI) / w.len;
-    h += w.amp * waveScale * Math.sin(k * (dx * x + dz * z - w.speed * t));
+    const k = (2 * Math.PI) / (w.len * unit);
+    h += w.amp * waveScale * unit * Math.sin(k * (dx * x + dz * z - w.speed * unit * t));
   }
-  return h;
+  return h * calmFactor(x, z, calm);
 }
 
 export interface OceanOptions {
   fogColor: THREE.Color;
   fogDensity: number;
   waveScale?: number;
+  /** Hệ số phóng sóng (bước sóng, biên độ, tốc độ) theo kích thước tàu; 1 = cảnh menu. */
+  unit?: number;
+  radius?: number;
+  calm?: CalmZone;
 }
 
 /** Lưới cực: dày ở gần tâm (camera), thưa ở xa. */
@@ -50,14 +63,19 @@ function polarGrid(radius: number, rings: number, sectors: number) {
 
 const vert = /* glsl */ `
 uniform float uTime, uAmp;
+uniform vec3 uCalm; // x: nửa rộng, y: nửa dài, z: độ cao còn lại (1 = không lặng)
+uniform vec2 uCalmRamp;
 uniform vec4 uWaves[${WAVES.length}]; // dir.xy, amp, len
 uniform float uSpeed[${WAVES.length}];
 varying vec3 vWorld; varying vec3 vNormal; varying float vCrest;
 void main() {
   vec3 p = (modelMatrix * vec4(position, 1.)).xyz;
   vec3 disp = vec3(0.); vec3 n = vec3(0., 1., 0.); float crest = 0.;
+  vec2 qc = max(abs(p.xz) - uCalm.xy, 0.);
+  float uc = clamp(length(qc) / max(uCalmRamp.x, 1.), 0., 1.);
+  float calm = uCalm.z + (1. - uCalm.z) * (uc * uc * (3. - 2. * uc));
   for (int i = 0; i < ${WAVES.length}; i++) {
-    vec2 d = uWaves[i].xy; float a = uWaves[i].z * uAmp, k = 6.2831853 / uWaves[i].w;
+    vec2 d = uWaves[i].xy; float a = uWaves[i].z * uAmp * calm, k = 6.2831853 / uWaves[i].w;
     float f = k * (dot(d, p.xz) - uSpeed[i] * uTime);
     float s = sin(f), co = cos(f);
     disp += vec3(d.x * a * co, a * s, d.y * a * co);
@@ -109,19 +127,28 @@ void main() {
 
 export class Ocean {
   readonly mesh: THREE.Mesh;
+  /** Bán kính lưới biển (cục bộ); chế độ trận phóng nên cần rộng hơn để mép nằm ngoài tầm sương. */
+  private radius: number;
   private mat: THREE.ShaderMaterial;
+  private ws: number;
+  private unit: number;
+  private calm?: CalmZone;
 
   constructor(o: OceanOptions) {
+    this.ws = o.waveScale ?? 1; this.unit = o.unit ?? 1; this.radius = o.radius ?? 220; this.calm = o.calm;
+    const U = this.unit;
     this.mat = new THREE.ShaderMaterial({
       side: THREE.DoubleSide,
       vertexShader: vert,
       fragmentShader: frag,
       uniforms: {
         uTime: { value: 0 }, uFlash: { value: 0 }, uReflect: { value: 1 }, uUnder: { value: 0 },
-        uAmp: { value: o.waveScale ?? 1 },
+        uAmp: { value: this.ws * U },
+        uCalm: { value: new THREE.Vector3(o.calm?.hx ?? 0, o.calm?.hz ?? 0, o.calm ? o.calm.min : 1) },
+        uCalmRamp: { value: new THREE.Vector2(o.calm?.ramp ?? 1, 0) },
         uFog: { value: o.fogDensity },
-        uWaves: { value: WAVES.map((w) => { const [x, z] = dirOf(w.dir); return new THREE.Vector4(x, z, w.amp, w.len); }) },
-        uSpeed: { value: WAVES.map((w) => w.speed) },
+        uWaves: { value: WAVES.map((w) => { const [x, z] = dirOf(w.dir); return new THREE.Vector4(x, z, w.amp, w.len * U); }) },
+        uSpeed: { value: WAVES.map((w) => w.speed * U) },
         uHorizon: { value: new THREE.Color('#18222B') },
         uZenith: { value: new THREE.Color('#05080B') },
         uDeep: { value: new THREE.Color('#04090D') },
@@ -135,7 +162,7 @@ export class Ocean {
         uMoonPow: { value: 220 },
       },
     });
-    this.mesh = new THREE.Mesh(polarGrid(220, 200, 256), this.mat);
+    this.mesh = new THREE.Mesh(polarGrid(this.radius, 420, 384), this.mat);
     this.mesh.frustumCulled = false;
   }
 
@@ -163,5 +190,5 @@ export class Ocean {
     this.mesh.position.set(camera.position.x, 0, camera.position.z);
   }
 
-  heightAt = (x: number, z: number, t: number) => waveHeight(x, z, t, this.mat.uniforms.uAmp.value as number);
+  heightAt = (x: number, z: number, t: number) => waveHeight(x, z, t, this.ws, this.unit, this.calm);
 }

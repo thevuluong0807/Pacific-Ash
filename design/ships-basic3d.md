@@ -11,8 +11,8 @@
 | `models/_src/preview.html` | Trang xem trước (chạy qua máy chủ tĩnh ở gốc dự án) |
 
 ## 1. Quy ước chung (mọi model)
-- Đơn vị: **1 đơn vị = 1 ô lưới**. Gốc ở giữa thân, trên mặt nước (y = 0). **Mũi +Z**, lên +Y. Riêng **tàu hộ vệ (escort) mũi +X** (footprint vuông, không xoay).
-- Kích thước đúng như `ship-*.md` (dài, rộng, mớn nước, mạn khô, vị trí từng bộ phận).
+- Đơn vị: **1 ô lưới = 10 đơn vị thế giới; model đã nhân 10 sẵn** (khu trục hạm dài 19, tàu sân bay 49; xem `world-scale.md`). Gốc ở giữa thân, trên mặt nước (y = 0). **Mũi +Z**, lên +Y. Riêng **tàu hộ vệ (escort) mũi +X** (footprint vuông, không xoay). Mọi kích thước và tọa độ neo ghi theo **ô** trong các tài liệu `ship-*.md` và bảng dưới: nhân 10 để ra tọa độ trong file glb.
+- Kích thước đúng như `ship-*.md` (dài, rộng, mớn nước, mạn khô, vị trí từng bộ phận), **nhân 10**.
 - **Thân tàu loft mượt**: nhiều mặt cắt dọc thân, đáy tròn (elip), sườn loe lên mạn, mạn khô tăng về mũi (sheer), mũi nhọn cong, đuôi vát. Hai phần: **dưới mớn nước** (tối `#2C353D`) và **trên mớn nước** (bạc `#C4CDD6`), đường gập là đường nước. Boong có hai lớp (viền boong tối và mặt boong sáng lùi vào, giống sprite 2D).
 - **Thượng tầng**: khối hình thang vát **mép trên** (bevel), pháp tuyến mượt theo góc gập, không còn góc vuông cắt phẳng.
 - **Trụ, cầu, vòm radar**: nhiều phân đoạn, pháp tuyến mượt (tháp pháo, ống khói, vòm radar, thân tàu ngầm tròn theo mặt tròn xoay).
@@ -22,7 +22,7 @@
 
 ## 2. Cây node (khớp `ship-*.md`)
 Mỗi model là một cây: gốc là `ship_<id>`, con trực tiếp là thân, thượng tầng, các bộ phận động, các điểm neo (node rỗng) và các nhóm hư hại rỗng (`dmg_cell0..N`, trống, agent code gắn hiệu ứng lên).
-- **Bộ phận động**: `turret_*` (xoay quanh Y) chứa `barrel_*` (xoay quanh X, có `muzzle_*`); `radar_rotor` (xoay quanh Y); `periscope` (tịnh tiến Y); `launcher_N` + `launcher_N_pitch` (tàu tên lửa, xoay quanh X); `plane_N` (tàu sân bay, ẩn hiện được); `jbd_0/1`; `torpedo_flap_N`; `propulsor_spin`; `decoy_N` (hộ vệ); `ciws_N`.
+- **Bộ phận động**: `turret_*` (xoay quanh Y) chứa `barrel_*` (xoay quanh X, có `muzzle_*`); `radar_rotor` (xoay quanh Y); `periscope` (tịnh tiến Y); `launcher_N` + `launcher_N_pitch` (tàu tên lửa, xoay quanh X); `plane_N` (tàu sân bay, ẩn hiện được); `jbd_0/1`; `torpedo_flap_N`; `propulsor_spin`; `decoy_N` (hộ vệ); `ciws_N` (cây `ciws_N` yaw → `ciws_N_pitch` → `ciws_N_spin` quay cụm 6 nòng; neo `ciws_N_muzzle` ở đầu nòng, có trên mọi tàu có CIWS).
 - **Điểm neo chuẩn** (node rỗng, con trực tiếp của `ship_<id>`): `muzzle`, `launch`, `bow`, `stern`, `deck`, `cell_N`, `fire_N`; riêng từng tàu thêm neo như trong file của nó (`muzzle_1/2`, `cam_under`, `vls_slot_N`, `plane_slot_N`, `cat_start_N`, `cat_end_N`, `takeoff_end`, `cam_close`, `intercept_cam`, `cam_gun`).
 - Tên node là hợp đồng với code; **không đổi tên** khi chưa hỏi.
 
@@ -45,7 +45,7 @@ Số tam giác là của bản hiện tại (1 101–11 351).
 - Thiếu so với bản cực chi tiết (chấp nhận): không texture, không vân kim loại xước, không decal số hiệu, không đinh tán/đường hàn, không `dmg_*` có hình học (chỉ node rỗng).
 
 ## 5. Cách dùng trong code
-- Chép `design/models/ship_<id>.glb` vào `src/assets/models/` và khai báo trong `manifest.ts` với khóa `ship_<id>` như `assets.md`. Nạp bằng `GLTFLoader`.
+- Chép `design/models/ship_<id>.glb` vào `src/assets/models/` và khai báo trong `manifest.ts` với khóa `ship_<id>` như `assets.md`. Nạp bằng `GLTFLoader`, **scale = 1** (model đã nhân 10).
 - Hướng: model mũi +Z; khi đặt lên lưới, xoay quanh Y theo hướng tàu (`env-and-fx.md` mục 1). **Escort mũi +X và không xoay.**
 - Có thể thay model hộp đặt tạm trong `shipModels.ts` bằng các file này mà không đổi API.
 
@@ -53,4 +53,5 @@ Số tam giác là của bản hiện tại (1 101–11 351).
 ```
 node design/models/_src/make_ships.mjs "$PWD/design/models"
 ```
+Tỉ lệ thế giới nằm ở hằng `WORLD_SCALE = 10` đầu file `make_ships.mjs`; đổi tại đó rồi chạy lại nếu cần tỉ lệ khác.
 Cần Node. Xem trước: chạy một máy chủ tĩnh ở gốc dự án (ví dụ `python3 -m http.server 8765`) rồi mở `http://localhost:8765/design/models/_src/preview.html` (cần `node_modules/three` đã cài; tham số `?yaw=..&pitch=..` đổi góc nhìn).

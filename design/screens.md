@@ -112,7 +112,7 @@ Toàn màn đen mờ (`overlay`), chữ giữa: "Chuyển máy cho Người chơ
 - Kết quả hiện sau cinematic (hoặc ngay khi bỏ qua), pop `markerPopMs`.
 
 ## 8. Cinematic overlay
-Hiện khi bắn. Lưới 2D mờ dần (`opacity 0.25`) hoặc thu nhỏ để canvas 3D thấy rõ. Nút **Bỏ qua** góc phải. Lưới 2D cập nhật đúng dù bỏ qua. Tối đa 5 s mỗi lần (xem `cinematics.md`).
+Hiện khi bắn. Lưới 2D mờ dần (`opacity 0.25`) hoặc thu nhỏ để canvas 3D thấy rõ. Nút **Bỏ qua** góc phải. Lưới 2D cập nhật đúng dù bỏ qua. Tối đa 9 s mỗi lần (xem `cinematics.md`).
 
 ## 9. Result
 - Chữ lớn: **CHIẾN THẮNG** (`friendly`) hoặc **THẤT BẠI** (`alert`).
@@ -125,8 +125,10 @@ Hiện khi bắn. Lưới 2D mờ dần (`opacity 0.25`) hoặc thu nhỏ để 
 - Chất lượng đồ họa: thấp / trung / cao (`tokens.json -> quality`).
 - Tốc độ animation: tắt cinematic / x1 / x2.
 - Rung màn hình: bật/tắt.
-- Cinematic ngắn: bật/tắt (chỉ phát cảnh trúng đích, khoảng 1.2 s; `cinematics.md` mục 9).
-- **Tàu chìm chạy nền**: bật/tắt (mặc định tắt); bật thì sau 2400 ms của hoạt cảnh chìm 7200 ms trận cho chơi tiếp (`sinking.md` mục 2.7).
+- Cinematic ngắn: bật/tắt (chỉ phát cảnh trúng đích, khoảng 1.8 s; `cinematics.md` mục 9).
+- **Tàu chìm chạy nền**: bật/tắt (mặc định tắt); bật thì sau 3600 ms của hoạt cảnh chìm 10800 ms trận cho chơi tiếp (`sinking.md` mục 2.7).
+- **Độ chói hiệu ứng**: thấp / vừa (mặc định) / cao (hệ số `glare` 0.35 / 0.55 / 1.0; `cinematics.md` mục 1).
+- **Khung điện ảnh**: bật/tắt (mặc định bật; dải đen 2.39:1 ở cinematic tàu sân bay, `cinematics.md` mục 6.5).
 - **Chọn map**: danh sách thả xuống có icon và ảnh xem trước, đổi phông cảnh chờ (`maps.md`).
 - Lưu `localStorage` (bọc try/catch).
 

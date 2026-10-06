@@ -38,7 +38,10 @@ Mỗi sự kiện ghi các lớp phát cùng lúc (khóa trong `assets.md` mục
 | Đạn trúng | `sfx_explosion_small` + kim loại xé + tia lửa | tầng trầm, kim loại, nước: ba lớp, theo `assets.md` |
 | Tàu chìm | `sfx_explosion_big` + `sfx_ship_sink` + bọt khí | ducking nhạc |
 | Cắn lén bắn | `sfx_cannon_light` hạ −8 dB, lọc cao tần nhẹ + `sfx_whistle_fast` (mới, tiếng rít ngắn rất nhanh) | ít tiếng, "lén"; bên bị bắn nghe tiếng rít rồi nổ |
-| Hộ vệ chặn | `sfx_ciws_burst` (mới, tiếng loạt CIWS rít) + `sfx_airburst` (mới, nổ giòn lửng lơ) + `sfx_chaff` (mới, tiếng xì nhẹ) | nổ giữa trời ngắn, không có tầng trầm nặng của nổ trúng |
+| Hộ vệ phát hiện | `sfx_radar_ping` (mới, 3 ping, cách 120 ms), tiếng quét radar nhẹ | cảnh 1 |
+| Hộ vệ chế áp | `sfx_ciws_burst` (**rền liên tục "brrrt", không tách từng phát**, 4500 viên/phút mỗi khẩu) + rền trầm của cụm nòng quay + `sfx_airburst` (nổ giòn lửng lơ) + `sfx_chaff` (xì nhẹ) + `sfx_casings` (mới, tiếng vỏ đạn rơi lách tách) | nổ giữa trời ngắn, không có tầng trầm nặng của nổ trúng |
+| Mảnh xác rơi xuống nước (trúng một phần) | `sfx_water_splash` lớn + `sfx_metal_clang` (mới, tiếng kim loại va) | lúc mảnh chạm nước |
+| Mảnh xác cháy | `amb_fire_loop` (lớn theo số mảnh đang cháy) + tiếng lách tách | lặp nền |
 | Tàu mình chìm | thêm `sfx_alert` (hai hồi) | hạ nhạc −9 dB trong 1 s |
 | Sấm | tiếng sấm vọng sau 0.4–2.5 s kể từ chớp (mới: `sfx_thunder`) | trầm, kéo dài |
 | Mưa, sóng (map `hai_phong`) | `amb_sea_rain` | vòng lặp, độ dài 60 s, không nghe ra điểm nối |
@@ -69,7 +72,7 @@ Mỗi sự kiện ghi các lớp phát cùng lúc (khóa trong `assets.md` mục
 - Đỉnh −3 dBFS cho SFX, nhạc chuẩn −16 LUFS, môi trường −24 LUFS.
 - Tổng dung lượng âm thanh ≤ 15 MB.
 - Chưa phát âm thanh khi trình duyệt chưa có thao tác người dùng; hiện lời nhắc "Chạm để bật âm thanh" ở menu lần đầu.
-- Khóa mới ngoài `assets.md`: `sfx_thunder`, `amb_fire_loop`, `amb_sea_dusk`, `sfx_whistle_fast`, `sfx_ciws_burst`, `sfx_airburst`, `sfx_chaff`. `sfx_thunder` chỉ phát ở map `hai_phong`.
+- Khóa mới ngoài `assets.md`: `sfx_thunder`, `amb_fire_loop`, `amb_sea_dusk`, `sfx_whistle_fast`, `sfx_ciws_burst`, `sfx_airburst`, `sfx_chaff`, `sfx_radar_ping`, `sfx_casings`, `sfx_metal_clang`. `sfx_thunder` chỉ phát ở map `hai_phong`.
 
 ## 7. Trợ năng
 - Mọi sự kiện quan trọng đều đã có dòng trong nhật ký và toast (không chỉ dựa vào âm thanh).

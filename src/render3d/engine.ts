@@ -5,6 +5,7 @@ import { ShaderPass } from 'three/examples/jsm/postprocessing/ShaderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import type { RenderScene } from './renderScene';
+import { glare } from './glare';
 import type { QualityConfig } from './world';
 
 /** Vignette 0.25 + nhiễu hạt phim 3% (design/env-and-fx.md mục 10). */
@@ -41,7 +42,7 @@ export class Engine {
     container.appendChild(this.renderer.domElement);
 
     this.renderPass = new RenderPass(new THREE.Scene(), new THREE.PerspectiveCamera());
-    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.35, 0.5, 0.9); // ngưỡng 0.9, cường độ 0.35
+    this.bloom = new UnrealBloomPass(new THREE.Vector2(1, 1), 0.18, 0.5, 1.1); // ngưỡng 1.1, cường độ 0.18 (nhân glare/0.55 mỗi khung hình)
     this.film = new ShaderPass(FilmShader);
     this.composer = new EffectComposer(this.renderer);
     this.composer.addPass(this.renderPass);
@@ -85,6 +86,7 @@ export class Engine {
     this.renderer.setAnimationLoop(() => {
       const dt = Math.min(this.clock.getDelta(), 0.1);
       this.current?.update(dt, this.clock.elapsedTime);
+      this.bloom.strength = 0.18 * (glare() / 0.55);
       this.film.uniforms.uTime.value = this.clock.elapsedTime;
       this.film.uniforms.uVignette.value = this.current?.vignette ?? 0.25;
       this.composer.render();

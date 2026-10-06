@@ -31,6 +31,8 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
   if (!ses.match) { app.go('menu'); return { dispose() {} }; }
   let state: MatchState = ses.match;
   let view3d = app.settings.battleView === '3d' && !!app.battleScene;
+  const FOCUS = ['center', 'enemy', 'own'] as const;
+  let focusIdx = 0;
   const hotseat = ses.mode === 'hotseat';
   const online = ses.mode === 'online' ? ses.online! : null;
   const viewer: PlayerId = online ? online.me : hotseat ? state.turn : 0;
@@ -43,6 +45,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
   let thinking = false;
   let player: EventPlayer | null = null;
   let skipFn: (() => void) | null = null;
+  let cineRunning = false;
   let enemyView: CellView[][] = viewOfEnemy(state, viewer).cells;
   let enemyMarks: CellMark[][] = viewOfEnemy(state, viewer).marks;
   let enemyRevealed = new Set<ShipId>(viewOfEnemy(state, viewer).revealed);
@@ -63,6 +66,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
         </div>
         <span class="bar__right">
           <button class="btn btn--tiny" data-view-toggle aria-pressed="false" title="${S.battle.viewTitle}"></button>
+          <button class="btn btn--tiny" data-focus title="${S.battle.focusTitle}" hidden></button>
           <span class="turnclock" data-clock hidden></span>
           <button class="btn btn--tiny" data-skip hidden>${S.battle.skip}</button>
           <span class="speed"><span>${S.battle.speed.toUpperCase()}</span><button class="btn btn--tiny" data-speed></button></span>
@@ -110,9 +114,18 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     b.textContent = view3d ? '3D' : '2D';
     b.setAttribute('aria-pressed', String(view3d));
     b.hidden = !app.battleScene;
+    focusIdx = 0;
+    const fb = q<HTMLButtonElement>('[data-focus]');
+    fb.hidden = !view3d; fb.textContent = S.battle.focus.center;
     app.battleScene?.setView(view3d ? '3d' : '2d', view3d ? { onCell: onCell3d, onHover: () => {} } : undefined);
     if (view3d) app.battleScene?.resetOrbit();
     update();
+  }
+  function cycleFocus() {
+    if (!view3d) return;
+    focusIdx = (focusIdx + 1) % FOCUS.length;
+    app.battleScene?.setFocus(FOCUS[focusIdx]);
+    q('[data-focus]').textContent = S.battle.focus[FOCUS[focusIdx]];
   }
   function toggleView() {
     if (!app.battleScene) return;
@@ -256,7 +269,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     oGrid.setOwn(ownBoard);
     app.battleScene?.setFleets(ownBoard.ships, [...sunkDraws.values()]);
     app.battleScene?.syncHits(
-      ownBoard.ships.filter((sh) => !sh.sunk).flatMap((sh) => shipCells(sh).filter((_, i) => sh.hits[i])),
+      ownBoard.ships.filter((sh) => !sh.sunk).flatMap((sh) => shipCells(sh).filter((_, i) => sh.hits[i]).map((c) => ({ ...c, ship: sh.id }))),
       enemyView.flatMap((row, y) => row.flatMap((v, x) => (v === 'hit' ? [{ x, y }] : []))),
     );
     const kind = selected ? effKind(selected) : null;
@@ -312,6 +325,8 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
         break;
       case 'ShipSunk': {
         const name = SPECS[e.shipId].nameVi;
+        // Không có cinematic (tắt hoặc đang phát qua EventPlayer): cảnh 3D phía sau vẫn phát hoạt cảnh chìm rút gọn ở nền (wreckage.md 2.1)
+        if (!cineRunning) app.battleScene?.sinkOnly(e, { viewer, speed: app.settings.anim === 'x2' ? 2 : 1, short: true, shake: app.settings.shake, reduced: matchMedia('(prefers-reduced-motion: reduce)').matches, onEvent: () => {} });
         if (e.owner === viewer) {
           ownBoard.ships.find((x) => x.id === e.shipId)!.sunk = true;
           showToast(battleEl, S.battle.toastSunkOwn(name), 'alert');
@@ -349,10 +364,12 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
       // Cinematic 3D: event được phát đúng mốc (chạm ô -> marker 2D), lưới 2D mờ về 0.25 trong lúc chiếu
       battleEl.classList.add('cine');
       skipFn = () => view.skip();
+      cineRunning = true;
       await view.play(events, {
-        viewer, speed: app.settings.anim === 'x2' ? 2 : 1, short: app.settings.shortCinematic, shake: app.settings.shake,
+        viewer, speed: app.settings.anim === 'x2' ? 2 : 1, short: app.settings.shortCinematic, shake: app.settings.shake, bars: app.settings.cineBars, sinkBg: app.settings.sinkBg,
         reduced: matchMedia('(prefers-reduced-motion: reduce)').matches, onEvent: show,
       });
+      cineRunning = false;
       battleEl.classList.remove('cine');
     } else {
       player = new EventPlayer(app.settings.anim);
@@ -485,6 +502,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     else if (t.closest('[data-cancel]')) clearAim();
     else if (t.closest('[data-skip]')) skipFn?.();
     else if (t.closest('[data-view-toggle]')) toggleView();
+    else if (t.closest('[data-focus]')) cycleFocus();
     else if (t.closest('[data-speed]')) { app.updateSettings({ anim: ({ off: 'x1', x1: 'x2', x2: 'off' } as const)[app.settings.anim] }); update(); }
     else if (t.closest('[data-settings]')) openSettings(app, () => app.go('menu'));
   });
@@ -607,6 +625,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
       if (e.key === 'Escape') clearAim();
       else if (e.key === 'r' || e.key === 'R') rotate();
       else if (e.key === 'v' || e.key === 'V') toggleView();
+      else if (e.key === 'f' || e.key === 'F') cycleFocus();
     },
   };
 };

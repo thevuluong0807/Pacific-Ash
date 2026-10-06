@@ -2,7 +2,8 @@ import * as THREE from 'three';
 import { Harbor } from './harbor';
 import { Lightning } from './lightning';
 import { NightSky } from './nightSky';
-import { Ocean, waveHeight } from './ocean';
+import { Ocean } from './ocean';
+import { CALM_ZONE, CELL, WAVE_UNIT, WORLD_SCALE } from './scale';
 import { Rain } from './rain';
 
 export type { QualityConfig } from './mapWorld';
@@ -17,6 +18,12 @@ export class NightWorld implements MapWorld {
   readonly style: FxStyle = { glow: 1, smoke: 0x2a2f35, dropTint: 0xffffff, vignette: 0.25 };
   private root = new THREE.Group();
   private paused = false;
+  /** Phóng phông nền (S) và sóng/sương theo kích thước tàu (U): chỉ ở chế độ trận, menu giữ nguyên. */
+  private readonly S: number;
+  private readonly U: number;
+  /** Chia mật độ sương theo kích thước ô (0.011 / CELL = 0.0011 ở CELL 10). */
+  private readonly FD: number;
+  private readonly proxy = new THREE.PerspectiveCamera();
   readonly ocean: Ocean;
   readonly sky = new NightSky();
   readonly rain = new Rain();
@@ -26,10 +33,13 @@ export class NightWorld implements MapWorld {
   private key = new THREE.DirectionalLight(0x9fb8cc, 1.2);
 
   constructor(private scene: THREE.Scene, renderer: THREE.WebGLRenderer, layout: Layout = 'play') {
-    this.ocean = new Ocean({ fogColor: FOG_ON, fogDensity: 0.011 });
-    this.harbor = new Harbor(waveHeight, layout);
+    this.S = layout === 'play' ? WORLD_SCALE : 1; this.U = layout === 'play' ? WAVE_UNIT : 1; this.FD = layout === 'play' ? CELL : 1;
+    const S = this.S, U = this.U;
+    this.ocean = new Ocean({ fogColor: FOG_ON, fogDensity: 0.011 / this.FD, unit: U, radius: S > 1 ? 200 * CELL / S : 220, calm: S > 1 ? CALM_ZONE : undefined });
+    this.harbor = new Harbor((x, z, t) => this.ocean.heightAt(x * S, z * S, t) / S, layout, S);
     this.key.position.set(-6, 14, -18); // chếch từ sau-trên, tạo vệt sáng viền
-    scene.fog = new THREE.FogExp2(FOG_ON.getHex(), 0.011);
+    scene.fog = new THREE.FogExp2(FOG_ON.getHex(), 0.011 / this.FD);
+    this.root.scale.setScalar(S);
     this.root.add(this.sky.mesh, this.ocean.mesh, this.harbor.group, this.rain.lines, this.hemi, this.key);
     scene.add(this.root);
     this.lightning.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -71,14 +81,14 @@ export class NightWorld implements MapWorld {
     this.scene.background = on ? new THREE.Color('#06141C') : null;
     if (on) {
       const c = new THREE.Color('#06141C');
-      fog.density = 0.08; fog.color.copy(c);
-      this.ocean.setFog(0.08, c); this.harbor.setFog(0.08, c);
+      fog.density = 0.08 / this.FD; fog.color.copy(c);
+      this.ocean.setFog(0.08 / this.FD, c); this.harbor.setFog(0.08 / this.FD, c);
     } else if (this.quality) this.setQuality(this.quality);
   }
 
   setQuality(q: QualityConfig) {
     this.quality = q;
-    const density = q.fog ? 0.011 : 0.003;
+    const density = (q.fog ? 0.011 : 0.003) / this.FD;
     const color = q.fog ? FOG_ON : FOG_OFF;
     (this.scene.fog as THREE.FogExp2).density = density;
     (this.scene.fog as THREE.FogExp2).color.copy(color);
@@ -93,11 +103,13 @@ export class NightWorld implements MapWorld {
   update(dt: number, t: number, camera: THREE.Camera) {
     void dt; void this.paused;
     const f = this.lightning.update(t);
+    this.proxy.position.copy(camera.position).divideScalar(this.S); // vật bám camera nằm trong nhóm đã phóng: dùng toạ độ cục bộ
+    this.proxy.quaternion.copy(camera.quaternion);
     this.sky.setFlash(f);
-    this.sky.update(t, camera);
-    this.ocean.update(t, camera);
+    this.sky.update(t, this.proxy);
+    this.ocean.update(t, this.proxy);
     this.ocean.setFlash(f);
-    this.rain.update(t, camera);
+    this.rain.update(t, this.proxy);
     this.harbor.update(t, f);
     this.hemi.intensity = 0.35 * (1 + f * 1.6);
     this.key.intensity = 1.2 + f * 1.5;

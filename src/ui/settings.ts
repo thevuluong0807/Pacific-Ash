@@ -1,5 +1,6 @@
 export type Quality = 'low' | 'medium' | 'high';
 export type AnimSpeed = 'off' | 'x1' | 'x2';
+import type { GlareLevel } from '../render3d/glare';
 export type MapId = 'truong_sa' | 'hai_phong';
 export const MAP_IDS: readonly MapId[] = ['truong_sa', 'hai_phong'];
 /** Đổi mặc định chỉ là một dòng (design/maps.md mục 1). */
@@ -10,7 +11,10 @@ export interface Settings {
   quality: Quality;
   anim: AnimSpeed;
   shake: boolean;
-  shortCinematic: boolean; // chỉ phát cảnh trúng đích (~1.2 s), dùng ở P4
+  shortCinematic: boolean; // chỉ phát cảnh trúng đích (~1.8 s), bỏ cảnh chìm 3D
+  glare: GlareLevel;       // "Độ chói hiệu ứng": thấp / vừa / cao (hệ số 0.35 / 0.55 / 1)
+  cineBars: boolean;       // "Khung điện ảnh": dải đen 2.39:1 ở cinematic tàu sân bay
+  sinkBg: boolean;         // "Tàu chìm chạy nền": sau 3600 ms của cảnh chìm trận cho chơi tiếp
   turnLimit: number;       // giây mỗi lượt, 0 = không giới hạn
   equipDamage: boolean;    // chế độ "hỏng hóc khí tài" (nhớ lựa chọn lần trước)
   battleView: '2d' | '3d'; // cách xem trận
@@ -20,7 +24,7 @@ export interface Settings {
 
 const KEY = 'pacific-ash.settings';
 const MAP_KEY = 'pacific-ash.map';
-export const defaultSettings: Settings = { master: 0.8, sfx: 1, music: 0.6, quality: 'medium', anim: 'x1', shake: true, shortCinematic: false, turnLimit: 0, equipDamage: false, battleView: '2d', onlineServer: '', map: DEFAULT_MAP };
+export const defaultSettings: Settings = { master: 0.8, sfx: 1, music: 0.6, quality: 'medium', anim: 'x1', shake: true, shortCinematic: false, cineBars: true, sinkBg: false, glare: 'mid', turnLimit: 0, equipDamage: false, battleView: '2d', onlineServer: '', map: DEFAULT_MAP };
 
 function loadMap(): MapId {
   try {

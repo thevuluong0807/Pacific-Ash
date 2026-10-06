@@ -26,8 +26,10 @@ Tổng quan nghệ thuật và lý do: `GDD.md`. Đọc `GDD.md` mục 2 trướ
 13. `design/cinematics.md` — shot list camera 5 đòn đánh (thắng `animations.md` mục 4).
 14. `design/sinking.md` — tàu bị bắn hạ: sprite 2D + dấu X, hoạt cảnh chìm 3D (khóa từng tàu).
 15. `design/ships-basic3d.md` — **model 3D khối cơ bản dùng được ngay** (`design/models/ship_*.glb`); model chi tiết trong `ship-*.md` mục 2 đã hoãn.
-16. `design/maps.md` — hai map (áp dụng cho cả gameplay), bố cục cảnh chờ dồn hai bên, mục "Chọn map" trong Cài đặt.
-17. `design/logo.md` — logo mới (hầm hố, cháy nổ), emblem, cách dùng, chuyển động mở màn.
+16. `design/world-scale.md` — **tỉ lệ thế giới: 1 ô = 10 đơn vị, model tàu và lưới nhân 10**, camera, biển, hiệu ứng, phông nền đặt lại. Đọc trước khi dựng cảnh 3D.
+17. `design/wreckage.md` — ô trúng ở 3D: mảnh xác tàu nổi (10 glb) kèm hiệu ứng; trúng đủ thì cả con tàu 3D cháy nổ và chìm.
+18. `design/maps.md` — hai map (áp dụng cho cả gameplay), bố cục cảnh chờ dồn hai bên, mục "Chọn map" trong Cài đặt.
+19. `design/logo.md` — logo mới (hầm hố, cháy nổ), emblem, cách dùng, chuyển động mở màn.
 Sprite và icon: `design/art/*.svg` dùng thẳng được, không vẽ lại.
 
 ## 3. Ràng buộc kỹ thuật (không thương lượng)

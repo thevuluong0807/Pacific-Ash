@@ -95,7 +95,7 @@ Trời sáng hơn nên lửa và nổ dễ chìm. Khi map là `truong_sa`:
 - Bóng đổ của tàu dài về phía camera-trái, nghĩa là bóng tháp pháo, cầu rơi xuống boong rõ hơn.
 
 ### 4.3 Vật trang trí nền không được lấn vào vùng chơi
-- Mọi vật nền nằm ngoài vùng `|x| < 14` và `z > −40` (vùng hai lưới và khoảng nước giữa, cộng đệm). Với `truong_sa`: **các đảo gần đặt ở `|x| ≥ 18`** (tâm x ∓45/+50, z −32…−34) để nhìn thấy rõ ở hai bên lưới nhưng không chạm vùng chơi; tàu giao tranh ở `|x| ≥ 24`; tên lửa bay ở độ cao ≥ 18 phía trên các lưới. Skyline và cần cẩu của `hai_phong` ở z ≤ −45.
+- **(Cập nhật tỉ lệ ×10, `world-scale.md` mục 3: vùng chơi là `|x| < 60` và `z` từ −135 tới +135; các số vị trí cũ dưới đây đã được thay bằng bảng ở `world-scale.md` mục 3.2.)** Bản cũ: mọi vật nền nằm ngoài vùng `|x| < 14` và `z > −40` (vùng hai lưới và khoảng nước giữa, cộng đệm). Với `truong_sa`: **các đảo gần đặt ở `|x| ≥ 18`** (tâm x ∓45/+50, z −32…−34) để nhìn thấy rõ ở hai bên lưới nhưng không chạm vùng chơi; tàu giao tranh ở `|x| ≥ 24`; tên lửa bay ở độ cao ≥ 18 phía trên các lưới. Skyline và cần cẩu của `hai_phong` ở z ≤ −45.
 - Không vật nền nào che hai lưới từ camera `tactical`, và không che đường nhìn từ camera cinematic tới ô mục tiêu.
 - Hai tàu đang chìm của `truong_sa` luôn là vật nền xa; không bị coi là tàu của trận.
 

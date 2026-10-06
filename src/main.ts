@@ -5,6 +5,7 @@ import '@fontsource/barlow/500.css';
 import '@fontsource/jetbrains-mono/400.css';
 import './style.css';
 import { applyTokens } from './ui/tokens';
+import { GLARE, setGlare } from './render3d/glare';
 import { manifest } from './assets/manifest';
 import { installSprites } from './ui/sprites';
 import { App } from './ui/app';
@@ -15,7 +16,7 @@ import { strings } from './ui/strings';
 import type { ScreenId } from './ui/app';
 import type { RenderScene } from './render3d/renderScene';
 import { BattleScene } from './render3d/battleScene';
-import { loadShipModels } from './render3d/shipGlb';
+import { loadDebrisModels, loadShipModels } from './render3d/shipGlb';
 import { resumeStore } from './net/client';
 import { BlankScene } from './render3d/blankScene';
 import { tokens } from './ui/tokens';
@@ -51,7 +52,7 @@ app.register('battle', battleScreen);
 app.register('result', resultScreen);
 if (engine) {
   app.battleScene = battleScene;
-  const apply = () => engine.setQuality(tokens.quality[app.settings.quality]);
+  const apply = () => { setGlare(GLARE[app.settings.glare]); engine.setQuality(tokens.quality[app.settings.quality]); };
   let screen: ScreenId = 'menu';
   let shown: RenderScene | null = null;
   // Đổi cảnh có mờ chuyển 600 ms (ngay lập tức nếu prefers-reduced-motion); lỗi nạp thì giữ cảnh cũ và báo toast.
@@ -105,6 +106,7 @@ if (engine) {
   // Model glb nạp nền; xong thì thay hộp placeholder trong cảnh trận (đặt tàu / trận đấu).
   void loadShipModels({ destroyer: manifest.ship_destroyer, cruiser: manifest.ship_cruiser, submarine: manifest.ship_submarine, missile: manifest.ship_missile, carrier: manifest.ship_carrier, raider: manifest.ship_raider, escort: manifest.ship_escort })
     .then(() => battleScene.reloadShips());
+  void loadDebrisModels(manifest as unknown as Record<string, string>);
 }
 if (new URLSearchParams(location.search).has('debug')) (window as unknown as { __pa: unknown }).__pa = { app, battleScene }; // móc kiểm thử hình ảnh
 // Link mời: ?room=MÃ (và tùy chọn ?server=ws://...) mở thẳng sảnh online và tự vào phòng.

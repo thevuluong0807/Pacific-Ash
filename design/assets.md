@@ -3,6 +3,8 @@
 Nguyên tắc: làm được với placeholder thì cứ làm, asset thật thay vào sau, không đổi code. Mọi asset tải qua một bảng ánh xạ khóa → đường dẫn duy nhất (`assets/manifest.ts`). Code không hard-code đường dẫn.
 
 ## 1. Model 3D (.glb)
+> **Mảnh xác tàu nổi** (ô trúng 3D): `models/debris/debris_<id>.glb`, 10 mảnh, xem `wreckage.md`.
+> **Tỉ lệ thế giới ×10:** các model đã nhân 10 sẵn (1 ô = 10 đơn vị thế giới), xem `world-scale.md`.
 > **Hiện dùng bản khối cơ bản** của 7 tàu: `design/models/ship_<id>.glb` (xem `ships-basic3d.md`), chép vào `src/assets/models/`. Các cột "Tam giác tối đa" LOD0/1/2 và placeholder hộp dưới đây là kế hoạch cũ cho model chi tiết (tạm hoãn); bản hiện tại (khối mượt, nhiều chi tiết) 1 101–11 351 tam giác, một mức duy nhất.
 
 Tỉ lệ: 1 ô lưới = 1 đơn vị thế giới theo chiều dài. Gốc tọa độ ở giữa thân tàu, mũi hướng +Z, đáy sát y=0.

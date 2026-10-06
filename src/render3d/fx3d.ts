@@ -1,5 +1,6 @@
 import * as THREE from 'three';
 import type { FxStyle } from './mapWorld';
+import { glare, glareK } from './glare';
 
 /**
  * Hiệu ứng chiến đấu theo design/env-and-fx.md mục 8: lửa mõm, cột nước, cầu lửa, mảnh vỡ, khói, sóng xung kích,
@@ -54,7 +55,7 @@ export class Fx {
   private pool: P[] = [];
   private rings: { m: THREE.Mesh; age: number; life: number; r1: number; live: boolean }[] = [];
   private lights: { l: THREE.PointLight; age: number; life: number; peak: number }[] = [];
-  private fires = new Map<string, { s: THREE.Sprite; smoke: THREE.Sprite; born: number; ember: boolean; base: number }>();
+  private fires = new Map<string, { s: THREE.Sprite; smoke: THREE.Sprite; glow: THREE.Sprite; ring: THREE.Mesh; born: number; ember: boolean; base: number }>();
   private oils = new Map<string, THREE.Mesh>();
   private debris: { p: THREE.Vector3; v: THREE.Vector3; born: number; spin: THREE.Vector3 }[] = [];
   private debrisMesh: THREE.InstancedMesh;
@@ -75,7 +76,7 @@ export class Fx {
   private take(): P | null {
     let p = this.pool.find((x) => !x.live);
     if (!p) {
-      if (this.pool.length >= 420) return null;
+      if (this.pool.length >= 640) return null;
       const s = new THREE.Sprite(new THREE.SpriteMaterial({ transparent: true, depthWrite: false, fog: true }));
       s.visible = false;
       this.group.add(s);
@@ -93,7 +94,7 @@ export class Fx {
       if (!p) return;
       const m = p.s.material as THREE.SpriteMaterial;
       m.map = tx[b.tex]; m.color.setHex(b.color ?? 0xffffff);
-      if (b.additive) m.color.multiplyScalar(this.style.glow);
+      if (b.additive) m.color.multiplyScalar(this.style.glow * glareK());
       else if (b.tex === 'drop' || b.tex === 'col') m.color.multiply(new THREE.Color(this.style.dropTint));
       m.blending = b.additive ? THREE.AdditiveBlending : THREE.NormalBlending;
       m.fog = !b.additive; m.needsUpdate = true;
@@ -103,12 +104,26 @@ export class Fx {
       p.age = 0; p.life = b.life[0] + Math.random() * (b.life[1] - b.life[0]);
       const U = this.unit;
       p.vel.multiplyScalar(U);
-      p.s0 = b.size[0] * U; p.s1 = b.size[1] * U; p.a0 = b.opacity ?? 1; p.grav = (b.grav ?? 0) * U; p.stretch = b.stretch ?? 1; p.drag = b.drag ?? 0;
+      const SU = b.tex === 'spark' || b.tex === 'drop' ? U * 0.4 : U; // hạt nhỏ (tia lửa, giọt nước) chỉ nhân 4 khi ô = 10 ĐV (world-scale.md 2.5)
+      p.s0 = b.size[0] * SU; p.s1 = b.size[1] * SU; p.a0 = b.opacity ?? 1; p.grav = (b.grav ?? 0) * U; p.stretch = b.stretch ?? 1; p.drag = b.drag ?? 0;
       p.live = true; p.s.visible = true;
     }
   }
 
   glowTex() { return textures().glow; }
+  tex(id: TexId) { return textures()[id]; }
+
+  /** Khung ngắm bốn góc (fx_lock_reticle): hộ vệ khóa đạn tới. */
+  reticleTex() {
+    return (this.reticle ??= canvasTex((x) => {
+      x.strokeStyle = '#fff'; x.lineWidth = 7; x.lineCap = 'square';
+      for (const [sx, sy] of [[1, 1], [127, 1], [1, 127], [127, 127]]) {
+        const dx = sx < 64 ? 1 : -1, dy = sy < 64 ? 1 : -1;
+        x.beginPath(); x.moveTo(sx + dx * 4, sy + dy * 34); x.lineTo(sx + dx * 4, sy + dy * 4); x.lineTo(sx + dx * 34, sy + dy * 4); x.stroke();
+      }
+    }));
+  }
+  private reticle?: THREE.Texture;
 
   ring(pos: THREE.Vector3, r1: number, life = 0.5, color = 0xcfe4f2) {
     let r = this.rings.find((x) => !x.live);
@@ -127,7 +142,7 @@ export class Fx {
   light(pos: THREE.Vector3, intensity: number, ms: number, color = 0xff8a30) {
     const slot = this.lights.reduce((a, b) => (b.age / b.life > a.age / a.life ? b : a));
     slot.l.position.copy(pos); slot.l.color.setHex(color);
-    slot.age = 0; slot.life = ms / 1000; slot.peak = intensity * this.unit ** 1.8; slot.l.distance = 14 * this.unit;
+    slot.age = 0; slot.life = ms / 1000; slot.peak = intensity * this.unit ** 1.8 * glare(); slot.l.distance = 14 * this.unit;
   }
 
   debrisBurst(pos: THREE.Vector3, n: number) {
@@ -140,9 +155,10 @@ export class Fx {
 
   // ---- hiệu ứng ghép sẵn ----
   muzzle(pos: THREE.Vector3, dir: THREE.Vector3, big: boolean) {
-    this.burst({ pos, vel: dir.clone().multiplyScalar(big ? 3 : 2), spread: 0.8, count: big ? 18 : 10, tex: 'fire', size: big ? [0.5, 0.9] : [0.25, 0.45], life: [0.08, big ? 0.22 : 0.14], additive: true });
+    // chớp mõm: bán kính ≤ 60%, sống ≤ 80 ms, màu cam #FFB15A (không để cháy trắng)
+    this.burst({ pos, vel: dir.clone().multiplyScalar(big ? 3 : 2), spread: 0.8, count: big ? 18 : 10, tex: 'fire', size: big ? [0.3, 0.54] : [0.15, 0.27], life: [0.05, 0.08], additive: true, color: 0xffb15a });
     this.burst({ pos, vel: new THREE.Vector3(0, 0.6, 0).addScaledVector(dir, 0.5), spread: 0.6, count: big ? 14 : 6, tex: 'smoke', size: [0.2, big ? 1.4 : 0.8], life: [0.8, 1.6], opacity: 0.6 });
-    this.light(pos, big ? 60 : 24, big ? 200 : 120);
+    this.light(pos, big ? 60 : 24, 80);
   }
 
   splash(pos: THREE.Vector3, big: boolean) {
@@ -154,7 +170,7 @@ export class Fx {
   }
 
   hit(pos: THREE.Vector3, torpedo = false) {
-    this.burst({ pos, tex: 'glow', size: [0.7, 0.2], life: [0.08, 0.08], additive: true, color: 0xfff3c4 }); // chớp lõi 80 ms
+    this.burst({ pos, tex: 'glow', size: [0.5, 0.14], life: [0.06, 0.06], additive: true, color: 0xfff3c4 }); // chớp lõi ≤ 60 ms, bán kính 0.25
     this.burst({ pos, count: 4, tex: 'fire', size: [0.3, 1.0], life: [0.3, 0.45], additive: true, spread: 0.3, vel: new THREE.Vector3(0, 0.6, 0), color: 0xff9a2a }); // cầu lửa 400 ms
     this.burst({ pos, count: 3, tex: 'fire', size: [0.2, 0.7], life: [0.25, 0.4], additive: true, spread: 0.4, color: 0xe8451c });
     this.burst({ pos, count: torpedo ? 18 : 12, tex: 'spark', size: [0.08, 0.02], life: [0.4, 0.9], vel: new THREE.Vector3(0, 2, 0), spread: 3.5, grav: 6, additive: true });
@@ -168,13 +184,18 @@ export class Fx {
   /** Lửa kéo dài ở ô trúng; vượt 16 ngọn thì ngọn cũ nhất thu nhỏ thành than hồng. `null` để tắt. */
   setFire(key: string, pos: THREE.Vector3 | null) {
     const cur = this.fires.get(key);
-    if (!pos) { if (cur) { this.group.remove(cur.s, cur.smoke); this.fires.delete(key); } return; }
+    if (!pos) { if (cur) { this.group.remove(cur.s, cur.smoke, cur.glow, cur.ring); this.fires.delete(key); } return; }
     if (cur) return;
     const s = new THREE.Sprite(new THREE.SpriteMaterial({ map: textures().fire, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false }));
     const smoke = new THREE.Sprite(new THREE.SpriteMaterial({ map: textures().smoke, transparent: true, depthWrite: false, opacity: 0.4, color: 0x151719 }));
-    s.position.copy(pos); smoke.position.copy(pos);
-    this.group.add(s, smoke);
-    this.fires.set(key, { s, smoke, born: this.t, ember: false, base: 0.25 + Math.random() * 0.15 });
+    // ô trúng phải đọc được từ xa ở xem 3D: ngọn lửa cao cỡ nửa ô, quầng đỏ cam, vòng đỏ nhấp nháy trên mặt nước đúng bằng ô, cột khói đen cao
+    const glow = new THREE.Sprite(new THREE.SpriteMaterial({ map: textures().glow, color: 0xff5a1a, blending: THREE.AdditiveBlending, transparent: true, depthWrite: false, fog: false, opacity: 0.55 }));
+    const ring = new THREE.Mesh(new THREE.RingGeometry(0.34, 0.46, 4, 1, Math.PI / 4).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xff3b2f, transparent: true, depthWrite: false, depthTest: false, fog: false, side: THREE.DoubleSide, opacity: 0.9 }));
+    ring.renderOrder = 5; ring.scale.setScalar(this.unit * 1.38);
+    s.position.copy(pos); smoke.position.copy(pos); glow.position.copy(pos);
+    ring.position.set(pos.x, this.heightAt(pos.x, pos.z, this.t) + 0.08 * this.unit, pos.z);
+    this.group.add(s, smoke, glow, ring);
+    this.fires.set(key, { s, smoke, glow, ring, born: this.t, ember: false, base: 0.7 + Math.random() * 0.3 });
     const live = [...this.fires.values()].filter((f) => !f.ember);
     if (live.length > 16) live.sort((a, b) => a.born - b.born)[0].ember = true;
   }
@@ -229,11 +250,14 @@ export class Fx {
     }
     for (const [, f] of this.fires) { // ngọn lửa nhấp nháy 8 Hz; ngọn "than hồng" nhỏ và mờ
       const k = 0.8 + 0.2 * Math.sin(t * 50 + f.base * 40);
-      const U = this.unit, sc = (f.ember ? 0.12 : f.base * k) * U;
+      const U = this.unit, sc = (f.ember ? 0.25 : f.base * k) * U;
       f.s.scale.set(sc * 0.8, sc, 1);
       (f.s.material as THREE.SpriteMaterial).opacity = f.ember ? 0.5 : 1;
-      f.smoke.scale.setScalar((f.ember ? 0.2 : 0.5) * U);
-      f.smoke.position.y = f.s.position.y + (0.25 + (t * 0.1 % 0.5)) * U;
+      f.smoke.scale.setScalar((f.ember ? 0.4 : 1.1) * U);
+      f.smoke.position.y = f.s.position.y + (0.5 + (t * 0.1 % 0.9)) * U;
+      f.glow.scale.setScalar((f.ember ? 0.8 : 1.6 + 0.2 * k) * U);
+      (f.glow.material as THREE.SpriteMaterial).opacity = (f.ember ? 0.25 : 0.55) * glareK() / 0.75;
+      (f.ring.material as THREE.MeshBasicMaterial).opacity = f.ember ? 0.55 : 0.55 + 0.4 * Math.sin(t * 6 + f.base * 9);
     }
     const o = new THREE.Object3D();
     for (let i = this.debris.length - 1; i >= 0; i--) {

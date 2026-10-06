@@ -1,6 +1,7 @@
 import type { App } from './app';
 import { mapPicker } from './mapPicker';
 import type { AnimSpeed, Quality } from './settings';
+import type { GlareLevel } from '../render3d/glare';
 import { icon } from './sprites';
 import { strings as S } from './strings';
 
@@ -25,7 +26,10 @@ export function openSettings(app: App, onQuit?: () => void) {
       ${seg('quality', S.settings.quality, [['low', S.settings.low], ['medium', S.settings.medium], ['high', S.settings.high]], s.quality)}
       ${seg('anim', S.settings.anim, [['off', S.settings.off], ['x1', S.settings.x1], ['x2', S.settings.x2]], s.anim)}
       ${toggle('shake', S.settings.shake, s.shake)}
+      ${seg('glare', S.settings.glare, [['low', S.settings.low], ['mid', S.settings.medium], ['high', S.settings.high]], s.glare)}
       ${toggle('shortCinematic', S.settings.shortCine, s.shortCinematic)}
+      ${toggle('cineBars', S.settings.cineBars, s.cineBars)}
+      ${toggle('sinkBg', S.settings.sinkBg, s.sinkBg)}
       <div class="set__row set__row--map"><span>${S.settings.map}</span><div class="dd" data-dd></div></div>
       <p class="set__note">${S.settings.mapNote}</p>
       <div class="actions">
@@ -51,7 +55,7 @@ export function openSettings(app: App, onQuit?: () => void) {
   ov.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('button, .overlay') ?? (e.target as HTMLElement);
     if (t.dataset.seg) {
-      app.updateSettings(t.dataset.seg === 'quality' ? { quality: t.dataset.v as Quality } : { anim: t.dataset.v as AnimSpeed });
+      app.updateSettings(t.dataset.seg === 'quality' ? { quality: t.dataset.v as Quality } : t.dataset.seg === 'glare' ? { glare: t.dataset.v as GlareLevel } : { anim: t.dataset.v as AnimSpeed });
       t.parentElement!.querySelectorAll('.seg__btn').forEach((b) => b.setAttribute('aria-checked', String(b === t)));
     } else if (t.dataset.switch) {
       const on = t.getAttribute('aria-checked') !== 'true';

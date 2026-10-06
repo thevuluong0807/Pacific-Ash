@@ -35,7 +35,7 @@ export const merge=(gs)=>{const g=G();for(const q of gs){const k=g.p.length/3;g.
 export const scale=(g,[sx,sy,sz])=>{for(let i=0;i<g.p.length;i+=3){g.p[i]*=sx;g.p[i+1]*=sy;g.p[i+2]*=sz}for(let i=0;i<g.n.length;i+=3){let a=g.n[i]/sx,b=g.n[i+1]/sy,c=g.n[i+2]/sz;const l=Math.hypot(a,b,c)||1;g.n[i]=a/l;g.n[i+1]=b/l;g.n[i+2]=c/l}return g}
 // ---------- cây node + vật liệu -> GLB ----------
 export class Model{
- constructor(name){this.name=name;this.nodes=[];this.meshes=[];this.mats=[];this.matIdx={};this.root=this.node(name,[0,0,0],null)}
+ constructor(name){this.name=name;this.S=1;this.nodes=[];this.meshes=[];this.mats=[];this.matIdx={};this.root=this.node(name,[0,0,0],null)}
  mat(key,color,metal=0,rough=.6,emis){if(this.matIdx[key]!=null)return this.matIdx[key];const hex=color.replace('#','');const c=[0,2,4].map(i=>Math.pow(parseInt(hex.slice(i,i+2),16)/255,2.2));const m={name:key,doubleSided:true,pbrMetallicRoughness:{baseColorFactor:[...c,1],metallicFactor:metal,roughnessFactor:rough}};if(emis)m.emissiveFactor=emis.map(x=>x);this.mats.push(m);return this.matIdx[key]=this.mats.length-1}
  node(name,t=[0,0,0],parent=this.root){const idx=this.nodes.length;this.nodes.push({name,translation:t,children:[]});if(parent!=null)this.nodes[parent].children.push(idx);return idx}
  mesh(name,g,matKey,parent=this.root,t){const n=this.node(name,t||[0,0,0],parent);this.meshes.push({g,mat:this.matIdx[matKey]});this.nodes[n].mesh=this.meshes.length-1;return n}
@@ -43,13 +43,13 @@ export class Model{
  build(){const bin=[];let off=0;const bv=[],ac=[],ms=[]
   const push=(arr,Type,comp)=>{const buf=Buffer.from(new Type(arr).buffer);const pad=(4-off%4)%4;if(pad){bin.push(Buffer.alloc(pad));off+=pad};bv.push({buffer:0,byteOffset:off,byteLength:buf.length,target:comp});bin.push(buf);off+=buf.length;return bv.length-1}
   this.meshes.forEach(({g,mat})=>{
-   const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];for(let i=0;i<g.p.length;i+=3)for(let k=0;k<3;k++){mn[k]=Math.min(mn[k],g.p[i+k]);mx[k]=Math.max(mx[k],g.p[i+k])}
-   const pv=push(g.p,Float32Array,34962),nv=push(g.n,Float32Array,34962),iv=push(g.i,Uint16Array,34963)
+   const P=g.p.map(v=>v*this.S);const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];for(let i=0;i<P.length;i+=3)for(let k=0;k<3;k++){mn[k]=Math.min(mn[k],P[i+k]);mx[k]=Math.max(mx[k],P[i+k])}
+   const pv=push(P,Float32Array,34962),nv=push(g.n,Float32Array,34962),iv=push(g.i,Uint16Array,34963)
    ac.push({bufferView:pv,componentType:5126,count:g.p.length/3,type:'VEC3',min:mn,max:mx});const pa=ac.length-1
    ac.push({bufferView:nv,componentType:5126,count:g.n.length/3,type:'VEC3'});const na=ac.length-1
    ac.push({bufferView:iv,componentType:5123,count:g.i.length,type:'SCALAR'});const ia=ac.length-1
    ms.push({primitives:[{attributes:{POSITION:pa,NORMAL:na},indices:ia,material:mat}]})})
-  const nodes=this.nodes.map(n=>{const o={name:n.name};if(n.translation.some(v=>v))o.translation=n.translation;if(n.rotation)o.rotation=n.rotation;if(n.children.length)o.children=n.children;if(n.mesh!=null)o.mesh=n.mesh;return o})
+  const nodes=this.nodes.map(n=>{const o={name:n.name};if(n.translation.some(v=>v))o.translation=n.translation.map(v=>v*this.S);if(n.rotation)o.rotation=n.rotation;if(n.children.length)o.children=n.children;if(n.mesh!=null)o.mesh=n.mesh;return o})
   const json={asset:{version:'2.0',generator:'pacific-ash basic ship builder'},scene:0,scenes:[{nodes:[0]}],nodes,meshes:ms,materials:this.mats,accessors:ac,bufferViews:bv,buffers:[{byteLength:off}]}
   let js=Buffer.from(JSON.stringify(json));const jp=(4-js.length%4)%4;js=Buffer.concat([js,Buffer.alloc(jp,0x20)])
   const bb=Buffer.concat(bin);const bp=(4-bb.length%4)%4;const bbp=Buffer.concat([bb,Buffer.alloc(bp)])

@@ -1,0 +1,22 @@
+// Chụp màn trận xem 3D: mặc định, lưới địch, lưới ta, zoom ra. OUT=thư-mục node view3d.mjs [truong_sa|hai_phong]. Cần dev server cổng 4599.
+import puppeteer from 'puppeteer-core';
+const map = process.argv[2] || 'truong_sa';
+const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', protocolTimeout: 600000, args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
+const page = await browser.newPage(); await page.setViewport({ width: 1280, height: 720 });
+page.on('pageerror', (e) => console.log('PAGEERR', e.message, (e.stack || '').split('\n').slice(0, 4).join(' | ')));
+page.on('console', (m) => m.type() === 'error' && console.log('CONERR', m.text().slice(0, 200)));
+await page.evaluateOnNewDocument((mp) => { localStorage.setItem('pacific-ash.settings', JSON.stringify({ anim: 'off', quality: 'medium', battleView: '3d' })); localStorage.setItem('pacific-ash.map', mp); }, map);
+await page.goto('http://localhost:4599/?debug');
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+const click = (s) => page.waitForSelector(s).then(() => page.click(s));
+const shot = (n) => page.screenshot({ path: `${process.env.OUT}/v_${map}_${n}.png` });
+await sleep(3500); await shot('menu');
+await click('[data-id="play"]'); await sleep(700); await click('[data-start="pve"]'); await sleep(1200);
+await click('[data-random]'); await sleep(2500); await shot('placement');
+await click('[data-confirm]'); await page.waitForSelector('.battle'); await sleep(4000); await shot('3d_default');
+await page.click('[data-focus]'); await sleep(5000); await shot('3d_enemy');
+await page.click('[data-focus]'); await sleep(5000); await shot('3d_own');
+await page.evaluate(() => { const c = document.querySelector('canvas'); for (let i = 0; i < 30; i++) c.dispatchEvent(new WheelEvent('wheel', { deltaY: 200, bubbles: true, cancelable: true })); });
+await sleep(4000); await shot('3d_zoomout');
+console.log('done');
+await browser.close();

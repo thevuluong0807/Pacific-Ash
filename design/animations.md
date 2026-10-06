@@ -70,8 +70,8 @@ Cảm giác chung: nặng, chậm vừa đủ, có lực. Đạn nổ có trọn
 - **Chìm** (mục 6).
 - Ô bị bỏ qua hoặc đã có kết quả trước đó: không phát hiệu ứng.
 
-## 6. Tàu chìm (7200 ms, mỗi tàu một kiểu)
-> **Chi tiết đầy đủ ở `sinking.md`**: **thời lượng 7200 ms (gấp bốn bản 1800 ms ban đầu), mỗi loại tàu có kiểu chìm riêng**, khóa chuyển động trên model 3D, dấu X và sprite 2D. Các mốc ms ghi dưới đây là bản tóm tắt CŨ (1800 ms) chỉ để tham khảo, không dùng.
+## 6. Tàu chìm (10800 ms, mỗi tàu một kiểu)
+> **Chi tiết đầy đủ ở `sinking.md`**: **thời lượng 10800 ms (gấp sáu bản 1800 ms ban đầu), mỗi loại tàu có kiểu chìm riêng**, khóa chuyển động trên model 3D, dấu X và sprite 2D. Các mốc ms ghi dưới đây là bản tóm tắt CŨ (1800 ms) chỉ để tham khảo, không dùng.
 
 Phát sau nổ của ô cuối cùng làm chìm.
 - 0–300: nổ lớn dọc thân tàu, rung camera lớn, tiếng kim loại gãy.
