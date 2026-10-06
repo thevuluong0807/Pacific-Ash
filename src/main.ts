@@ -16,7 +16,7 @@ import { strings } from './ui/strings';
 import type { ScreenId } from './ui/app';
 import type { RenderScene } from './render3d/renderScene';
 import { BattleScene } from './render3d/battleScene';
-import { loadDebrisModels, loadShipModels } from './render3d/shipGlb';
+import { loadDebrisModels, loadShipModels, loadWreckModels } from './render3d/shipGlb';
 import { resumeStore } from './net/client';
 import { BlankScene } from './render3d/blankScene';
 import { tokens } from './ui/tokens';
@@ -107,6 +107,7 @@ if (engine) {
   void loadShipModels({ destroyer: manifest.ship_destroyer, cruiser: manifest.ship_cruiser, submarine: manifest.ship_submarine, missile: manifest.ship_missile, carrier: manifest.ship_carrier, raider: manifest.ship_raider, escort: manifest.ship_escort })
     .then(() => battleScene.reloadShips());
   void loadDebrisModels(manifest as unknown as Record<string, string>);
+  void loadWreckModels(manifest as unknown as Record<string, string>);
 }
 if (new URLSearchParams(location.search).has('debug')) (window as unknown as { __pa: unknown }).__pa = { app, battleScene }; // móc kiểm thử hình ảnh
 // Link mời: ?room=MÃ (và tùy chọn ?server=ws://...) mở thẳng sảnh online và tự vào phòng.

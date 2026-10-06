@@ -9,6 +9,14 @@ const LAYERS = [
   { z: -110, hMin: 30, hMax: 90, tone: 0.75 },
   { z: -160, hMin: 40, hMax: 130, tone: 0.5 },
 ];
+/** Chế độ trận: skyline lùi ra khỏi lưới (trước đây lớp 1 ở z −70 chạm mép lưới địch), chừa luồng nước giữa hai thành phố để bắc cầu. */
+const PLAY_LAYERS = [
+  { z: -112, hMin: 22, hMax: 70, tone: 1.0 },
+  { z: -150, hMin: 34, hMax: 100, tone: 0.75 },
+  { z: -200, hMin: 44, hMax: 140, tone: 0.5 },
+];
+/** Nửa rộng luồng nước giữa hai thành phố ở lớp gần (cục bộ), nơi cầu vượt qua. */
+const CHANNEL = 46;
 const PER_LAYER = 50;
 
 const buildingVert = /* glsl */ `
@@ -66,6 +74,11 @@ export class Harbor {
   private floaters: { obj: THREE.Object3D; y0: number; phase: number }[] = [];
   private blinkers: { m: THREE.Sprite; phase: number; color: THREE.Color }[] = [];
   private fireLight: THREE.PointLight;
+  /** Hải Phòng về đêm (chế độ trận): đèn cầu, xe chạy trên cầu, trụ cầu đổi màu, ngọn hải đăng Hòn Dáu, thuyền đánh cá. */
+  private cars: { s: THREE.Sprite; x0: number; v: number; y: number; z: number; span: number }[] = [];
+  private pylonMats: THREE.MeshBasicMaterial[] = [];
+  private beam?: THREE.Mesh;
+  private lighthouse?: THREE.Sprite;
 
   /** `scale`: nhóm này bị phóng `scale` lần; PointLight cần khoảng chiếu và cường độ phóng theo. */
   private lk: number;
@@ -76,6 +89,7 @@ export class Harbor {
     const rnd = (a: number, b: number) => a + rng() * (b - a);
     this.buildSkyline(rnd);
     this.buildPort(rnd);
+    if (layout === 'play') this.buildHaiPhong(rnd);
     // đèn động: một PointLight cam yếu phía skyline, nhấp nháy (tối đa 3 đèn thật trong cảnh)
     this.fireLight = new THREE.PointLight(0xff7a1a, 0, 120 * scale, 1.6);
     this.fireLight.position.set(0, 12, -50);
@@ -86,7 +100,7 @@ export class Harbor {
     const box = new THREE.BoxGeometry(1, 1, 1);
     box.translate(0, 0.5, 0);
     const tops: THREE.Vector3[] = [];
-    LAYERS.forEach((L, li) => {
+    (this.layout === 'play' ? PLAY_LAYERS : LAYERS).forEach((L, li) => {
       const dims = new Float32Array(PER_LAYER * 4);
       const mat = new THREE.ShaderMaterial({
         vertexShader: buildingVert, fragmentShader: buildingFrag,
@@ -98,7 +112,8 @@ export class Harbor {
       for (let i = 0; i < PER_LAYER; i++) {
         const w = rnd(4, 12), d = rnd(6, 12);
         let h = rnd(L.hMin, L.hMax);
-        const x = ((i + rnd(-0.4, 0.4)) / PER_LAYER - 0.5) * 320;
+        let x = ((i + rnd(-0.4, 0.4)) / PER_LAYER - 0.5) * 320;
+        if (this.layout === 'play' && li < 2 && Math.abs(x) < CHANNEL) x = Math.sign(x || 1) * (CHANNEL + rnd(2, 40)); // luồng nước giữa hai thành phố để trống
         const tilt = collapsed.has(i) ? ((rnd(8, 15) * Math.PI) / 180) * (i % 2 ? 1 : -1) : 0;
         if (tilt) h *= 0.7; // tòa nhà đổ: đỉnh vỡ nên thấp hơn
         // Menu: vùng giữa thoáng, skyline thấp; hai bên dày và cao (maps.md mục 8.3)
@@ -147,7 +162,7 @@ export class Harbor {
     const steel = new THREE.MeshStandardMaterial({ color: 0x1b2229, roughness: 0.7, metalness: 0.6 });
     const rust = new THREE.MeshStandardMaterial({ color: 0x3a2a22, roughness: 0.9, metalness: 0.3 });
     // cần cẩu cảng: x -40/-18/+22/+45, cao 28; một cần đổ gãy
-    (this.layout === 'menu' ? [[-62, -55], [-44, -48], [46, -52], [66, -58]] : [[-62, -66], [-38, -64], [40, -68], [66, -72]]).forEach(([x, z], i) => {
+    (this.layout === 'menu' ? [[-62, -55], [-44, -48], [46, -52], [66, -58]] : [[-96, -108], [-62, -112], [66, -110], [104, -114]]).forEach(([x, z], i) => {
       const g = new THREE.Group();
       const tower = new THREE.Mesh(new THREE.BoxGeometry(1.2, 28, 1.2), steel);
       tower.position.y = 14;
@@ -225,6 +240,94 @@ export class Harbor {
     });
   }
 
+  /**
+   * Hải Phòng về đêm (chỉ chế độ trận): bờ biển ngắn hai bên luồng nước, cầu dây văng lớn nối hai thành phố (kiểu cầu Tân Vũ – Lạch Huyện: hai trụ cao
+   * đổi màu, dây văng, đèn mặt cầu, xe chạy), hải đăng Hòn Dáu quét chùm sáng, thuyền đánh cá sáng đèn, nhà hát lớn có vòm sáng, đồi Đồ Sơn xa.
+   * Mọi vật nằm ngoài vùng chơi (|x| < 28, z > −70 cục bộ).
+   */
+  private buildHaiPhong(rnd: (a: number, b: number) => number) {
+    const dark = new THREE.MeshStandardMaterial({ color: 0x0b1015, roughness: 0.9, metalness: 0.1 });
+    const concrete = new THREE.MeshStandardMaterial({ color: 0x1b2229, roughness: 0.8, metalness: 0.2 });
+    const lamp = glowTexture('rgba(255,214,150,1)', 'rgba(255,170,60,0)');
+    const lampBlue = glowTexture('rgba(150,220,255,1)', 'rgba(60,160,255,0)');
+    const glowMat = (tex: THREE.Texture, color: number, op = 1) => new THREE.SpriteMaterial({ map: tex, color, blending: THREE.AdditiveBlending, depthWrite: false, transparent: true, opacity: op });
+    const sprite = (tex: THREE.Texture, x: number, y: number, z: number, sz: number, color = 0xffffff, op = 1) => { const s = new THREE.Sprite(glowMat(tex, color, op)); s.position.set(x, y, z); s.scale.set(sz, sz, 1); this.group.add(s); return s; };
+
+    // ---- bờ biển ngắn: hai dải đất thấp ở hai bên luồng nước, đèn đường dọc kè ----
+    for (const sgn of [-1, 1]) {
+      const bank = new THREE.Mesh(new THREE.BoxGeometry(150, 3, 52), concrete);
+      bank.position.set(sgn * (CHANNEL + 75), 0.4, -112); this.group.add(bank);
+      const kè = new THREE.Mesh(new THREE.BoxGeometry(150, 1.2, 2), dark); kè.position.set(sgn * (CHANNEL + 75), 2, -86); this.group.add(kè);
+      for (let k = 0; k < 14; k++) sprite(lamp, sgn * (CHANNEL + 6 + k * 10), 5.5, -86, 4, 0xffd9a0, 0.9);
+    }
+    // ---- cầu dây văng lớn: boong dài, trụ cầu đôi, dây văng, đèn mặt cầu ----
+    const BZ = -96, DECK = 15, SPAN = 340, PY = 52;
+    const deck = new THREE.Mesh(new THREE.BoxGeometry(SPAN, 1.6, 6), concrete); deck.position.set(0, DECK, BZ); this.group.add(deck);
+    const rail = new THREE.Mesh(new THREE.BoxGeometry(SPAN, 0.4, 0.5), new THREE.MeshBasicMaterial({ color: 0x35546a })); rail.position.set(0, DECK + 1.3, BZ - 2.8); this.group.add(rail);
+    for (let x = -SPAN / 2 + 8; x <= SPAN / 2 - 8; x += 24) { // trụ cầu dẫn
+      if (Math.abs(x) < CHANNEL + 14) continue;
+      const pier = new THREE.Mesh(new THREE.CylinderGeometry(1.1, 1.6, DECK + 2, 8), dark); pier.position.set(x, (DECK - 2) / 2, BZ); this.group.add(pier);
+    }
+    for (let x = -SPAN / 2 + 6; x <= SPAN / 2 - 6; x += 7) sprite(lamp, x, DECK + 3.2, BZ - 2.8, 3.4, 0xffd9a0, 0.85); // đèn mặt cầu
+    const mats: THREE.MeshBasicMaterial[] = [];
+    for (const px of [-CHANNEL * 0.6, CHANNEL * 0.6]) { // hai trụ chính hình chữ H, đổi màu theo thời gian
+      const m = new THREE.MeshBasicMaterial({ color: 0x4fc3e8 }); mats.push(m);
+      for (const dz of [-2.2, 2.2]) { const leg = new THREE.Mesh(new THREE.BoxGeometry(2.4, PY, 1.6), m); leg.position.set(px, DECK + PY / 2, BZ + dz); this.group.add(leg); }
+      const bar = new THREE.Mesh(new THREE.BoxGeometry(2.4, 1.6, 6.4), m); bar.position.set(px, DECK + PY * 0.8, BZ); this.group.add(bar);
+      const top = sprite(lampBlue, px, DECK + PY + 3, BZ, 6, 0xff3030); this.blinkers.push({ m: top, phase: rnd(0, 4), color: new THREE.Color(0xff3030) });
+      const cables: THREE.Vector3[] = [];
+      for (let k = 1; k <= 8; k++) for (const side of [-1, 1]) { // dây văng toả hai phía
+        const dx = side * k * 7.5;
+        cables.push(new THREE.Vector3(px, DECK + PY - k * 1.1, BZ), new THREE.Vector3(px + dx, DECK + 0.8, BZ));
+      }
+      const geo = new THREE.BufferGeometry().setFromPoints(cables);
+      this.group.add(new THREE.LineSegments(geo, new THREE.LineBasicMaterial({ color: 0x6fa8c8, transparent: true, opacity: 0.55 })));
+    }
+    this.pylonMats = mats;
+    // xe chạy trên cầu (đèn pha trắng một chiều, đèn đuôi đỏ chiều kia)
+    for (let i = 0; i < 26; i++) {
+      const dir = i % 2 ? 1 : -1;
+      const s = sprite(lamp, 0, DECK + 2, BZ + dir * 1.4, 2.4, dir > 0 ? 0xffffff : 0xff4030, 0.95);
+      this.cars.push({ s, x0: rnd(0, SPAN), v: dir * rnd(6, 11), y: DECK + 2, z: BZ + dir * 1.4, span: SPAN });
+    }
+    // ---- hải đăng Hòn Dáu trên đảo đá nhỏ, chùm sáng quét ----
+    const isle = new THREE.Mesh(new THREE.ConeGeometry(14, 7, 10), dark); isle.position.set(128, 2.5, -60); this.group.add(isle);
+    const tower = new THREE.Mesh(new THREE.CylinderGeometry(1.2, 2.2, 15, 10), new THREE.MeshStandardMaterial({ color: 0x9aa4ab, roughness: 0.8 })); tower.position.set(128, 11, -60); this.group.add(tower);
+    this.lighthouse = sprite(lamp, 128, 20, -60, 7, 0xfff2c0);
+    const beam = new THREE.Mesh(new THREE.PlaneGeometry(90, 3).translate(45, 0, 0).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xfff2c0, transparent: true, opacity: 0.18, blending: THREE.AdditiveBlending, depthWrite: false, side: THREE.DoubleSide }));
+    beam.position.set(128, 20, -60); this.group.add(beam); this.beam = beam;
+    // ---- thuyền đánh cá sáng đèn ở luồng nước ----
+    for (let i = 0; i < 7; i++) {
+      const x = (i % 2 ? 1 : -1) * rnd(36, 130), z = rnd(-92, -70);
+      const boat = new THREE.Group();
+      const hull = new THREE.Mesh(new THREE.BoxGeometry(5, 1.1, 1.8), dark); hull.position.y = 0.4;
+      const cab = new THREE.Mesh(new THREE.BoxGeometry(1.3, 1.3, 1.3), concrete); cab.position.set(-1, 1.5, 0);
+      boat.add(hull, cab);
+      const l = new THREE.Sprite(glowMat(lamp, 0xffe0a0, 1)); l.position.set(-1, 2.6, 0); l.scale.set(3, 3, 1); boat.add(l);
+      boat.position.set(x, 0, z); boat.rotation.y = rnd(0, 6.28);
+      this.group.add(boat);
+      this.floaters.push({ obj: boat, y0: 0, phase: rnd(0, 6) });
+    }
+    // ---- nhà hát lớn: khối tân cổ điển có vòm sáng trong thành phố bên trái ----
+    const theater = new THREE.Group();
+    const body = new THREE.Mesh(new THREE.BoxGeometry(22, 12, 14), new THREE.MeshBasicMaterial({ color: 0x6b5a46 })); body.position.y = 6;
+    const dome = new THREE.Mesh(new THREE.SphereGeometry(6, 16, 10, 0, Math.PI * 2, 0, Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0x4fa6a0 })); dome.position.y = 12;
+    theater.add(body, dome);
+    for (let k = -4; k <= 4; k++) { const c = new THREE.Mesh(new THREE.CylinderGeometry(0.4, 0.4, 9, 6), new THREE.MeshBasicMaterial({ color: 0xe8d8b0 })); c.position.set(k * 2.4, 4.5, 7.4); theater.add(c); }
+    theater.position.set(-CHANNEL - 28, 1.8, -86); this.group.add(theater);
+    sprite(lamp, -CHANNEL - 28, 8, -78, 40, 0xffd090, 0.35);
+    // ---- đồi Đồ Sơn xa ở bên phải ----
+    for (const [x, z, r, h] of [[205, -190, 38, 26], [235, -205, 30, 20], [170, -215, 28, 16]] as const) {
+      const hill = new THREE.Mesh(new THREE.ConeGeometry(r, h, 14), new THREE.MeshStandardMaterial({ color: 0x080d12, roughness: 1 }));
+      hill.position.set(x, h / 2 - 1, z); this.group.add(hill);
+    }
+    // ---- bãi container sáng đèn ở bờ: cần cẩu có đèn đỏ trắng ----
+    for (const sgn of [-1, 1]) for (let k = 0; k < 6; k++) {
+      const x = sgn * (CHANNEL + 22 + k * 16), z = -104;
+      sprite(lamp, x, 9, z, 3, k % 2 ? 0xff4030 : 0xe8f4ff, 0.9);
+    }
+  }
+
   private debris: { x: number; z: number; rot: THREE.Euler; s: number }[] = [];
   private debrisMesh!: THREE.InstancedMesh;
 
@@ -266,6 +369,10 @@ export class Harbor {
     this.lights.forEach((l, i) => { l.rotation.z = Math.sin((t / 12) * Math.PI * 2 + i * 2) * 0.5; l.rotation.x = Math.cos((t / 12) * Math.PI * 2 + i) * 0.15; });
     for (const f of this.floaters) f.obj.position.y = f.y0 + this.heightAt(f.obj.position.x, f.obj.position.z, t) * 0.9;
     for (const b of this.blinkers) b.m.material.opacity = Math.sin(t * 2.5 + b.phase) > 0 ? 1 : 0.1;
+    for (const c of this.cars) c.s.position.set(((c.x0 + t * c.v) % c.span + c.span) % c.span - c.span / 2, c.y, c.z);
+    this.pylonMats.forEach((m, i) => m.color.setHSL(((t * 0.04 + i * 0.5) % 1), 0.8, 0.55)); // trụ cầu đổi màu
+    if (this.beam) { this.beam.rotation.y = t * 0.9; (this.beam.material as THREE.MeshBasicMaterial).opacity = 0.14 + 0.1 * Math.max(0, Math.sin(t * 0.9 * 2)); }
+    if (this.lighthouse) (this.lighthouse.material as THREE.SpriteMaterial).opacity = 0.6 + 0.4 * Math.sin(t * 3);
     const d = new THREE.Object3D();
     this.debris.forEach((p, i) => {
       d.position.set(p.x + Math.sin(t * 0.1 + i) * 0.4, this.heightAt(p.x, p.z, t) + 0.05, p.z + Math.cos(t * 0.08 + i) * 0.3);

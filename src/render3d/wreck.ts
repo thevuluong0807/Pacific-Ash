@@ -3,11 +3,10 @@ import type { Cell, ShipId } from '../../design/core-api';
 import type { Fx } from './fx3d';
 import { debrisModel, type DebrisId } from './shipGlb';
 import { CELL } from './scale';
-import { glareK } from './glare';
 
 /**
  * Ô trúng ở 3D = mảnh xác tàu nổi (design/wreckage.md mục 1). Mỗi ô trúng một trong 10 mảnh glb: bị hất lên theo cung 900 ms, rơi xuống,
- * nổi và nhấp nhô, cháy (`fx_fire`), cột khói cao 40, vòng sáng lan trên mặt nước, than hồng, chùm tia lửa. Mảnh chung (6) cho mọi ô để không lộ
+ * nổi và nhấp nhô, bốc cột khói cao 40 (không còn lửa, vòng sáng, than hồng). Mảnh chung (6) cho mọi ô để không lộ
  * loại tàu địch; mảnh riêng (cánh, VLS, tháp tàu ngầm, vòm radar) chỉ cho tàu của mình. Khi tàu chìm (`absorb`), mảnh trong ô trôi về thân tàu và chìm
  * cùng từ 4.5 s tới 9 s (thời gian cảnh chìm), riêng 2 mảnh ở lại nổi (tắt lửa sau 6 s).
  */
@@ -16,19 +15,19 @@ type Owner = 'own' | 'enemy';
 
 const COMMON: DebrisId[] = ['plate', 'mast', 'turret', 'hullchunk', 'cargo', 'funnel'];
 const SPECIAL: Partial<Record<ShipId, DebrisId>> = { carrier: 'wing', missile: 'vls', submarine: 'sail', escort: 'radome' };
-const MAX_PIECES = 25, MAX_FIRES = 16, MAX_SMOKE = 12;
+const MAX_PIECES = 25, MAX_SMOKE = 12;
 const hash = (a: number, b: number, c: number) => { let h = (a * 73856093) ^ (b * 19349663) ^ (c * 83492791); h = Math.imul(h ^ (h >>> 13), 0x5bd1e995); return ((h ^ (h >>> 15)) >>> 0) / 4294967295; };
 
 interface Piece {
   key: string; owner: Owner; cell: Cell; kind: DebrisId;
   holder: THREE.Group; body: THREE.Object3D;
-  float: THREE.Object3D | null; firePt: THREE.Object3D | null; smokePt: THREE.Object3D | null;
+  float: THREE.Object3D | null; smokePt: THREE.Object3D | null;
   rest: THREE.Vector3; yaw: number; tiltX: number; tiltZ: number; phase: number; drift: THREE.Vector2;
   state: 'toss' | 'rise' | 'float' | 'sink' | 'gone';
-  t0: number; born: number; hot: boolean; smoky: boolean; stay: boolean; coolAt: number;
+  t0: number; born: number; smoky: boolean; stay: boolean;
   from?: THREE.Vector3; apex: number; spin: number;
   sinkFrom?: THREE.Vector3; sinkT0?: number; sinkT1?: number; sinkTo?: THREE.Vector3;
-  fire: THREE.Sprite; glow: THREE.Sprite; smoke: THREE.Sprite[]; ring: THREE.Mesh; nextSpark: number; ringT: number;
+  smoke: THREE.Sprite[];
 }
 
 export class WreckField {
@@ -73,7 +72,7 @@ export class WreckField {
     const k = CELL / 10;
     const holder = new THREE.Group();
     const body = model;
-    body.scale.setScalar(CELL * 1.8); // cỡ nhìn rõ từ camera trận (wreckage.md 1.2: rộng ≥ 28 px ở camera trận (đo ảnh: ×1.2 quá nhỏ); đòn nặng ×1.4 chưa phân biệt)
+    body.scale.setScalar(CELL * 1.0); // cỡ nhìn rõ từ camera trận (wreckage.md 1.2: rộng ≥ 28 px ở camera trận (đo ảnh: ×1.2 quá nhỏ); đòn nặng ×1.4 chưa phân biệt)
     holder.add(body);
     const named = (n: string) => { let f: THREE.Object3D | null = null; body.traverse((o) => { if (!f && o.name === n) f = o; }); return f; };
     const center = this.cellWorld(owner, c);
@@ -83,29 +82,24 @@ export class WreckField {
       rest.x += Math.cos(h) * side * Math.min(5.5 * k, 0.4 * CELL); rest.z += -Math.sin(h) * side * Math.min(5.5 * k, 0.4 * CELL);
     }
     const r = (n: number) => hash(c.x, c.y, this.seed + n);
-    rest.x += (r(1) - 0.5) * 0.2 * CELL; rest.z += (r(2) - 0.5) * 0.2 * CELL;
+    rest.x += (r(1) - 0.5) * 0.1 * CELL; rest.z += (r(2) - 0.5) * 0.1 * CELL; // lệch nhỏ để mảnh ô kề nhau không đè lên nhau
     const mat = (tex: THREE.Texture, color: number, add: boolean, op = 1) => new THREE.SpriteMaterial({ map: tex, color, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, transparent: true, depthWrite: false, fog: !add, opacity: op });
-    const fire = new THREE.Sprite(mat(this.fx.tex('fire'), 0xffffff, true));
-    const glow = new THREE.Sprite(mat(this.fx.tex('glow'), 0xff6a20, true, 0.4));
     const smoke = [0, 1, 2].map(() => new THREE.Sprite(mat(this.fx.tex('smoke'), 0x1a1a1c, false, 0.6)));
-    const ring = new THREE.Mesh(new THREE.RingGeometry(0.9, 1, 48).rotateX(-Math.PI / 2), new THREE.MeshBasicMaterial({ color: 0xff8a2a, transparent: true, depthWrite: false, depthTest: false, fog: false, side: THREE.DoubleSide, opacity: 0 }));
-    ring.renderOrder = 5;
-    this.group.add(holder, fire, glow, ...smoke, ring);
+    this.group.add(holder, ...smoke);
     const p: Piece = {
-      key, owner, cell: { x: c.x, y: c.y }, kind, holder, body, float: named('float_line'), firePt: named('fire_point'), smokePt: named('smoke_point'),
+      key, owner, cell: { x: c.x, y: c.y }, kind, holder, body, float: named('float_line'), smokePt: named('smoke_point'),
       rest, yaw: r(3) * Math.PI * 2, tiltX: (10 + r(4) * 25) * Math.PI / 180 * (r(5) < 0.5 ? -1 : 1), tiltZ: (10 + r(6) * 25) * Math.PI / 180 * (r(8) < 0.5 ? -1 : 1),
-      phase: r(9) * 6.28, drift: new THREE.Vector2((r(10) - 0.5) * 0.2, (r(11) - 0.5) * 0.2),
-      state: toss ? 'toss' : 'float', t0: t, born: t, hot: true, smoky: true, stay: false, coolAt: Infinity,
+      phase: r(9) * 6.28, drift: new THREE.Vector2((r(10) - 0.5) * 0.1, (r(11) - 0.5) * 0.1),
+      state: toss ? 'toss' : 'float', t0: t, born: t, smoky: true, stay: false,
       apex: (15 + r(12) * 10) * k, spin: (1 + r(13)) * Math.PI * 2, from: center.clone(),
-      fire, glow, smoke, ring, nextSpark: t + 2 + r(14) * 2, ringT: r(15) * 1.6,
+      smoke,
     };
     holder.position.copy(rest);
     this.pieces.set(key, p);
   }
 
   private remove(p: Piece) {
-    this.group.remove(p.holder, p.fire, p.glow, ...p.smoke, p.ring);
-    p.ring.geometry.dispose();
+    this.group.remove(p.holder, ...p.smoke);
     this.pieces.delete(p.key);
   }
 
@@ -113,21 +107,17 @@ export class WreckField {
   private limit() {
     const all = [...this.pieces.values()].sort((a, b) => a.born - b.born);
     while (all.length > MAX_PIECES) this.remove(all.shift()!);
-    const hot = all.filter((p) => p.hot);
-    for (const p of hot.slice(0, Math.max(0, hot.length - MAX_FIRES))) { p.hot = false; p.smoky = false; }
     const sm = all.filter((p) => p.smoky);
     for (const p of sm.slice(0, Math.max(0, sm.length - MAX_SMOKE))) p.smoky = false;
   }
 
-  /** Tàu chìm: mảnh trong các ô của nó chìm cùng (4.5–9 s hoạt cảnh), 2 mảnh ở lại nổi; chặn tạo lại mảnh ở các ô đó. */
-  absorb(owner: Owner, cells: Cell[], center: THREE.Vector3, t: number, speed: number) {
-    const keys = new Set(cells.map((c) => `${owner}:${c.x},${c.y}`));
-    for (const k of keys) this.blocked.add(k);
-    const mine = [...this.pieces.values()].filter((p) => keys.has(p.key));
-    const keep = new Set(mine.sort((a, b) => hash(a.cell.x, a.cell.y, this.seed + 21) - hash(b.cell.x, b.cell.y, this.seed + 21)).slice(0, 2));
-    for (const p of mine) {
-      if (keep.has(p)) { p.stay = true; p.coolAt = t + 6 / speed; continue; }
-      p.state = 'sink'; p.sinkT0 = t + 4.5 / speed; p.sinkT1 = t + 9 / speed; p.sinkFrom = p.holder.position.clone(); p.sinkTo = center.clone().setY(0);
+  /** Tàu bị hạ: tàu hiện tại chỗ (cháy nổ) nên xóa hết mảnh vỡ của các ô tàu đó (khỏi đè lên model tàu), chặn tạo lại mảnh ở các ô ấy. */
+  absorb(owner: Owner, cells: Cell[], _center: THREE.Vector3, _t: number, _speed: number) {
+    for (const c of cells) {
+      const k = `${owner}:${c.x},${c.y}`;
+      this.blocked.add(k);
+      const p = this.pieces.get(k);
+      if (p) { this.fx.burst({ pos: p.holder.position.clone(), tex: 'smoke', size: [0.3, 0.8], life: [0.5, 0.9], opacity: 0.5, color: 0x222222, count: 4, spread: 0.3 }); this.remove(p); }
     }
   }
 
@@ -141,7 +131,6 @@ export class WreckField {
         else {
           const from = p.from!, pos = from.clone().lerp(p.rest, u); pos.y = this.heightAt(pos.x, pos.z, t) + p.apex * 4 * u * (1 - u);
           h.position.copy(pos); h.rotation.set(p.tiltX * u, p.yaw + p.spin * u, p.tiltZ * u, 'YXZ');
-          this.fx.burst({ pos: pos.clone(), tex: 'fire', size: [0.5, 0.1], life: [0.1, 0.2], additive: true, opacity: 0.8, color: 0xff8a2a }); // vệt lửa và khói sau mảnh (kích thước tính theo ô)
           this.fx.burst({ pos: pos.clone(), tex: 'smoke', size: [0.3, 0.9], life: [0.5, 0.9], opacity: 0.45, color: 0x222222 });
         }
       }
@@ -152,13 +141,11 @@ export class WreckField {
         if (p.state === 'sink') {
           const u = Math.min(1, Math.max(0, (t - p.sinkT0!) / (p.sinkT1! - p.sinkT0!)));
           x = THREE.MathUtils.lerp(p.sinkFrom!.x, p.sinkTo!.x, u); z = THREE.MathUtils.lerp(p.sinkFrom!.z, p.sinkTo!.z, u); y -= u * 14 * k;
-          p.hot = u < 0.4 ? p.hot : false;
           if (u >= 1) { this.remove(p); continue; }
         }
         h.position.set(x, y, z);
         h.rotation.set(p.tiltX + 0.05 * Math.sin(t * 1.1 + p.phase), p.yaw, p.tiltZ + 0.05 * Math.cos(t * 0.9 + p.phase), 'YXZ');
       }
-      if (t >= p.coolAt) { p.hot = false; p.smoky = false; }
       this.effects(p, t, k, wind);
     }
   }
@@ -166,17 +153,6 @@ export class WreckField {
   private effects(p: Piece, t: number, k: number, wind: number) {
     p.holder.updateWorldMatrix(true, true);
     const at = (o: THREE.Object3D | null) => (o ? o.getWorldPosition(new THREE.Vector3()) : p.holder.position.clone().add(new THREE.Vector3(0, 3 * k, 0)));
-    const water = this.heightAt(p.holder.position.x, p.holder.position.z, t);
-    const on = p.hot && p.state !== 'toss';
-    const fp = at(p.firePt);
-    const flick = 0.85 + 0.15 * Math.sin(t * 50 + p.phase * 7); // nhấp nháy 8 Hz
-    p.fire.visible = on; p.glow.visible = on;
-    if (on) {
-      const hgt = (8 + 4 * ((p.phase / 6.28) % 1)) * k * flick;
-      p.fire.position.copy(fp).y += hgt * 0.4; p.fire.scale.set(hgt * 0.7, hgt, 1);
-      p.glow.position.copy(fp); p.glow.scale.setScalar(14 * k); (p.glow.material as THREE.SpriteMaterial).opacity = 0.4 * glareK() * flick;
-      if (Math.random() < 0.33) this.fx.burst({ pos: fp.clone(), vel: new THREE.Vector3(0, 0.45, 0), count: 1, tex: 'spark', size: [0.12, 0.03], life: [0.8, 1.6], additive: true, color: 0xff9a40, spread: 0.12 }); // than hồng ~20/s, bay lên 3–6 ĐV/s
-    }
     const sp = p.smoky && !this.low && p.state !== 'toss';
     const sm = at(p.smokePt);
     p.smoke.forEach((s, i) => {
@@ -186,17 +162,6 @@ export class WreckField {
       s.position.set(sm.x + rise * wind, sm.y + rise, sm.z); const sc = (3 + 5 * life) * k; s.scale.set(sc, sc, 1);
       (s.material as THREE.SpriteMaterial).opacity = Math.sin(life * Math.PI) * 0.6;
     });
-    // vòng sáng lan trên mặt nước mỗi 1.6 s (bán kính 6 → 12, độ mờ 0.35 → 0)
-    p.ring.visible = on && !this.low;
-    if (p.ring.visible) {
-      p.ringT = (p.ringT + 1 / 60) % 1.6; const u = p.ringT / 1.6;
-      p.ring.position.set(p.holder.position.x, water + 0.1 * k, p.holder.position.z); p.ring.scale.setScalar((6 + 6 * u) * k);
-      (p.ring.material as THREE.MeshBasicMaterial).opacity = 0.35 * (1 - u) * glareK();
-    }
-    if (on && !this.low && t >= p.nextSpark) { // chùm tia lửa từ mép nóng
-      p.nextSpark = t + 2 + Math.random() * 2;
-      this.fx.burst({ pos: fp.clone(), vel: new THREE.Vector3(0, 0.6, 0), count: 20, tex: 'spark', size: [0.12, 0.03], life: [0.5, 1.0], additive: true, spread: 0.7, grav: 0.8, color: 0xffb060 });
-    }
   }
 
   clear() { for (const p of [...this.pieces.values()]) this.remove(p); this.blocked.clear(); this.primed = false; }
@@ -204,45 +169,36 @@ export class WreckField {
 
 
 /**
- * Xác tàu đắm nửa chìm sau khi bắn hạ (người dùng: bắn hạ mới hiện model tàu đắm một nửa, cháy nổ): model giữ tư thế cuối của hoạt cảnh chìm,
- * cháy ở các neo `fire_N`, khói đen cao, nổ thứ phát ngẫu nhiên 3–6 s một lần, ở lại đến hết ván.
+ * Xác tàu bị hạ (design/sinking.md 2.8): model `wreck_<id>` ở lại đến hết ván; không còn lửa (trông giả), thay bằng các cột khói đen cao
+ * bốc từ từng neo `smoke_point_*` của xác (không có neo thì từ `fire_N`), mỏng dần sau 20–60 s, trôi theo gió.
  */
 export class ShipWreckFx {
-  private fires: { pt: THREE.Object3D; fire: THREE.Sprite; glow: THREE.Sprite; smoke: THREE.Sprite[]; phase: number }[] = [];
-  private nextBoom: number;
+  private cols: { pt: THREE.Object3D; smoke: THREE.Sprite[]; phase: number }[] = [];
+  private t0: number;
   readonly group = new THREE.Group();
-  constructor(private rig: THREE.Object3D, private fx: Fx, t: number, private low = false) {
-    const pts: THREE.Object3D[] = [];
-    rig.traverse((o) => { if (/^fire_\d+$/.test(o.name)) pts.push(o); });
-    const mat = (tex: THREE.Texture, color: number, add: boolean, op = 1) => new THREE.SpriteMaterial({ map: tex, color, blending: add ? THREE.AdditiveBlending : THREE.NormalBlending, transparent: true, depthWrite: false, fog: !add, opacity: op });
+  constructor(private rig: THREE.Object3D, fx: Fx, t: number, low = false) {
+    const root: THREE.Object3D = rig.userData.wreckRoot ?? rig, pts: THREE.Object3D[] = [];
+    root.traverse((o) => { if (/^smoke_point_/.test(o.name)) pts.push(o); });
+    if (!pts.length) root.traverse((o) => { if (/^fire_\d+$/.test(o.name)) pts.push(o); });
     for (const pt of pts.slice(0, 4)) {
-      const fire = new THREE.Sprite(mat(fx.tex('fire'), 0xffffff, true));
-      const glow = new THREE.Sprite(mat(fx.tex('glow'), 0xff6a20, true, 0.4));
-      const smoke = [0, 1, 2].map(() => new THREE.Sprite(mat(fx.tex('smoke'), 0x1a1a1c, false, 0.6)));
-      this.group.add(fire, glow, ...smoke);
-      this.fires.push({ pt, fire, glow, smoke, phase: Math.random() * 6.28 });
+      const smoke = Array.from({ length: low ? 3 : 7 }, () => new THREE.Sprite(new THREE.SpriteMaterial({ map: fx.tex('smoke'), color: 0x868b92, transparent: true, depthWrite: false, fog: false, opacity: 0.6 })));
+      this.group.add(...smoke);
+      this.cols.push({ pt, smoke, phase: Math.random() * 6.28 });
     }
-    this.nextBoom = t + 2 + Math.random() * 3;
+    this.t0 = t;
   }
   update(t: number) {
-    const k = CELL / 10, wind = Math.tan((12 * Math.PI) / 180);
+    const k = CELL / 10, wind = Math.tan((12 * Math.PI) / 180), age = t - this.t0;
+    const thin = 1 - 0.55 * Math.min(1, Math.max(0, (age - 20) / 40)); // sau 20 s mỏng dần, còn 45% sau 60 s
     this.rig.updateWorldMatrix(true, true);
-    for (const f of this.fires) {
-      const p = f.pt.getWorldPosition(new THREE.Vector3());
-      const flick = 0.85 + 0.15 * Math.sin(t * 50 + f.phase * 7), hgt = 12 * k * flick;
-      f.fire.position.copy(p).y += hgt * 0.4; f.fire.scale.set(hgt * 0.7, hgt, 1);
-      f.glow.position.copy(p); f.glow.scale.setScalar(18 * k); (f.glow.material as THREE.SpriteMaterial).opacity = 0.4 * glareK() * flick;
-      f.smoke.forEach((s, i) => {
-        s.visible = !this.low;
-        const life = (t * 0.12 + i / 3 + f.phase) % 1, rise = life * 40 * k;
-        s.position.set(p.x + rise * wind, p.y + rise, p.z); const sc = (4 + 6 * life) * k; s.scale.set(sc, sc, 1);
-        (s.material as THREE.SpriteMaterial).opacity = Math.sin(life * Math.PI) * 0.6;
+    for (const c of this.cols) {
+      const p = c.pt.getWorldPosition(new THREE.Vector3()), n = c.smoke.length;
+      c.smoke.forEach((s, i) => {
+        const life = (t * 0.1 + i / n + c.phase) % 1, rise = life * 60 * k;
+        s.position.set(p.x + rise * wind + Math.sin(life * 5 + i) * 1.5 * k * life, p.y + rise, p.z + Math.cos(life * 4 + c.phase) * 1.5 * k * life);
+        const sc = (5 + 16 * life) * k; s.scale.set(sc, sc, 1);
+        (s.material as THREE.SpriteMaterial).opacity = Math.sin(life * Math.PI) ** 0.7 * 1.0 * thin;
       });
-    }
-    if (t >= this.nextBoom && this.fires.length) { // nổ thứ phát lẻ tẻ
-      this.nextBoom = t + 3 + Math.random() * 3;
-      const f = this.fires[Math.floor(Math.random() * this.fires.length)];
-      this.fx.hit(f.pt.getWorldPosition(new THREE.Vector3()), false);
     }
   }
   dispose() { this.group.parent?.remove(this.group); }

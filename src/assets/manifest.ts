@@ -23,6 +23,13 @@ import dbSail from './models/debris/debris_sail.glb?inline';
 import dbTurret from './models/debris/debris_turret.glb?inline';
 import dbVls from './models/debris/debris_vls.glb?inline';
 import dbWing from './models/debris/debris_wing.glb?inline';
+import wreckDestroyer from './models/wrecks/wreck_destroyer.glb?inline';
+import wreckCruiser from './models/wrecks/wreck_cruiser.glb?inline';
+import wreckMissile from './models/wrecks/wreck_missile.glb?inline';
+import wreckSubmarine from './models/wrecks/wreck_submarine.glb?inline';
+import wreckCarrier from './models/wrecks/wreck_carrier.glb?inline';
+import wreckRaider from './models/wrecks/wreck_raider.glb?inline';
+import wreckEscort from './models/wrecks/wreck_escort.glb?inline';
 import logoEmblem from '../../design/art/logo_emblem.svg';
 import mapTruongSa from '../../design/art/map_truong_sa.svg';
 import mapHaiPhong from '../../design/art/map_hai_phong.svg';
@@ -39,6 +46,7 @@ export const manifest = {
   ship_carrier: shipCarrier, ship_raider: shipRaider, ship_escort: shipEscort,
   debris_cargo: dbCargo, debris_funnel: dbFunnel, debris_hullchunk: dbHull, debris_mast: dbMast, debris_plate: dbPlate,
   debris_radome: dbRadome, debris_sail: dbSail, debris_turret: dbTurret, debris_vls: dbVls, debris_wing: dbWing,
+  wreck_destroyer: wreckDestroyer, wreck_cruiser: wreckCruiser, wreck_missile: wreckMissile, wreck_submarine: wreckSubmarine, wreck_carrier: wreckCarrier, wreck_raider: wreckRaider, wreck_escort: wreckEscort,
   ui_logo_emblem: logoEmblem,
   ui_map_truong_sa: mapTruongSa,
   ui_map_hai_phong: mapHaiPhong,

@@ -39,23 +39,27 @@ export class Model{
  mat(key,color,metal=0,rough=.6,emis){if(this.matIdx[key]!=null)return this.matIdx[key];const hex=color.replace('#','');const c=[0,2,4].map(i=>Math.pow(parseInt(hex.slice(i,i+2),16)/255,2.2));const m={name:key,doubleSided:true,pbrMetallicRoughness:{baseColorFactor:[...c,1],metallicFactor:metal,roughnessFactor:rough}};if(emis)m.emissiveFactor=emis.map(x=>x);this.mats.push(m);return this.matIdx[key]=this.mats.length-1}
  node(name,t=[0,0,0],parent=this.root){const idx=this.nodes.length;this.nodes.push({name,translation:t,children:[]});if(parent!=null)this.nodes[parent].children.push(idx);return idx}
  mesh(name,g,matKey,parent=this.root,t){const n=this.node(name,t||[0,0,0],parent);this.meshes.push({g,mat:this.matIdx[matKey]});this.nodes[n].mesh=this.meshes.length-1;return n}
+ find(name){return this.nodes.findIndex(n=>n.name===name)}
+ drop(name){const i=this.find(name);if(i<0)return false;const n=this.nodes[i];if(n.mesh!=null){this.meshes[n.mesh]=null;n.mesh=undefined};this.nodes.forEach(x=>{x.children=x.children.filter(c=>c!==i)});n.name='__dropped__';return true}
+ reparent(i,p){this.nodes.forEach(x=>{x.children=x.children.filter(c=>c!==i)});this.nodes[p].children.push(i)}
+ zOf(i){const n=this.nodes[i];const z=n.translation[2];if(n.mesh!=null&&this.meshes[n.mesh]){const g=this.meshes[n.mesh].g;let a=1e9,b=-1e9;for(let k=2;k<g.p.length;k+=3){a=Math.min(a,g.p[k]);b=Math.max(b,g.p[k])};return (a+b)/2+z}if(n.translation.some(v=>v))return z;const cs=n.children.map(c=>this.zOf(c));return cs.length?cs.reduce((t,v)=>t+v,0)/cs.length:0}
  rot(n,axisAngle){const [x,y,z,a]=axisAngle,s=Math.sin(a/2);this.nodes[n].rotation=[x*s,y*s,z*s,Math.cos(a/2)];return n}
- build(){const bin=[];let off=0;const bv=[],ac=[],ms=[]
+ build(){const idxMap=[];const live=[];this.meshes.forEach((g,i)=>{if(g){idxMap[i]=live.length;live.push(g)}});const bin=[];let off=0;const bv=[],ac=[],ms=[]
   const push=(arr,Type,comp)=>{const buf=Buffer.from(new Type(arr).buffer);const pad=(4-off%4)%4;if(pad){bin.push(Buffer.alloc(pad));off+=pad};bv.push({buffer:0,byteOffset:off,byteLength:buf.length,target:comp});bin.push(buf);off+=buf.length;return bv.length-1}
-  this.meshes.forEach(({g,mat})=>{
+  live.forEach(({g,mat})=>{
    const P=g.p.map(v=>v*this.S);const mn=[1e9,1e9,1e9],mx=[-1e9,-1e9,-1e9];for(let i=0;i<P.length;i+=3)for(let k=0;k<3;k++){mn[k]=Math.min(mn[k],P[i+k]);mx[k]=Math.max(mx[k],P[i+k])}
    const pv=push(P,Float32Array,34962),nv=push(g.n,Float32Array,34962),iv=push(g.i,Uint16Array,34963)
    ac.push({bufferView:pv,componentType:5126,count:g.p.length/3,type:'VEC3',min:mn,max:mx});const pa=ac.length-1
    ac.push({bufferView:nv,componentType:5126,count:g.n.length/3,type:'VEC3'});const na=ac.length-1
    ac.push({bufferView:iv,componentType:5123,count:g.i.length,type:'SCALAR'});const ia=ac.length-1
    ms.push({primitives:[{attributes:{POSITION:pa,NORMAL:na},indices:ia,material:mat}]})})
-  const nodes=this.nodes.map(n=>{const o={name:n.name};if(n.translation.some(v=>v))o.translation=n.translation.map(v=>v*this.S);if(n.rotation)o.rotation=n.rotation;if(n.children.length)o.children=n.children;if(n.mesh!=null)o.mesh=n.mesh;return o})
+  const nodes=this.nodes.map(n=>{const o={name:n.name};if(n.translation.some(v=>v))o.translation=n.translation.map(v=>v*this.S);if(n.rotation)o.rotation=n.rotation;if(n.children.length)o.children=n.children;if(n.mesh!=null&&idxMap[n.mesh]!=null)o.mesh=idxMap[n.mesh];return o})
   const json={asset:{version:'2.0',generator:'pacific-ash basic ship builder'},scene:0,scenes:[{nodes:[0]}],nodes,meshes:ms,materials:this.mats,accessors:ac,bufferViews:bv,buffers:[{byteLength:off}]}
   let js=Buffer.from(JSON.stringify(json));const jp=(4-js.length%4)%4;js=Buffer.concat([js,Buffer.alloc(jp,0x20)])
   const bb=Buffer.concat(bin);const bp=(4-bb.length%4)%4;const bbp=Buffer.concat([bb,Buffer.alloc(bp)])
   const len=12+8+js.length+8+bbp.length;const h=Buffer.alloc(12);h.writeUInt32LE(0x46546C67,0);h.writeUInt32LE(2,4);h.writeUInt32LE(len,8)
   const c1=Buffer.alloc(8);c1.writeUInt32LE(js.length,0);c1.writeUInt32LE(0x4E4F534A,4);const c2=Buffer.alloc(8);c2.writeUInt32LE(bbp.length,0);c2.writeUInt32LE(0x004E4942,4)
-  return {glb:Buffer.concat([h,c1,js,c2,bbp]),tris:this.meshes.reduce((s,m)=>s+m.g.i.length/3,0)}}
+  return {glb:Buffer.concat([h,c1,js,c2,bbp]),tris:this.meshes.reduce((s,m)=>s+(m?m.g.i.length/3:0),0)}}
 }
 export const save=(m,dir)=>{const {glb,tris}=m.build();fs.writeFileSync(`${dir}/${m.name}.glb`,glb);return {name:m.name,bytes:glb.length,tris,nodes:m.nodes.length}}
 
@@ -92,7 +96,7 @@ export const hullLoft=(P)=>{const {zb,zs,W,wr=.9,draft,hsB,hsM,hsS,zmB,zmS,bp=2,
  const fn=(z)=>{let wd=W,dr=draft,hs=hsM;if(z>zmB){const t=Math.min(1,(z-zmB)/(zb-zmB));wd=W*Math.pow(Math.max(0,1-Math.pow(t,bp)),bq);dr=draft*(1-.8*Math.pow(t,2.5));hs=hsM+(hsB-hsM)*t*t}
   else if(z<zmS){const t=Math.min(1,(zmS-z)/(zmS-zs));wd=W*(1-(1-sw)*t*t);dr=draft*(1-.5*Math.pow(t,3));hs=hsM+(hsS-hsM)*t*t}
   return {wd,ww:wd*wr,dr,hs}}
- const zsmp=Array.from({length:zN+1},(_,i)=>zs+(zb-zs)*i/zN)
+ const [r0,r1]=P.range||[zs,zb];const nn=P.range?Math.max(4,Math.round(zN*(r1-r0)/(zb-zs))):zN;const zsmp=Array.from({length:nn+1},(_,i)=>r0+(r1-r0)*i/nn)
  const lower=[],upR=[],upL=[],deck=[]
  for(const z of zsmp){const {wd,ww,dr,hs}=fn(z);const lo=[];for(let k=0;k<=K1;k++){const a=-Math.PI/2+Math.PI*k/K1*1;const aa=Math.abs(a);lo.push([Math.sign(a||1)*ww*Math.sin(aa),-dr*Math.cos(aa),z])}
   // lo: từ trái (a=-90°) qua keel (0) tới phải (+90°)
@@ -105,3 +109,15 @@ export const hullLoft=(P)=>{const {zb,zs,W,wr=.9,draft,hsB,hsM,hsS,zmB,zmS,bp=2,
  const gd=rows(deck,{ref:(p)=>[p[0],p[1]-1,p[2]]})
  smooth(gl,60);smooth(gu,60)
  return {lower:gl,upper:gu,deck:gd,fn}}
+
+// vòng mặt cắt thân tàu tại z: danh sách [x,y], đi từ mép boong trái xuống đáy rồi lên mép boong phải
+export const hullRing=(P,z,K1=8,K2=3)=>{const {zb,zs,W,wr=.9,draft,hsB,hsM,hsS,zmB,zmS,bp=2,bq=.7,sw=.85}=P
+ let wd=W,dr=draft,hs=hsM;if(z>zmB){const t=Math.min(1,(z-zmB)/(zb-zmB));wd=W*Math.pow(Math.max(0,1-Math.pow(t,bp)),bq);dr=draft*(1-.8*Math.pow(t,2.5));hs=hsM+(hsB-hsM)*t*t}else if(z<zmS){const t=Math.min(1,(zmS-z)/(zmS-zs));wd=W*(1-(1-sw)*t*t);dr=draft*(1-.5*Math.pow(t,3));hs=hsM+(hsS-hsM)*t*t}
+ const ww=wd*wr,pts=[];for(let k=K2;k>=0;k--){const u=k/K2;pts.push([-(ww+(wd-ww)*u),hs*Math.pow(u,.85)])}
+ for(let k=1;k<=K1-1;k++){const a=-Math.PI/2+Math.PI*k/K1;pts.push([ww*Math.sin(a),-dr*Math.cos(a)])}
+ for(let k=0;k<=K2;k++){const u=k/K2;pts.push([ww+(wd-ww)*u,hs*Math.pow(u,.85)])}
+ return {pts,wd,ww,dr,hs}}
+// mặt cắt kín: đa giác quạt từ trọng tâm, quay ra hướng dir (+1 hoặc -1 theo z)
+export const capGeom=(P,z,dir)=>{const {pts}=hullRing(P,z);const g=G();let cx=0,cy=0;for(const p of pts){cx+=p[0];cy+=p[1]};cx/=pts.length;cy/=pts.length
+ for(let i=0;i<pts.length;i++){const a=pts[i],b=pts[(i+1)%pts.length];const A=[a[0],a[1],z],B=[b[0],b[1],z],C=[cx,cy,z];const n=cr3(sub3(B,A),sub3(C,A));if(n[2]*dir>=0)addTri(g,A,B,C);else addTri(g,A,C,B)}
+ return g}

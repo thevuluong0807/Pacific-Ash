@@ -5,7 +5,7 @@ const WORLD_SCALE=10   // 1 ô lưới = 10 đơn vị thế giới (model nhân
 const MATS=m=>{m.mat('hull','#C4CDD6',.3,.45);m.mat('under','#2C353D',.2,.7);m.mat('deck','#8A949C',.15,.75);m.mat('decklight','#B4BEC7',.15,.7);m.mat('struct','#B9C4CE',.3,.5);m.mat('dark','#3A444E',.25,.6);m.mat('orange','#E08A2E',0,.6);m.mat('glass','#0C1E2A',.1,.12);m.mat('radome','#E9EEF2',0,.35);m.mat('white','#F4F7FA',0,.8);m.mat('hazard','#E8B02E',0,.6);m.mat('rail','#CBD4DC',.3,.5);m.mat('navred','#FF3030',0,.5,[1,.1,.1]);m.mat('navgreen','#30FF70',0,.5,[.1,1,.3]);m.mat('navwhite','#FFFFFF',0,.5,[1,1,1])}
 const sc=(r,h,s=18,ax='y',r2)=>smooth(cyl(r,h,s,ax,r2),50),ss=(r,a=16,b=10)=>smooth(sphere(r,a,b),50)
 const anch=(m,l)=>{for(const [n,t] of l)m.node(n,t)}
-const stats=[]
+const stats=[];export const builders={};export const MATS_EXPORT=MATS
 // --- chi tiết dùng chung ---
 const hullParts=(m,H,{deckInset=.012,rails=true,railZ0,railZ1,railStep=.05}={})=>{
  m.mesh('hull_under',H.lower,'under');m.mesh('hull',H.upper,'hull');m.mesh('deck',H.deck,'deck')
@@ -34,8 +34,8 @@ const hatches=(m,pts,r=.008)=>{const G=pts.map(([x,y,z])=>tr(cyl(r,.003,10),[x,y
 const vlsGrid=(m,name,x0,x1,z0,z1,y,cols,rowsN)=>{m.mesh(name,boxR(x0,x1,y,y+.006,z0,z1),'dark');const hs=[];for(let i=0;i<cols;i++)for(let j=0;j<rowsN;j++){const zc=z0+(i+.5)*(z1-z0)/cols,xc=x0+(j+.5)*(x1-x0)/rowsN;const hw=(x1-x0)/rowsN/2*.8,hz=(z1-z0)/cols/2*.8;hs.push(boxR(xc-hw,xc+hw,y+.006,y+.0085,zc-hz,zc+hz))};m.mesh(name+'_hatches',merge(hs),'deck');m.mesh(name+'_hz1',boxR(x0,x0+.02,y+.006,y+.009,z0,z0+.04),'hazard');m.mesh(name+'_hz2',boxR(x1-.02,x1,y+.006,y+.009,z1-.04,z1),'hazard')}
 const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,[0,y+.012,z]);m.mesh('anchor_port',boxR(.03,.044,y-.006,y+.01,z+.05,z+.07),'dark');m.mesh('anchor_stbd',boxR(-.044,-.03,y-.006,y+.01,z+.05,z+.07),'dark')}
 // ============ KHU TRỤC HẠM ============
-{const m=new Model('ship_destroyer');m.S=WORLD_SCALE;MATS(m)
- const H=hullLoft({zb:.95,zs:-.95,W:.19,wr:.88,draft:.045,hsB:.075,hsM:.05,hsS:.055,zmB:.3,zmS:-.55,bp:2.1,bq:.7,sw:.84})
+builders.destroyer=(m)=>{MATS(m)
+ const H=hullLoft(m.HP={zb:.95,zs:-.95,W:.19,wr:.88,draft:.045,hsB:.075,hsM:.05,hsS:.055,zmB:.3,zmS:-.55,bp:2.1,bq:.7,sw:.84})
  hullParts(m,H,{railZ0:-.9,railZ1:.82});lights(m,.2,.108,.098,-.93)
  m.mesh('bridge1',bevBox([-.1,.1,.02,.3],[-.088,.088,.035,.285],.05,.1,.009),'struct');m.mesh('bridge2',bevBox([-.085,.085,.1,.26],[-.074,.074,.115,.235],.1,.135,.008),'struct')
  winRow(m,'bridge_win_front1',[-.068,.068],.074,.092,.2915,.0025,8);winRow(m,'bridge_win_front2',[-.058,.058],.115,.129,.2375,.0025,7);winSide(m,'bridge_win_side',.0795,.114,.128,.12,.22,5)
@@ -50,10 +50,10 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  boat(m,'boat_port',.092,-.11,.063);boat(m,'boat_stbd',-.092,-.11,.063);rafts(m,[[.07,.092,-.13],[-.07,.092,-.13],[.07,.092,-.2],[-.07,.092,-.2]])
  helideck(m,-.825);anchorGear(m,.78,.075);hatches(m,[[.06,.0525,.62],[-.06,.0525,.62],[.05,.0525,-.1],[-.05,.0525,-.1],[0,.0525,-.64]])
  anch(m,[['muzzle',[0,.087,.74]],['muzzle_1',[0,.087,.735]],['muzzle_2',[0,.087,-.325]],['launch',[0,.058,.46]],['bow',[0,.06,.95]],['stern',[0,.06,-.95]],['deck',[0,.05,0]],['cell_0',[0,.05,-.5]],['cell_1',[0,.05,.5]],['fire_0',[0,.06,-.5]],['fire_1',[0,.06,.5]]])
- m.node('dmg_cell0');m.node('dmg_cell1');stats.push(save(m,OUT))}
+ m.node('dmg_cell0');m.node('dmg_cell1')}
 // ============ TUẦN DƯƠNG ============
-{const m=new Model('ship_cruiser');m.S=WORLD_SCALE;MATS(m)
- const H=hullLoft({zb:1.45,zs:-1.45,W:.2,wr:.88,draft:.05,hsB:.085,hsM:.055,hsS:.06,zmB:.5,zmS:-1.0,bp:2.2,bq:.7,sw:.85,zN:48})
+builders.cruiser=(m)=>{MATS(m)
+ const H=hullLoft(m.HP={zb:1.45,zs:-1.45,W:.2,wr:.88,draft:.05,hsB:.085,hsM:.055,hsS:.06,zmB:.5,zmS:-1.0,bp:2.2,bq:.7,sw:.85,zN:48})
  hullParts(m,H,{railZ0:-1.38,railZ1:1.3,railStep:.06});lights(m,.3,.12,.108,-1.42)
  m.mesh('bridge1',bevBox([-.11,.11,.12,.4],[-.095,.095,.14,.38],.055,.12,.01),'struct');m.mesh('bridge2',bevBox([-.085,.085,.17,.34],[-.07,.07,.19,.32],.12,.17,.009),'struct')
  winRow(m,'bridge_win_front1',[-.08,.08],.082,.1,.3925,.0025,8);winRow(m,'bridge_win_front2',[-.058,.058],.14,.158,.3225,.0025,7);winSide(m,'bridge_win_side',.0895,.136,.152,.2,.32,5)
@@ -67,9 +67,9 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  boat(m,'boat_port',.1,-.08,.067,.14);boat(m,'boat_stbd',-.1,-.08,.067,.14);rafts(m,[[.08,.098,-.12],[-.08,.098,-.12],[.08,.098,-.16],[-.08,.098,-.16],[.08,.098,.0],[-.08,.098,.0]])
  helideck(m,-1.17,.08,.0575);anchorGear(m,1.22,.08);hatches(m,[[.07,.058,.55],[-.07,.058,.55],[.06,.058,-.1],[-.06,.058,-.1]])
  anch(m,[['muzzle',[.012,.092,1.075]],['muzzle_1',[.012,.092,1.075]],['launch',[0,.06,-1.17]],['bow',[0,.065,1.45]],['stern',[0,.065,-1.45]],['deck',[0,.055,0]],['cell_0',[0,.055,-1]],['cell_1',[0,.055,0]],['cell_2',[0,.055,1]],['fire_0',[0,.065,-1]],['fire_1',[0,.065,0]],['fire_2',[0,.065,1]],['cam_gun',[0,.1,.7]]])
- m.node('dmg_cell0');m.node('dmg_cell1');m.node('dmg_cell2');stats.push(save(m,OUT))}
+ m.node('dmg_cell0');m.node('dmg_cell1');m.node('dmg_cell2')}
 // ============ TÀU NGẦM ============
-{const m=new Model('ship_submarine');m.S=WORLD_SCALE;MATS(m);m.mat('subhull','#4A5866',.25,.5);m.mat('sail','#9AA8B5',.35,.4);m.mat('tile','#3A4652',.2,.6)
+builders.submarine=(m)=>{MATS(m);m.mat('subhull','#4A5866',.25,.5);m.mat('sail','#9AA8B5',.35,.4);m.mat('tile','#3A4652',.2,.6)
  const cy=-.045;const R=.11;const prof=[];for(let i=0;i<=44;i++){const z=-1.5+2.95*i/44;let r=R;if(z>1.0){const t=(z-1.0)/.45;r=R*Math.sqrt(Math.max(0,1-t*t))}else if(z<-.9){const t=(-.9-z)/.6;r=R*(1-.86*Math.pow(t,1.6))};prof.push([z,Math.max(r,.001)])}
  m.mesh('hull_main',smooth(revolve(prof,28),70),'subhull',m.root,[0,cy,0])
  const T=[];for(let z=-.8;z<1.0;z+=.22)T.push(tr(cyl(R+.0012,.006,28,'z'),[0,0,z]));m.mesh('hull_tiles',merge(T),'tile',m.root,[0,cy,0])
@@ -82,10 +82,10 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  ;[[.03,.03],[-.03,.03],[.03,-.03],[-.03,-.03]].forEach(([x,y],i)=>{m.mesh('torpedo_flap_'+i,sc(.021,.005,14,'z'),'dark',m.root,[x,cy+y,1.37]);m.mesh('torpedo_port_'+i,sc(.016,.006,12,'z'),'under',m.root,[x,cy+y,1.365])})
  ;[1.1,.9,-.1,-.45,-.8].forEach((z,i)=>m.mesh('hatch_'+i,sc(.022,.008,14),'struct',m.root,[0,.07,z]))
  anch(m,[['launch',[0,cy,1.4]],['muzzle',[0,cy,1.4]],['bow',[0,0,1.45]],['stern',[0,0,-1.45]],['deck',[0,.065,0]],['cell_0',[0,.065,-1]],['cell_1',[0,.065,0]],['cell_2',[0,.065,1]],['fire_0',[0,.07,-1]],['fire_1',[0,.07,0]],['fire_2',[0,.07,1]],['cam_under',[-.35,-.16,1]]])
- m.node('dmg_cell0');m.node('dmg_cell1');m.node('dmg_cell2');stats.push(save(m,OUT))}
+ m.node('dmg_cell0');m.node('dmg_cell1');m.node('dmg_cell2')}
 // ============ TÀU TÊN LỬA ============
-{const m=new Model('ship_missile');m.S=WORLD_SCALE;MATS(m)
- const H=hullLoft({zb:1.95,zs:-1.95,W:.21,wr:.88,draft:.05,hsB:.08,hsM:.05,hsS:.055,zmB:.6,zmS:-1.4,bp:2.2,bq:.7,sw:.86,zN:56})
+builders.missile=(m)=>{MATS(m)
+ const H=hullLoft(m.HP={zb:1.95,zs:-1.95,W:.21,wr:.88,draft:.05,hsB:.08,hsM:.05,hsS:.055,zmB:.6,zmS:-1.4,bp:2.2,bq:.7,sw:.86,zN:56})
  hullParts(m,H,{railZ0:-1.9,railZ1:1.8,railStep:.07});lights(m,.2,.15,.108,-1.92)
  vlsGrid(m,'vls_fwd_array',-.12,.12,.55,1.25,.05,8,4);vlsGrid(m,'vls_aft_array',-.12,.12,-1.46,-.68,.05,8,4)
  ;[.71,.91,1.11,-1.17,-.97].forEach((z,i)=>{const l=m.node('launcher_'+i,[0,.0585,z]);const pv=m.node('launcher_'+i+'_pitch',[0,0,-.03],l);const C=[];for(const dx of [-.02,.02])for(const dy of [.016,.044])C.push(tr(cyl(.0155,.07,10,'z'),[dx,dy,.03]));m.mesh('launcher_'+i+'_canisters',merge(C),'dark',pv);m.mesh('launcher_'+i+'_frame',bevBox([-.04,.04,-.01,.065],[-.038,.038,-.008,.063],0,.012,.003),'struct',pv);m.node('vls_slot_'+i,[0,.06,z])})
@@ -99,10 +99,10 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  boat(m,'boat_port',.092,-.44,.063);boat(m,'boat_stbd',-.092,-.44,.063);rafts(m,[[.07,.092,-.3],[-.07,.092,-.3],[.07,.092,-.34],[-.07,.092,-.34]])
  helideck(m,-1.76);anchorGear(m,1.78,.075)
  anch(m,[['muzzle',[0,.087,1.595]],['muzzle_1',[0,.087,1.595]],['launch',[0,.06,1.11]],['bow',[0,.06,1.95]],['stern',[0,.06,-1.95]],['deck',[0,.05,0]],['cell_0',[0,.05,-1.5]],['cell_1',[0,.05,-.5]],['cell_2',[0,.05,.5]],['cell_3',[0,.05,1.5]],['fire_0',[0,.06,-1.5]],['fire_1',[0,.06,-.5]],['fire_2',[0,.06,.5]],['fire_3',[0,.06,1.5]]])
- ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i));stats.push(save(m,OUT))}
+ ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i))}
 // ============ TÀU SÂN BAY ============
-{const m=new Model('ship_carrier');m.S=WORLD_SCALE;MATS(m);m.mat('flightdeck','#6F7A84',.15,.85);m.mat('deckedge','#E7C34A',0,.7)
- const H=hullLoft({zb:2.45,zs:-2.45,W:.31,wr:.9,draft:.08,hsB:.13,hsM:.12,hsS:.12,zmB:.8,zmS:-1.8,bp:2.3,bq:.7,sw:.88,zN:60})
+builders.carrier=(m)=>{MATS(m);m.mat('flightdeck','#6F7A84',.15,.85);m.mat('deckedge','#E7C34A',0,.7)
+ const H=hullLoft(m.HP={zb:2.45,zs:-2.45,W:.31,wr:.9,draft:.08,hsB:.13,hsM:.12,hsS:.12,zmB:.8,zmS:-1.8,bp:2.3,bq:.7,sw:.88,zN:60})
  m.mesh('hull_under',H.lower,'under');m.mesh('hull',H.upper,'hull');m.mesh('deck_under',H.deck,'deck')
  const fd=[];const wf=(z)=>z>1.4?.4*Math.sqrt(Math.max(0,1-Math.pow((z-1.4)/1.0,2))):(z<-2.1?.3+.1*Math.sqrt(Math.max(0,1-Math.pow((-2.1-z)/.3,2))):.4)
  const zl=[];for(let z=2.4;z>1.4;z-=.1)zl.push(z);for(let z=1.4;z>=-2.1;z-=.5)zl.push(z);for(let z=-2.1;z>=-2.4;z-=.06)zl.push(z)
@@ -127,10 +127,10 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  m.mesh('tractor',bevBox([.1,.15,-.6,-.5],[.105,.145,-.59,-.51],.137,.152,.004),'orange')
  const cr=[];for(const [x,z] of [[.06,.2],[-.08,-.9],[.1,-.3]])cr.push(tr(box(.03,.02,.04),[x,.147,z]));m.mesh('deck_crates',merge(cr),'dark')
  anch(m,[['muzzle',[.12,.137,1.3]],['launch',[.12,.137,1.3]],['bow',[0,.137,2.45]],['stern',[0,.137,-2.45]],['deck',[0,.137,0]],['cell_0',[0,.137,-2]],['cell_1',[0,.137,-1]],['cell_2',[0,.137,0]],['cell_3',[0,.137,1]],['cell_4',[0,.137,2]],['fire_0',[0,.142,-2]],['fire_1',[0,.142,-1]],['fire_2',[0,.142,0]],['fire_3',[0,.142,1]],['fire_4',[0,.142,2]],['cat_start_0',[.12,.137,1.3]],['cat_start_1',[-.12,.137,1.3]],['cat_end_0',[.12,.137,2.28]],['cat_end_1',[-.12,.137,2.28]],['takeoff_end',[0,.137,2.45]]])
- ;[0,1,2,3,4].forEach(i=>m.node('dmg_cell'+i));stats.push(save(m,OUT))}
+ ;[0,1,2,3,4].forEach(i=>m.node('dmg_cell'+i))}
 // ============ TÀU CẮN LÉN ============
-{const m=new Model('ship_raider');m.S=WORLD_SCALE;MATS(m);m.mat('rhull','#3C4A56',.25,.5)
- const H=hullLoft({zb:.45,zs:-.45,W:.17,wr:.82,draft:.035,hsB:.06,hsM:.05,hsS:.052,zmB:.05,zmS:-.2,bp:1.5,bq:.75,sw:.8,zN:9,K1:4,K2:2})
+builders.raider=(m)=>{MATS(m);m.mat('rhull','#3C4A56',.25,.5)
+ const H=hullLoft(m.HP={zb:.45,zs:-.45,W:.17,wr:.82,draft:.035,hsB:.06,hsM:.05,hsS:.052,zmB:.05,zmS:-.2,bp:1.5,bq:.75,sw:.8,zN:9,K1:4,K2:2})
  m.mesh('hull_under',H.lower,'under');m.mesh('hull',H.upper,'rhull');m.mesh('deck',H.deck,'dark')
  const dr=[];for(let z=.4;z>=-.42;z-=.04){const {wd,hs}=H.fn(z);dr.push([[-(wd-.014),hs+.001,z],[(wd-.014),hs+.001,z]])};m.mesh('deck_plate',rows(dr,{ref:(p)=>[p[0],p[1]-1,p[2]]}),'deck')
  m.mesh('superstructure',bevBox([-.07,.07,-.1,.12],[-.05,.05,-.06,.08],.05,.11,.012),'struct');m.mesh('glass',boxR(-.04,.04,.075,.095,.078,.0835),'glass');winSide(m,'side_win',.0585,.078,.092,-.06,.06,4)
@@ -138,10 +138,10 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  turret(m,'1',[0,.05,.22],false,.026);m.node('cam_close',[.35,.12,.25])
  m.mesh('decoy_port',boxR(.07,.1,.05,.07,-.36,-.3),'orange');m.mesh('decoy_stbd',boxR(-.1,-.07,.05,.07,-.36,-.3),'orange');m.mesh('exhaust_vents',merge([boxR(-.03,-.012,.05,.06,-.28,-.22),boxR(.012,.03,.05,.06,-.28,-.22)]),'dark')
  m.mesh('nav_port',ss(.003,8,6),'navred',m.root,[.1,.075,.08]);m.mesh('nav_stbd',ss(.003,8,6),'navgreen',m.root,[-.1,.075,.08])
- anch(m,[['muzzle',[0,.087,.295]],['launch',[0,.087,.295]],['bow',[0,.05,.45]],['stern',[0,.05,-.45]],['deck',[0,.05,0]],['cell_0',[0,.05,0]],['fire_0',[0,.06,0]]]);m.node('dmg_cell0');stats.push(save(m,OUT))}
+ anch(m,[['muzzle',[0,.087,.295]],['launch',[0,.087,.295]],['bow',[0,.05,.45]],['stern',[0,.05,-.45]],['deck',[0,.05,0]],['cell_0',[0,.05,0]],['fire_0',[0,.06,0]]]);m.node('dmg_cell0')}
 // ============ TÀU HỘ VỆ 2x2 (mũi +X) ============
-{const m=new Model('ship_escort');m.S=WORLD_SCALE;MATS(m)
- const mk=(zc,tag)=>{const H=hullLoft({zb:.95,zs:-.92,W:.25,wr:.86,draft:.05,hsB:.075,hsM:.06,hsS:.06,zmB:.4,zmS:-.7,bp:2,bq:.7,sw:.85,zN:36});const rot=g=>tr(rotY(g,Math.PI/2),[0,0,zc]);m.mesh('hull_under_'+tag,rot(H.lower),'under');m.mesh('hull_'+tag,rot(H.upper),'hull');m.mesh('hull_deck_'+tag,rot(H.deck),'deck');return H}
+builders.escort=(m)=>{MATS(m)
+ const mk=(zc,tag)=>{const H=hullLoft(m.HP={zb:.95,zs:-.92,W:.25,wr:.86,draft:.05,hsB:.075,hsM:.06,hsS:.06,zmB:.4,zmS:-.7,bp:2,bq:.7,sw:.85,zN:36});const rot=g=>tr(rotY(g,Math.PI/2),[0,0,zc]);m.mesh('hull_under_'+tag,rot(H.lower),'under');m.mesh('hull_'+tag,rot(H.upper),'hull');m.mesh('hull_deck_'+tag,rot(H.deck),'deck');return H}
  const Hp=mk(-.6,'port');mk(.6,'stbd')
  // lan can quanh hai thân
  const Rg=[];for(const zc of [-.6,.6])for(const s of [-1,1])for(let x=-.85;x<=.85;x+=.07){const hw=Hp.fn(x).wd;const zz=zc+s*(hw-.007);Rg.push(boxR(x-.0009,x+.0009,.06,.076,zz-.0009,zz+.0009));Rg.push(boxR(x,x+.07,.0755,.0772,zz-.0007,zz+.0007))};m.mesh('rails',merge(Rg),'rail')
@@ -155,5 +155,8 @@ const anchorGear=(m,z,y)=>{m.mesh('windlass',sc(.011,.018,10,'x'),'dark',m.root,
  m.mesh('deck_bar',boxR(-.2,-.03,.0872,.0932,-.02,.02),'orange');hatches(m,[[.05,.0865,.4],[.05,.0865,-.4],[.65,.0865,0]],.012)
  m.mesh('nav_port',ss(.004,8,6),'navred',m.root,[.5,.17,.28]);m.mesh('nav_stbd',ss(.004,8,6),'navgreen',m.root,[.5,.17,-.28]);m.mesh('nav_stern',ss(.004,8,6),'navwhite',m.root,[-.9,.09,0])
  anch(m,[['muzzle',[-.1,.12,-.32]],['launch',[-.55,.11,-.6]],['bow',[.95,.06,0]],['stern',[-.92,.06,0]],['deck',[0,.07,0]],['cell_0',[-.5,.06,-.5]],['cell_1',[.5,.06,-.5]],['cell_2',[-.5,.06,.5]],['cell_3',[.5,.06,.5]],['fire_0',[-.5,.07,-.5]],['fire_1',[.5,.07,-.5]],['fire_2',[-.5,.07,.5]],['fire_3',[.5,.07,.5]],['intercept_cam',[0,.9,-1.4]]])
- ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i));stats.push(save(m,OUT))}
-console.log(stats.map(s=>`${s.name}: ${s.tris} tam giác, ${s.nodes} node, ${(s.bytes/1024).toFixed(1)} KB`).join('\n'))
+ ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i))}
+import {pathToFileURL} from 'url'
+if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
+ for(const [k,b] of Object.entries(builders)){const m=new Model('ship_'+k);m.S=WORLD_SCALE;b(m);stats.push(save(m,OUT))}
+ console.log(stats.map(s=>`${s.name}: ${s.tris} tam giác, ${s.nodes} node, ${(s.bytes/1024).toFixed(1)} KB`).join('\n'))}

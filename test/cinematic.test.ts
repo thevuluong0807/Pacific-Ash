@@ -171,7 +171,7 @@ test('line3: dải đen trượt vào ở đầu, ra ở cuối (host.bars), t�
   assert.ok(off.every((k) => k === 0), 'tắt Khung điện ảnh thì không có dải đen');
 });
 
-test('tàu chìm: ShipSunk (sprite xám + X) ngay sau ô cuối chạm; cảnh chìm chặn 10800 ms sau cảnh trúng, đuôi 6000 ms chạy nền', async () => {
+test('tàu chìm: ShipSunk (sprite xám + X) ngay sau ô cuối chạm; cảnh bắn hạ chặn 10800 ms sau cảnh trúng, đuôi 6000 ms chạy nền', async () => {
   const ev = fireEvents('missile', { kind: 'cross', center: { x: 0, y: 0 } }); // chìm khu trục (0,0),(1,0)
   assert.ok(ev.some((e) => e.type === 'ShipSunk'));
   const r = await run(ev);
@@ -179,7 +179,7 @@ test('tàu chìm: ShipSunk (sprite xám + X) ngay sau ô cuối chạm; cảnh c
   near(at(r.log, 'ShipSunk')[0], lastCell + 10, 80);
   near(at(r.log, 'TurnChanged')[0], 6600 + 10800, 150);
   near(r.total, 6600 + 10800 + 750, 200);
-  assert.ok(r.bgDone, 'đuôi chìm nốt chạy nền xong');
+  assert.ok(r.bgDone, 'đuôi nốt chạy nền xong');
   near(r.end, 6600 + 10800 + 6000, 400);
 });
 
@@ -196,7 +196,7 @@ test('bỏ qua cảnh bắn: nhảy tới đầu cảnh chìm (không bỏ luôn
   const ev = fireEvents('missile', { kind: 'cross', center: { x: 0, y: 0 } });
   const a = await run(ev, {}, 1000);
   assert.equal(a.log.length, ev.length, 'phát đủ event');
-  assert.ok(a.total > 10000, `vẫn còn cảnh chìm: ${a.total}`);
+  assert.ok(a.total > 10000, `vẫn còn cảnh bắn hạ sau khi bỏ qua cảnh bắn: ${a.total}`);
   const b = await run(ev, {}, 6600 + 2000);
   assert.ok(b.total < 6600 + 2000 + 400, `bỏ qua cảnh chìm: ${b.total}`);
   assert.ok(b.bgDone);

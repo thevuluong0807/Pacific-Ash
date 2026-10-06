@@ -65,6 +65,36 @@ export async function loadDebrisModels(src: Record<string, string>): Promise<voi
     } catch (err) { console.error(`Không nạp được mảnh xác ${id}`, err); }
   }));
 }
+const wrecks = new Map<ShipId, THREE.Object3D>();
+
+/** Nạp 7 model xác tàu bị hạ `wreck_<id>.glb` (design/wreckage.md mục 3; đã nhân 10, co về đơn vị ô như model tàu). Lỗi thì tàu bị hạ giữ model nguyên vẹn. */
+export async function loadWreckModels(src: Record<string, string>): Promise<void> {
+  const loader = new GLTFLoader();
+  await Promise.all(ROSTER.map(async (id) => {
+    try {
+      const uri = src[`wreck_${id}`];
+      const b64 = uri.slice(uri.indexOf(',') + 1);
+      const bin = atob(b64), buf = new Uint8Array(bin.length);
+      for (let i = 0; i < bin.length; i++) buf[i] = bin.charCodeAt(i);
+      const gltf = await loader.parseAsync(buf.buffer, '');
+      gltf.scene.traverse((o) => {
+        const m = (o as THREE.Mesh).material as THREE.MeshStandardMaterial | undefined;
+        if (m?.isMeshStandardMaterial && m.emissive.getHex() === 0) { m.emissive.copy(m.color).multiplyScalar(0.3); m.emissiveIntensity = 1; }
+      });
+      shrinkToCells(gltf.scene);
+      wrecks.set(id, gltf.scene);
+    } catch (err) { console.error(`Không nạp được model xác ${id}`, err); }
+  }));
+}
+/** Bản sao model xác, đã xoay mũi về +Z của rig (riêng escort mũi +X như model nguyên vẹn). */
+export function wreckModel(id: ShipId): THREE.Group | null {
+  const src = wrecks.get(id);
+  if (!src) return null;
+  const inner = new THREE.Group();
+  inner.add(src.clone(true));
+  if (id === 'escort') inner.rotation.y = -Math.PI / 2;
+  return inner;
+}
 export const debrisModel = (id: DebrisId) => debris.get(id)?.clone(true);
 
 export const hasModel = (id: ShipId) => cache.has(id);

@@ -153,7 +153,7 @@ Bảng khóa chi tiết (chúi, nghiêng, độ sâu theo mili-giây) và chuy�
 | Khu trục hạm, tuần dương, tàu tên lửa | nghiêng 15° → 30°, mũi hoặc đuôi chìm trước (chọn phía bị trúng) |
 | Tàu ngầm | hạ thẳng cả thân xuống nước, nghiêng tối đa 10°, nhiều bọt khí, ít khói |
 | Tàu sân bay | nghiêng sang một mạn tới 40°, máy bay đậu trượt và cháy, khói đặc hơn, chậm hơn một chút ở giai đoạn cuối (vẫn kết thúc trong 1800 ms) |
-Sau khi chìm: model biến mất ở 1500 ms, để lại `fx_oil`.
+Sau khi chìm: tàu không biến mất mà chuyển thành **xác nổi chìm một nửa** (`wreck_<id>`, `sinking.md` mục 2.8), để lại `fx_oil`.
 
 ## 9. Bảng rung camera
 | Sự kiện | Biên độ | Thời lượng | Ghi chú |

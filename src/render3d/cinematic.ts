@@ -8,7 +8,7 @@ import { type CamPose, Frame, V, deg, key, lerp, lerpV, prog, smooth, wp } from 
 import { buildRapid, buildPrecision, buildCross, buildTorpedo } from './cineStrikes';
 import { buildLine3 } from './cineCarrier';
 import { buildSneak, buildGuard } from './cinePassive';
-import { planSink, restKey, SINK_BLOCK_MS, SINK_BLOCK_BG_MS, SINK_TOTAL_MS } from './cineSink';
+import { planSink, SINK_BLOCK_MS, SINK_BLOCK_BG_MS, SINK_TOTAL_MS } from './cineSink';
 
 export type { CamPose } from './cineUtil';
 export type ZoneOwner = 'own' | 'enemy';
@@ -200,14 +200,13 @@ export class Cinematic {
     this.phase = 'skip'; this.skipT = 0;
     for (const r of this.ranges) r.ended = true;
     for (const c of this.calls) c.done = true;
-    this.sunkStart = [...this.touched].map((r) => r.userData.yOffset);
-    this.sunkPitch = [...this.touched].map((r) => [r.userData.kick.pitch, r.userData.kick.roll]);
   }
-  private sunkStart: number[] = [];
-  private sunkPitch: number[][] = [];
-  private wrecks: { rig: ShipRig; id: ShipId; owner: ZoneOwner; side: number }[] = [];
-  /** Đăng ký tàu sẽ để lại xác khi cảnh chìm kết thúc (cảnh chìm con gọi lúc dựng). */
-  registerWreck(rig: ShipRig, id: ShipId, owner: ZoneOwner, side: number) { this.wrecks.push({ rig, id, owner, side }); }
+  private wrecks: { rig: ShipRig; id: ShipId; owner: ZoneOwner; side: number; show: (u: number) => void; k?: number; k0?: number }[] = [];
+  /** Đăng ký tàu ở lại làm xác khi cảnh bắn hạ kết thúc; `show(u)` hoán đổi sang model xác và dịch các mảnh từ pose 0 (u = 0) tới pose cuối (u = 1). */
+  registerWreck(rig: ShipRig, id: ShipId, owner: ZoneOwner, side: number, show: (u: number) => void) {
+    const w = { rig, id, owner, side, show: (u: number) => { w.k = u; show(u); } } as (typeof this.wrecks)[number];
+    this.wrecks.push(w);
+  }
 
   private reset() {
     this.clock = 0; this.endU = 0; this.phase = 'run'; this.exitT = 0; this.skipT = 0; this.lastPose = null; this.enterFrom = null;
@@ -239,7 +238,7 @@ export class Cinematic {
 
   private cleanup() {
     if (this.child) for (const w of this.wrecks) { // để lại xác: không restore/gỡ rig này
-      this.touched.delete(w.rig); this.ownTemps = this.ownTemps.filter((r) => r !== w.rig);
+      w.show(1); this.touched.delete(w.rig); this.ownTemps = this.ownTemps.filter((r) => r !== w.rig);
       this.h.leaveWreck(w.rig, w.owner);
     }
     if (!this.child) this.h.fx.clearTransient();
@@ -304,7 +303,7 @@ export class Cinematic {
           }
           sinkPose = this.sink.update(dt);
         }
-        endR = s0 + (this.o.sinkBg ? SINK_BLOCK_BG_MS : SINK_BLOCK_MS);
+        endR = s0 + Math.min(this.o.sinkBg ? SINK_BLOCK_BG_MS : SINK_BLOCK_MS, this.sink?.endU ?? SINK_BLOCK_MS);
       }
       if (this.clock >= endR) {
         for (const e of this.emits) if (!e.done) { e.done = true; this.o.onEvent(e.ev); }
@@ -313,14 +312,10 @@ export class Cinematic {
       }
     } else if (this.phase === 'exit') this.exitT += dt * 1000 * speed;
     else if (this.phase === 'skip') {
-      if (this.child) { // cảnh chìm bị bỏ qua: tàu lún nhanh trong 450 ms
+      if (this.child) { // cảnh chìm bị bỏ qua: tàu về xác trong 450 ms
         this.skipT += dt * 1000;
         const k = smooth(this.skipT / 450);
-        [...this.touched].forEach((r, i) => { // bỏ qua: tàu về ngay tư thế xác nửa chìm (tàu ngầm: lún hẳn)
-          const w = this.wrecks.find((x) => x.rig === r);
-          if (w) { const rk = restKey(w.id), p0 = this.sunkPitch[i] ?? [0, 0]; r.userData.kick.pitch = lerp(p0[0], (rk[0] * Math.PI) / 180, k); r.userData.kick.roll = lerp(p0[1], (rk[1] * Math.PI) / 180 * w.side, k); r.userData.yOffset = lerp(this.sunkStart[i] ?? 0, rk[2] * K, k); }
-          else r.userData.yOffset = lerp(this.sunkStart[i] ?? 0, -3 * K, k);
-        });
+        for (const w of this.wrecks) { w.k0 ??= w.k ?? 0; w.show(lerp(w.k0, 1, k)); } // bỏ qua: các mảnh xác về pose cuối
         if (this.skipT >= 450) { this.finish(); return null; }
         return null;
       }
