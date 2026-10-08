@@ -112,6 +112,7 @@ Mọi vật bay phải xoay đầu theo vận tốc (không trượt ngang). M�
 | Mã | Khi nào | Thành phần | Thời lượng | Hạt (cao) | Đèn | Rung camera |
 |---|---|---|---|---|---|---|
 | `fx_muzzle_s` | khu trục hạm bắn | lửa mõm ngắn + khói mõm nhỏ | 180 ms | 40 | cam, 180 ms | 0.02 / 225 ms |
+| `fx_muzzle_xl` | siêu chiến hạm bắn (ba nòng một tháp, 40 ms lệch) | lửa mõm lớn ×3 nòng + sóng giật rộng trên mặt nước + khói dày | 330 ms | 100 | cam, 330 ms (≤ 80 ms chớp, theo quy tắc giảm chói) | 0.08 / 500 ms |
 | `fx_muzzle_l` | tuần dương bắn | lửa mõm lớn + sóng giật trên mặt nước | 300 ms | 90 | cam, 300 ms | 0.05 / 375 ms |
 | `fx_launch` | tên lửa phóng | cột khói trắng + lửa đáy + vệt cháy boong | 1050 ms | 240 | cam, 900 ms | 0.07 / 900 ms (ù dài) |
 | `fx_torpedo_launch` | tàu ngầm bắn | bọt khí + sủi dưới nước | 600 ms | 80 | không | 0.02 / 300 ms |

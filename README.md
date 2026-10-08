@@ -39,8 +39,9 @@ Mở `http://localhost:8787`. Cổng đổi bằng biến môi trường `PORT`.
 1. Chọn **Chơi**, rồi chọn chế độ:
    - **PvE vs AI**: đấu với máy, ba mức dễ / vừa / khó.
    - **Hot-seat**: hai người chung một máy, chuyền tay nhau (có màn che để không lộ lưới).
+   - **Hải chiến**: lái một chiến hạm (góc nhìn thứ ba, cầm khí tài thì chuyển sang góc nhìn thứ nhất), tối đa 6 tàu, đánh đơn hoặc chia đội; hiện chơi với máy. Phím: `W/S` ga, `A/D` bánh lái, `1`–`7` hoặc `Q/E` cầm khí tài (lúc đó **di chuột** để xoay/ngẩng nòng, `W/A/S/D` tinh chỉnh), `Space`/chuột trái bắn, `X`/`Esc` thoát khí tài, `T` đường đạn, `Tab` bảng điểm. Thiết kế tàu ở **Khí tài → Chế tạo tàu**.
    - **Online**: xem bên dưới.
-2. **Xếp tàu**: chọn tối đa 5 tàu trong 7 loại, kéo tàu vào lưới (hoặc chạm tàu rồi chạm ô). Nút **Xoay** hoặc phím `R` đổi hướng. **Ngẫu nhiên** xếp giúp bạn.
+2. **Xếp tàu**: chọn tối đa 5 tàu trong 8 loại, kéo tàu vào lưới (hoặc chạm tàu rồi chạm ô). Nút **Xoay** hoặc phím `R` đổi hướng. **Ngẫu nhiên** xếp giúp bạn.
 3. **Trận đấu**: tới lượt, chọn một tàu sẵn sàng ở cột trái, nhắm vào lưới địch rồi bấm **Bắn**. Đánh chìm hết tàu địch trước là thắng.
 
 Mục **Khí tài** cho tạo profile (bộ tàu mang vào trận) và đánh dấu yêu thích để chọn nhanh khi xếp tàu.

@@ -23,7 +23,7 @@ export const CALM_ZONE = { hx: 62, hz: 135, min: 1, ramp: 80 }; // min 1 = tắt
  */
 export const FREEBOARD_RATIO = 0.06;
 const HULL: Record<string, [length: number, freeboard: number]> = {
-  destroyer: [19, 0.75], cruiser: [29, 0.85], missile: [39, 0.8], carrier: [49, 1.3], raider: [9, 0.6], escort: [19, 0.75],
+  destroyer: [19, 0.75], cruiser: [29, 0.85], missile: [39, 0.8], carrier: [49, 1.3], raider: [9, 0.6], escort: [19, 0.75], dreadnought: [39, 0.7],
 };
 /** Phần nâng thân tàu (đơn vị thế giới). */
 export const shipLift = (id: string) => { const h = HULL[id]; return h ? Math.max(0, FREEBOARD_RATIO * h[0] - h[1]) * (CELL / 10) : 0; };

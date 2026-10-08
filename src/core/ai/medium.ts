@@ -3,7 +3,7 @@ import { readyShips, viewOfEnemy } from '../match';
 import { mulberry32, pick } from '../rng';
 import { attackOf, cellsWhere, neighbors, sameCell } from './common';
 
-const AREA_ORDER = ['cross', 'line3', 'rapid', 'torpedo', 'precision'];
+const AREA_ORDER = ['barrage', 'cross', 'line3', 'rapid', 'torpedo', 'precision'];
 
 const isHit = (view: CellView[][], c: Cell) => view[c.y]?.[c.x] === 'hit';
 
@@ -27,6 +27,8 @@ function actionAt(kind: AttackKind, shipId: ShipId, anchor: Cell, pool: Cell[], 
       const orientation: Orientation = isHit(view, left) || isHit(view, right) ? 'h' : isHit(view, up) || isHit(view, down) ? 'v' : pick(rng, ['h', 'v'] as const);
       return { shipId, target: { kind, center: anchor, orientation } };
     }
+    case 'barrage':
+      return { shipId, target: { kind } };
   }
 }
 

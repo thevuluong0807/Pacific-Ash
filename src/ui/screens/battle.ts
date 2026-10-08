@@ -144,6 +144,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
       case 'torpedo': return aim.torpedo ? { shipId: selected, target: { kind: 'torpedo', ...aim.torpedo } } : null;
       case 'cross': return aim.center ? { shipId: selected, target: { kind: 'cross', center: aim.center } } : null;
       case 'line3': return aim.center ? { shipId: selected, target: { kind: 'line3', center: aim.center, orientation: aim.orientation } } : null;
+      case 'barrage': return { shipId: selected, target: { kind: 'barrage' } };
     }
   };
   /** Đòn thực tế của tàu mình (tàu hỏng khí tài chỉ bắn 1 ô). */
@@ -157,7 +158,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     if (!myTurn() || !selected) return;
     const kind = effKind(selected);
     if ((kind === 'rapid' || kind === 'precision') && !fresh(c)) return;
-    if (kind === 'torpedo') return;
+    if (kind === 'torpedo' || kind === 'barrage') return;
     if (kind === 'rapid') {
       const i = aim.rapid.findIndex((k) => k.x === c.x && k.y === c.y);
       if (i >= 0) aim.rapid.splice(i, 1);
@@ -203,6 +204,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
       ? (cells.length > 1 && cells[0].y === cells[1].y ? S.battle.log.row(cells[0].y + 1) : S.battle.log.col(COLS[cells[0].x]))
       : shot.attack === 'rapid' ? cells.map(cellName).join(', ')
       : shot.attack === 'line3' ? `${cellName(cells[0])}–${cellName(cells[cells.length - 1])}`
+      : shot.attack === 'barrage' ? cells.map(cellName).join(', ')
       : cellName(cells[0]);
     const hits = events.filter((e) => e.type === 'CellResolved' && e.result === 'hit').length;
     const nul = events.find((e): e is Extract<GameEvent, { type: 'ShotNullified' }> => e.type === 'ShotNullified');
@@ -274,6 +276,7 @@ export const battleScreen: ScreenFactory<'battle'> = (app, root) => {
     );
     const kind = selected ? effKind(selected) : null;
     const active = myTurn() && !!selected;
+    eGrid.el.classList.toggle('grid--barrage', active && kind === 'barrage'); // dội pháo: cả lưới địch nháy mờ + chữ "5 Ô NGẪU NHIÊN"
     eGrid.setHandles(active && kind === 'torpedo', aim.torpedo ?? undefined);
     eGrid.setDisabled(active && (kind === 'rapid' || kind === 'precision') ? (c) => !fresh(c) : null);
     const action = active ? buildAction() : null;

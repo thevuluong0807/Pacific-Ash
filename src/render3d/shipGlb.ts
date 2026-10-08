@@ -127,9 +127,9 @@ export function modelRig(id: ShipId): ShipRig | null {
     const pitch = new THREE.Group();
     yaw.add(pitch);
     for (const b of [...yaw.children]) if (/^barrel_/.test(b.name) && !/mesh/.test(b.name)) pitch.add(b);
-    let muzzle: THREE.Object3D | undefined;
-    pitch.traverse((o) => { if (!muzzle && /^muzzle_/.test(o.name) && !/brake/.test(o.name)) muzzle = o; });
-    parts.turrets.push({ yaw, pitch, recoil: pitch, muzzle: muzzle ?? pitch } satisfies Turret);
+    const muzzles: THREE.Object3D[] = [];
+    pitch.traverse((o) => { if (/^muzzle_/.test(o.name) && !/brake/.test(o.name)) muzzles.push(o); });
+    parts.turrets.push({ yaw, pitch, recoil: pitch, muzzle: muzzles[0] ?? pitch, muzzles: muzzles.length > 1 ? muzzles : undefined } satisfies Turret);
   }
   if (id === 'escort') { // CIWS: quay được, dùng cho cảnh hộ tống
     for (const c of named(/^ciws_\d$/)) parts.turrets.push({ yaw: c, pitch: new THREE.Object3D(), recoil: new THREE.Object3D(), muzzle: c });
@@ -142,7 +142,7 @@ export function modelRig(id: ShipId): ShipRig | null {
     parts.launchers.push({ base, pitch, muzzle: anchor(`vls_slot_${n}`) ?? base });
   }
   parts.flaps = named(/^torpedo_flap_\d$/);
-  parts.planes = named(/^plane_\d$/).slice(0, 3); // cinematic dùng tối đa 3 máy bay; chiếc thứ 4 đậu yên
+  parts.planes = named(/^plane_\d$/).slice(0, 4); // rải thảm 4 ô: bốn máy bay
   parts.catStart = named(/^cat_start_\d$/);
   parts.catEnd = named(/^cat_end_\d$/);
 

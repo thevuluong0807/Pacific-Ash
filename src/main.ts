@@ -16,6 +16,8 @@ import { strings } from './ui/strings';
 import type { ScreenId } from './ui/app';
 import type { RenderScene } from './render3d/renderScene';
 import { BattleScene } from './render3d/battleScene';
+import { ArenaScene } from './render3d/arenaScene';
+import { loadArenaModels } from './render3d/arenaGlb';
 import { loadDebrisModels, loadShipModels, loadWreckModels } from './render3d/shipGlb';
 import { resumeStore } from './net/client';
 import { BlankScene } from './render3d/blankScene';
@@ -28,6 +30,8 @@ import { placementScreen } from './ui/screens/placement';
 import { passDeviceScreen } from './ui/screens/passDevice';
 import { battleScreen } from './ui/screens/battle';
 import { resultScreen } from './ui/screens/result';
+import { arenaLobbyScreen } from './ui/screens/arenaLobby';
+import { arenaScreen } from './ui/screens/arena';
 
 applyTokens();
 // Favicon: emblem khiên thép (logo.md mục 5)
@@ -40,6 +44,7 @@ const engine = use3d ? new Engine(document.getElementById('app')!) : null;
 const menuScenes = { hai_phong: new MenuScene('hai_phong'), truong_sa: new MenuScene('truong_sa') };
 const battleScene = new BattleScene();
 const blankScene = new BlankScene();
+const arenaScene = new ArenaScene();
 
 const app = new App(document.getElementById('ui')!);
 app.register('menu', menuScreen);
@@ -50,8 +55,11 @@ app.register('placement', placementScreen);
 app.register('passDevice', passDeviceScreen);
 app.register('battle', battleScreen);
 app.register('result', resultScreen);
+app.register('arenaLobby', arenaLobbyScreen);
+app.register('arena', arenaScreen);
 if (engine) {
   app.battleScene = battleScene;
+  app.arenaScene = arenaScene;
   const apply = () => { setGlare(GLARE[app.settings.glare]); engine.setQuality(tokens.quality[app.settings.quality]); };
   let screen: ScreenId = 'menu';
   let shown: RenderScene | null = null;
@@ -70,7 +78,7 @@ if (engine) {
     fade.style.opacity = '1';
     setTimeout(() => { swap(); fade.style.opacity = '0'; }, 300);
   };
-  const waiting = (id: ScreenId) => id === 'menu' || id === 'modeSelect' || id === 'online';
+  const waiting = (id: ScreenId) => id === 'menu' || id === 'modeSelect' || id === 'online' || id === 'arenaLobby';
   const gameplay = (id: ScreenId) => id === 'placement' || id === 'battle' || id === 'result';
   const menuFor = () => menuScenes[app.settings.map];
   // Đổi map giữa lúc chơi: nếu đang phát cinematic thì chờ xong; mờ chuyển 600 ms; trạng thái trận giữ nguyên (maps.md mục 1).
@@ -95,7 +103,8 @@ if (engine) {
     screen = id;
     if (gameplay(id) && shown !== battleScene) battleScene.setMap(app.settings.map); // vào gameplay từ màn khác: nạp đúng map ngay
     switch (id) {
-      case 'menu': case 'modeSelect': case 'online': show(menuFor()); break;
+      case 'menu': case 'modeSelect': case 'online': case 'arenaLobby': show(menuFor()); break;
+      case 'arena': show(arenaScene); break;
       case 'hangar': case 'passDevice': show(blankScene); break; // Hangar: phòng xưởng tối trung tính, không đổi theo map
       case 'placement': show(battleScene, () => battleScene.setMode('placement')); battleScene.setMode('placement'); break;
       case 'battle': show(battleScene, () => battleScene.setMode('battle')); battleScene.setMode('battle'); break;
@@ -104,12 +113,13 @@ if (engine) {
   };
   engine.start();
   // Model glb nạp nền; xong thì thay hộp placeholder trong cảnh trận (đặt tàu / trận đấu).
-  void loadShipModels({ destroyer: manifest.ship_destroyer, cruiser: manifest.ship_cruiser, submarine: manifest.ship_submarine, missile: manifest.ship_missile, carrier: manifest.ship_carrier, raider: manifest.ship_raider, escort: manifest.ship_escort })
+  void loadShipModels({ destroyer: manifest.ship_destroyer, cruiser: manifest.ship_cruiser, submarine: manifest.ship_submarine, missile: manifest.ship_missile, carrier: manifest.ship_carrier, raider: manifest.ship_raider, escort: manifest.ship_escort, dreadnought: manifest.ship_dreadnought })
     .then(() => battleScene.reloadShips());
   void loadDebrisModels(manifest as unknown as Record<string, string>);
   void loadWreckModels(manifest as unknown as Record<string, string>);
+  void loadArenaModels(manifest as unknown as Record<string, string>).then(() => arenaScene.reloadShips());
 }
-if (new URLSearchParams(location.search).has('debug')) (window as unknown as { __pa: unknown }).__pa = { app, battleScene }; // móc kiểm thử hình ảnh
+if (new URLSearchParams(location.search).has('debug')) (window as unknown as { __pa: unknown }).__pa = { app, battleScene, arenaScene }; // móc kiểm thử hình ảnh
 // Link mời: ?room=MÃ (và tùy chọn ?server=ws://...) mở thẳng sảnh online và tự vào phòng.
 const qs = new URLSearchParams(location.search);
 if (qs.get('server')) app.updateSettings({ onlineServer: qs.get('server')! });

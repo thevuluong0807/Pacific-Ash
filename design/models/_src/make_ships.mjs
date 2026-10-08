@@ -156,6 +156,51 @@ builders.escort=(m)=>{MATS(m)
  m.mesh('nav_port',ss(.004,8,6),'navred',m.root,[.5,.17,.28]);m.mesh('nav_stbd',ss(.004,8,6),'navgreen',m.root,[.5,.17,-.28]);m.mesh('nav_stern',ss(.004,8,6),'navwhite',m.root,[-.9,.09,0])
  anch(m,[['muzzle',[-.1,.12,-.32]],['launch',[-.55,.11,-.6]],['bow',[.95,.06,0]],['stern',[-.92,.06,0]],['deck',[0,.07,0]],['cell_0',[-.5,.06,-.5]],['cell_1',[.5,.06,-.5]],['cell_2',[-.5,.06,.5]],['cell_3',[.5,.06,.5]],['fire_0',[-.5,.07,-.5]],['fire_1',[.5,.07,-.5]],['fire_2',[-.5,.07,.5]],['fire_3',[.5,.07,.5]],['intercept_cam',[0,.9,-1.4]]])
  ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i))}
+// ============ SIÊU CHIẾN HẠM (1×4, 5 tháp pháo ba nòng, tháp chỉ huy chùa nhiều tầng, hai ống khói) ============
+const turret3=(m,name,pos,rad=.066,barbette=0)=>{const base=[pos[0],pos[1],pos[2]];if(barbette>0)m.mesh('barbette_'+name,bevBox([-rad*1.15,rad*1.15,pos[2]-rad*1.15,pos[2]+rad*1.15],[-rad*1.05,rad*1.05,pos[2]-rad*1.05,pos[2]+rad*1.05],pos[1]-barbette,pos[1],.006),'dark')
+ const t=m.node('turret_'+name,pos);m.mesh('turret_base_'+name,sc(rad,.026,24),'dark',t,[0,.013,0]);m.mesh('turret_ring_'+name,sc(rad*1.08,.005,24),'struct',t,[0,.003,0])
+ m.mesh('turret_shield_'+name,bevBox([-rad*.95,rad*.95,-rad*1.05,rad*.85],[-rad*.66,rad*.66,-rad*.6,rad*.7],.0,.04,.008),'struct',t,[0,.026,0])
+ m.mesh('turret_roof_'+name,boxR(-rad*.5,rad*.5,.0,.003,-rad*.2,rad*.35),'dark',t,[0,.066,0])
+ for(const [dx,sf] of [[-.027,'L'],[0,'C'],[.027,'R']]){const b=m.node('barrel_'+name+sf,[dx,.048,rad*.75],t);m.mesh('barrel_mesh_'+name+sf,sc(.0052,.15,12,'z'),'dark',b,[0,0,.075]);m.mesh('muzzle_brake_'+name+sf,sc(.0074,.014,12,'z'),'dark',b,[0,0,.14]);m.node('muzzle_'+name+sf,[0,0,.152],b)}
+ return t}
+builders.dreadnought=(m)=>{MATS(m)
+ const H=hullLoft(m.HP={zb:1.97,zs:-1.97,W:.27,wr:.88,draft:.062,hsB:.1,hsM:.07,hsS:.075,zmB:.6,zmS:-1.1,bp:2.2,bq:.7,sw:.86,zN:56})
+ hullParts(m,H,{railZ0:-1.9,railZ1:1.85,railStep:.06});lights(m,.2,.16,.15,-1.95)
+ // dải giáp thân (vạch tối dọc mạn) cho cảm giác nặng
+ const bz=[];for(let z=1.7;z>=-1.7;z-=.05){const {wd,hs}=H.fn(z);bz.push([[-(wd+.0015),hs*.15,z],[-(wd+.0015),hs*.7,z]])}
+ m.mesh('armor_belt_stbd',rows(bz),'dark');const bz2=bz.map(r=>r.map(p=>[-p[0],p[1],p[2]]).reverse());m.mesh('armor_belt_port',rows(bz2),'dark')
+ // pháo chính: 3 tháp mũi (1 và 3 thấp, 2 cao), 2 tháp lái (4 cao, 5 thấp)
+ turret3(m,'1',[0,.1,1.58]);turret3(m,'2',[0,.145,1.2],.066,.045);turret3(m,'3',[0,.08,.84])
+ turret3(m,'4',[0,.135,-1.05],.066,.05);turret3(m,'5',[0,.075,-1.5])
+ // tháp chỉ huy nhiều tầng (chùa): thượng tầng trước, cầu, tầng nhìn, cột
+ m.mesh('tower_base',bevBox([-.15,.15,.0,.52],[-.13,.13,.02,.5],.07,.15,.01),'struct')
+ m.mesh('tower_t1',bevBox([-.115,.115,.1,.42],[-.1,.1,.12,.4],.15,.21,.008),'struct')
+ m.mesh('tower_t2',bevBox([-.095,.095,.14,.38],[-.08,.08,.16,.36],.21,.265,.008),'struct')
+ m.mesh('tower_bridge',bevBox([-.13,.13,.2,.34],[-.115,.115,.215,.325],.265,.3,.008),'struct')
+ m.mesh('tower_t3',bevBox([-.065,.065,.2,.32],[-.055,.055,.215,.305],.3,.345,.006),'struct')
+ m.mesh('tower_top',bevBox([-.075,.075,.2,.31],[-.065,.065,.21,.3],.345,.37,.006),'dark')
+ winRow(m,'tower_win_front1',[-.1,.1],.172,.19,.5025,.0025,9);winRow(m,'tower_win_front2',[-.08,.08],.225,.24,.4125,.0025,8);winRow(m,'tower_win_bridge',[-.11,.11],.275,.292,.3315,.0025,10);winRow(m,'tower_win_top',[-.05,.05],.315,.33,.3175,.0025,6)
+ winSide(m,'tower_win_side',.1175,.275,.292,.22,.32,6)
+ const rp=[];for(const s of [-1,1])rp.push(boxR(s>0?.122:-.126,s>0?.126:-.122,.22,.255,.38,.44),boxR(s>0?.122:-.126,s>0?.126:-.122,.22,.255,.2,.26));m.mesh('radar_panels',merge(rp),'dark')
+ m.mesh('mast',sc(.0075,.22,10),'dark',m.root,[0,.48,.26]);m.mesh('mast_base',sc(.014,.012,12),'dark',m.root,[0,.372,.26])
+ const A=[];for(let i=0;i<4;i++){const yy=.41+i*.05;A.push(boxR(-.04+i*.007,.04-i*.007,yy,yy+.003,.2585,.2615))};m.mesh('mast_cross',merge(A),'dark')
+ const rr=m.node('radar_rotor',[0,.592,.26]);m.mesh('radar_pedestal',sc(.01,.014,10),'dark',rr);m.mesh('radar_plate',bevBox([-.04,.04,-.008,.008],[-.038,.038,-.006,.006],0,.016,.004),'dark',rr,[0,.014,0]);m.mesh('radar_dome',ss(.006,8,6),'radome',m.root,[0,.63,.26])
+ m.mesh('fire_dir',sc(.012,.03,10),'dark',m.root,[0,.385,.12]);m.mesh('fire_dir_dome',ss(.014,10,8),'radome',m.root,[0,.4,.12])
+ // hai ống khói lớn
+ funnel(m,'funnel_1',[-.07,.07,-.32,-.1],[-.058,.058,-.3,-.12],.1,.22);funnel(m,'funnel_2',[-.065,.065,-.62,-.4],[-.055,.055,-.6,-.42],.1,.2)
+ m.mesh('funnel_band_1',boxR(-.06,.06,.17,.18,-.305,-.115),'orange');m.mesh('funnel_band_2',boxR(-.056,.056,.155,.165,-.605,-.415),'orange')
+ // nhà boong sau: hầm trục thang máy và cần cẩu
+ m.mesh('aft_house',bevBox([-.1,.1,-.9,-.66],[-.09,.09,-.88,-.68],.07,.11,.008),'struct');winSide(m,'aft_house_win',.0925,.08,.09,-.87,-.7,5)
+ m.mesh('crane_post',sc(.006,.12,8),'dark',m.root,[.09,.13,-.78]);m.mesh('crane_boom',boxR(.088,.092,.2,.204,-.98,-.78),'dark')
+ // pháo phụ nòng đôi hai bên (8 bệ), CIWS (4), xuồng, bè
+ const sec=[[.19,.32],[-.19,.32],[.19,-.02],[-.19,-.02],[.17,-.8],[-.17,-.8],[.15,1.0],[-.15,1.0]]
+ sec.forEach(([x,z],i)=>{const n=m.node('turret_s'+(i+1),[x,.076,z]);m.mesh('sec_base_'+(i+1),sc(.018,.016,12),'dark',n,[0,.008,0]);m.mesh('sec_shield_'+(i+1),bevBox([-.017,.017,-.018,.016],[-.012,.012,-.012,.012],0,.02,.004),'struct',n,[0,.016,0]);for(const dx of [-.006,.006])m.mesh('sec_barrel_'+(i+1)+(dx<0?'L':'R'),sc(.0016,.04,6,'z'),'dark',n,[dx,.028,.03])})
+ ;[[.12,.58],[-.12,.58],[.1,-.46],[-.1,-.46]].forEach(([x,z],i)=>ciws6(m,'ciws_'+(i+1),[x,.15,z]))
+ boat(m,'boat_port',.17,-.34,.08,.14);boat(m,'boat_stbd',-.17,-.34,.08,.14);rafts(m,[[.14,.11,.2],[-.14,.11,.2],[.14,.11,-.65],[-.14,.11,-.65],[.15,.11,-.12],[-.15,.11,-.12]])
+ anchorGear(m,1.8,.1);hatches(m,[[.08,.07,1.4],[-.08,.07,1.4],[.08,.07,-.2],[-.08,.07,-.2],[0,.07,-1.28]])
+ m.mesh('helipad',sc(.07,.003,26),'deck',m.root,[0,.0705,-1.78]);m.mesh('helipad_ring',sc(.058,.0035,26),'white',m.root,[0,.0707,-1.78])
+ anch(m,[['muzzle',[0,.19,1.74]],['launch',[0,.19,1.74]],['bow',[0,.07,1.97]],['stern',[0,.07,-1.97]],['deck',[0,.07,0]],['cell_0',[0,.07,-1.5]],['cell_1',[0,.07,-.5]],['cell_2',[0,.07,.5]],['cell_3',[0,.07,1.5]],['fire_0',[0,.08,-1.5]],['fire_1',[0,.08,-.5]],['fire_2',[0,.08,.5]],['fire_3',[0,.08,1.5]],['cam_gun',[0,.26,1.2]]])
+ ;[0,1,2,3].forEach(i=>m.node('dmg_cell'+i))}
 import {pathToFileURL} from 'url'
 if(process.argv[1]&&import.meta.url===pathToFileURL(process.argv[1]).href){
  for(const [k,b] of Object.entries(builders)){const m=new Model('ship_'+k);m.S=WORLD_SCALE;b(m);stats.push(save(m,OUT))}

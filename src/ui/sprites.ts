@@ -23,6 +23,10 @@ export function installSprites() {
   sprite.appendChild(defs);
   for (const n of Array.from(parse(icons).querySelectorAll('symbol'))) defs.appendChild(document.importNode(n, true));
 
+  // Siêu chiến hạm: icons.svg của thiết kế chưa có `ship-dreadnought` và `atk-barrage`, vẽ tạm cùng kiểu nét (viền, 64×32 và lưới 50×50).
+  const extra = parse(`<svg xmlns="${NS}"><symbol id="ship-dreadnought" viewBox="0 0 64 32" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="miter" stroke-linecap="square"><path d="M2 16 L8 10 H56 L62 16 L56 22 H8 Z"/><circle cx="12" cy="16" r="2.6"/><circle cx="18" cy="16" r="2.6"/><circle cx="43" cy="16" r="2.6"/><circle cx="49" cy="16" r="2.6"/><circle cx="55" cy="16" r="2.6"/><rect x="31" y="12" width="7" height="8"/><rect x="22" y="13" width="3.4" height="6"/><rect x="26.4" y="13" width="3.4" height="6"/></symbol><symbol id="atk-barrage" viewBox="0 0 50 50"><g fill="none" stroke="currentColor" stroke-opacity=".35"><path d="M0 10H50M0 20H50M0 30H50M0 40H50M10 0V50M20 0V50M30 0V50M40 0V50"/></g><rect x="10" y="10" width="10" height="10" fill="currentColor"/><rect x="30" y="0" width="10" height="10" fill="currentColor"/><rect x="40" y="20" width="10" height="10" fill="currentColor"/><rect x="20" y="30" width="10" height="10" fill="currentColor"/><rect x="0" y="30" width="10" height="10" fill="currentColor"/></symbol></svg>`);
+  for (const n of Array.from(extra.querySelectorAll('symbol'))) defs.appendChild(document.importNode(n, true));
+
   const mk = parse(markers);
   for (const d of Array.from(mk.querySelectorAll(':scope > defs > *'))) if (d.id !== 'cell') defs.appendChild(document.importNode(d, true));
   Array.from(mk.querySelectorAll(':scope > g[transform^="translate"]')).forEach((g, i) => {

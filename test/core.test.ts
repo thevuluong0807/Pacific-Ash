@@ -60,20 +60,21 @@ test('cross: trúng và chìm', () => {
   assert.deepEqual(r.state.revealed[1], ['destroyer']);
 });
 
-// ---- line3 ----
-test('line3: sát mép phải (9,5) h chỉ 2 ô; mép trái (0,5) h 2 ô; mép dọc', () => {
+// ---- line3 (rải thảm 4 ô: tâm là ô thứ hai của dải) ----
+test('line3: sát mép phải (9,5) h chỉ 2 ô; mép trái (0,5) h 3 ô; mép dọc (4,0) v 3 ô', () => {
   const m = match();
   assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 9, y: 5 }, orientation: 'h' })).events[0]), ['8,5', '9,5']);
-  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 0, y: 5 }, orientation: 'h' })).events[0]), ['0,5', '1,5']);
-  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 0 }, orientation: 'v' })).events[0]), ['4,0', '4,1']);
+  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 0, y: 5 }, orientation: 'h' })).events[0]), ['0,5', '1,5', '2,5']);
+  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 0 }, orientation: 'v' })).events[0]), ['4,0', '4,1', '4,2']);
 });
 test('line3: giữa lưới, thứ tự tăng của trục', () => {
   const m = match();
-  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'v' })).events[0]), ['4,3', '4,4', '4,5']);
+  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'v' })).events[0]), ['4,3', '4,4', '4,5', '4,6']);
+  assert.deepEqual(cells(applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'h' })).events[0]), ['3,4', '4,4', '5,4', '6,4']);
 });
 test('line3: trúng và chìm (tuần dương 3 ô ở hàng 2)', () => {
   const r = applyAction(match(), 0, fire('carrier', { kind: 'line3', center: { x: 1, y: 2 }, orientation: 'h' }));
-  assert.deepEqual(resolved(r.events), ['0,2:hit', '1,2:hit', '2,2:hit']);
+  assert.deepEqual(resolved(r.events), ['0,2:hit', '1,2:hit', '2,2:hit', '3,2:miss']);
   assert.ok(types(r.events).includes('ShipSunk'));
 });
 test('line3: ô đã bắn không phát event mới', () => {
@@ -81,7 +82,7 @@ test('line3: ô đã bắn không phát event mới', () => {
   m = applyAction(m, 0, fire('cruiser', { kind: 'precision', cell: { x: 4, y: 4 } })).state;
   m = applyAction(m, 1, fire('destroyer', { kind: 'rapid', cells: [{ x: 9, y: 9 }, { x: 8, y: 9 }] })).state;
   const r = applyAction(m, 0, fire('carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'v' }));
-  assert.deepEqual(resolved(r.events), ['4,3:miss', '4,5:miss']);
+  assert.deepEqual(resolved(r.events), ['4,3:miss', '4,5:miss', '4,6:miss']);
 });
 
 // ---- torpedo ----
@@ -302,4 +303,36 @@ test('hạm đội lệch (1 tàu vs 2 tàu): thắng đúng khi tàu cuối c�
   const t = match([ship('destroyer', 0, 0)], rows(), 1);
   const lost = applyAction(t, 1, rapid([0, 0], [1, 0]));
   assert.equal(lost.state.winner, 1);
+});
+
+// ---- barrage (siêu chiến hạm, rules.md 4.6) ----
+const dread = () => match([ship('dreadnought', 0, 0), ship('cruiser', 0, 2), ship('submarine', 0, 4), ship('missile', 0, 6), ship('carrier', 0, 8)], rows());
+const barrage = fire('dreadnought', { kind: 'barrage' });
+test('barrage: đúng 5 ô khác nhau chưa bắn, cùng seed cùng kết quả, không có xem trước', () => {
+  const m = dread();
+  assert.deepEqual(previewCells(m, 0, barrage), []);
+  const a = cells(applyAction(m, 0, barrage).events[0]), b = cells(applyAction(m, 0, barrage).events[0]);
+  assert.equal(a.length, 5);
+  assert.equal(new Set(a).size, 5);
+  assert.deepEqual(a, b);
+  assert.equal(resolved(applyAction(m, 0, barrage).events).length, 5);
+});
+test('barrage: bỏ qua ô đã bắn; còn 3 ô chưa bắn thì đánh 3 ô; hồi chiêu 3; không lộ loại tàu khi trúng', () => {
+  const m = dread();
+  const r = applyAction(m, 0, barrage);
+  assert.equal(r.state.boards[0].ships.find((s) => s.id === 'dreadnought')!.cooldown, 3);
+  assert.ok(!types(r.events).includes('ShipRevealed'));
+  const shots = m.boards[1].shots.map((row) => row.map(() => 'miss' as const));
+  for (const [x, y] of [[1, 1], [5, 5], [9, 9]]) shots[y][x] = 'none';
+  const few = { ...m, boards: [m.boards[0], { ...m.boards[1], shots }] as typeof m.boards };
+  assert.deepEqual(cells(applyAction(few, 0, barrage).events[0]).sort(), ['1,1', '5,5', '9,9']);
+});
+test('barrage vs hộ vệ: chọn 5 ô trước, hộ vệ triệt tiêu đúng 2, 3 ô còn lại phân giải', () => {
+  const m = match([ship('dreadnought', 0, 0), ship('cruiser', 0, 2), ship('submarine', 0, 4), ship('missile', 0, 6), ship('carrier', 0, 8)],
+    [ship('escort', 0, 0), ship('destroyer', 0, 3), ship('cruiser', 0, 5), ship('missile', 0, 7), ship('carrier', 0, 9)]);
+  const r = applyAction(m, 0, barrage);
+  assert.equal(cells(r.events[0]).length, 5);
+  const nul = r.events.find((e) => e.type === 'ShotNullified') as unknown as { cells: unknown[] };
+  assert.equal(nul.cells.length, 2);
+  assert.equal(resolved(r.events).length, 3);
 });

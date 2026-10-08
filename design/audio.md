@@ -29,6 +29,7 @@ Mỗi sự kiện ghi các lớp phát cùng lúc (khóa trong `assets.md` mục
 | Nhắm không hợp lệ | `sfx_ui_error` | trầm, ngắn |
 | Khu trục hạm bắn (mỗi phát) | `sfx_cannon_light` + nước giật nhỏ + rung trầm | hai phát cách nhau theo timeline |
 | Tuần dương bắn | `sfx_cannon_heavy` + sóng giật + đuôi vang dài | |
+| Siêu chiến hạm dội pháo | `sfx_cannon_super` (ba nòng, 15 viên chia 5 đợt), bass sâu 40–60 Hz, sóng giật, đuôi vang dài 1.5 s; quay nòng: `sfx_turret_traverse` ×5 lệch nhau 80 ms | slow-motion 0.6×: hạ cao độ 8%; đạn rơi: `sfx_shell_whistle` ×5 rồi nổ lần lượt |
 | Tên lửa phóng | `sfx_missile_launch` + gầm trầm + khói rít | 5 quả cách nhau 60 ms, đẩy nhẹ độ vang |
 | Tên lửa lao xuống | `sfx_missile_fall` | tiếng rít cao dần, ngắt ngay khi nổ |
 | Ngư lôi | `sfx_torpedo_launch`, `sfx_torpedo_run` (lặp), tiếng nước bị lọc thấp tần | camera dưới nước: lọc thông thấp 1.2 kHz, thêm ù |

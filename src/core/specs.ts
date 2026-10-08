@@ -4,7 +4,7 @@ import type { ShipId, ShipSpec } from '../../design/core-api';
 export const GRID = data.grid;
 /** Đội hình mặc định (5 tàu cổ điển). */
 export const FLEET = data.fleet as ShipId[];
-/** Toàn bộ loại tàu (7). Người chơi chọn `FLEET_SIZE` trong số này. */
+/** Toàn bộ loại tàu (8). Người chơi chọn `FLEET_SIZE` trong số này. */
 export const ROSTER = data.roster as ShipId[];
 /** Số tàu mỗi bên mang vào trận. */
 export const FLEET_SIZE = data.fleetSize;

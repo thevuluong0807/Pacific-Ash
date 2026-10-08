@@ -85,6 +85,12 @@ export function createHardAi(seed: number): Player {
               add({ kind, center: c, orientation }, sum(targetCells({ kind, center: c, orientation })));
             }
             break;
+          case 'barrage': { // kỳ vọng = 5 × xác suất trung bình một ô chưa bắn có tàu; chỉ khi chưa có ô `hit` dở dang (rules.md 10)
+            const free = allCells().filter(fresh), n = Math.min(SPECS[shipId].shots ?? 5, free.length);
+            const dangling = allCells().some((c) => view[c.y][c.x] === 'hit');
+            add({ kind }, dangling || !free.length ? 0 : (n * free.reduce((a, c) => a + p[c.y][c.x], 0)) / free.length);
+            break;
+          }
         }
       }
       const eps = 1e-9;

@@ -4,10 +4,10 @@
 
 | File | Vai trò |
 |---|---|
-| `models/ship_<id>.glb` | 7 model dùng được ngay: `destroyer`, `cruiser`, `submarine`, `missile`, `carrier`, `raider`, `escort` |
-| `models/preview_sheet.png` | Ảnh xem trước cả 7 model (dựng bằng three.js từ chính các file glb) |
+| `models/ship_<id>.glb` | 8 model dùng được ngay: `destroyer`, `cruiser`, `submarine`, `missile`, `carrier`, `raider`, `escort`, `dreadnought` |
+| `models/preview_sheet.png` | Ảnh xem trước 7 model đầu (`dreadnought` xem `ship-dreadnought.md`) (dựng bằng three.js từ chính các file glb) |
 | `models/_src/glb.mjs` | Bộ dựng glb tối giản (hộp, trụ, cầu, đùn, hình thang khối) |
-| `models/_src/make_ships.mjs` | Định nghĩa 7 tàu. Sửa ở đây rồi chạy lại để ra glb mới |
+| `models/_src/make_ships.mjs` | Định nghĩa 8 tàu. Sửa ở đây rồi chạy lại để ra glb mới |
 | `models/_src/preview.html` | Trang xem trước (chạy qua máy chủ tĩnh ở gốc dự án) |
 
 ## 1. Quy ước chung (mọi model)
@@ -38,6 +38,7 @@ Số tam giác là của bản hiện tại (1 101–11 351).
 | **Tàu sân bay** `carrier` (4.9, thân 0.62, boong 0.80) | 5 871 | thân; **boong bay** là khối đùn rộng hơn thân, mũi nhọn; vạch tim và đường hạ cánh chéo; **đảo chỉ huy** mạn phải (−X) + cột radar; 2 thang máy; 2 ống phóng + 2 `jbd`; **4 máy bay đậu** (`plane_0..3`, mỗi cái có thân, cánh, đuôi); 4 CIWS; xe kéo cam |
 | **Tàu cắn lén** `raider` (0.9, 0.34) | 1 101 | thân góc cạnh tối; thượng tầng hình thang khối + kính; 1 tháp pháo nhỏ; cột radar nhỏ; 2 hộp cam ở đuôi |
 | **Tàu hộ vệ** `escort` (1.9 × 1.9, mũi +X) | 8 942 | **2 thân song song** (đùn) nối boong trung tâm; cầu hình thang khối + kính; **vòm radar lớn** (cầu dẹt); cột ăng-ten; 4 CIWS; 4 giàn mồi nhử (hộp tối + đầu cam, mỗi giàn có `decoy_N_launch`) |
+| **Siêu chiến hạm** `dreadnought` (3.94, 0.54) | 15 357 | **5 tháp pháo ba nòng** (3 mũi, 2 lái; tháp 2 và 4 trên bệ cao); tháp chỉ huy nhiều tầng kiểu chùa có dải kính, 4 tấm radar, cột radar cao; 2 ống khói to vạch cam; 8 pháo phụ nòng đôi; 4 CIWS; dải giáp hai mạn; sàn trực thăng; chi tiết `ship-dreadnought.md` |
 
 ## 4. Chất lượng và dung lượng
 - Một mức duy nhất, thay cho LOD0/1/2: 1 101–11 351 tam giác, 100–910 KB mỗi file glb. Đủ nhẹ cho 10 tàu cùng lúc trên màn; nếu cần giảm, bỏ các mesh `rails`, `bollards`, `antennas`, `*_hatches` (không ảnh hưởng node điều khiển).

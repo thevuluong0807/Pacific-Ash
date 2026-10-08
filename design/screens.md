@@ -82,6 +82,7 @@ Toàn màn đen mờ (`overlay`), chữ giữa: "Chuyển máy cho Người chơ
    - `torpedo`: chạm vào mép lưới để chọn hàng/cột và phía vào; đường đi hiện mũi tên.
    - `cross`: chọn tâm, vùng chữ thập hiện ngay.
    - `line3`: chọn tâm, nút **Xoay** (R) đổi ngang/dọc.
+   - `barrage` (siêu chiến hạm): **không chọn ô**; lưới địch nháy mờ toàn bộ kèm chữ "5 Ô NGẪU NHIÊN", bấm BẮN là đánh luôn (`previewCells` rỗng).
 3. Vùng xem trước tô `hostile` mờ, ô không hợp lệ không chọn được. Dùng `previewCells`.
 4. **BẮN** xác nhận (chạm hai bước trên mobile: chọn rồi nhấn BẮN).
 5. Cinematic. Xong, cập nhật lưới, sang lượt địch (hoặc PassDevice).

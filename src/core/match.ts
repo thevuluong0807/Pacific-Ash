@@ -1,7 +1,7 @@
 import type {
   Board, Cell, CellMark, CellView, FireAction, GameEvent, MatchState, PlacedShip, PlayerId, ShipAttack, ShipId,
 } from '../../design/core-api';
-import { attackPath, resolveAttack, resolveCell, targetCells } from './attacks';
+import { attackPath, pickBarrage, resolveAttack, resolveCell, targetCells } from './attacks';
 import { cloneBoard, emptyShots, freshShip, inGrid, isBlocked, isValidPlacement, other, segmentAt, shipCells } from './board';
 import { mulberry32, randInt } from './rng';
 import { GRID, loadSpecs } from './specs';
@@ -73,6 +73,8 @@ export function isValidAction(state: MatchState, player: PlayerId, action: FireA
       return inGrid(t.center);
     case 'line3':
       return inGrid(t.center) && (t.orientation === 'h' || t.orientation === 'v');
+    case 'barrage':
+      return shots.flat().some((s) => s === 'none');
   }
 }
 
@@ -167,7 +169,9 @@ export function applyAction(state: MatchState, player: PlayerId, action: FireAct
   const def = boards[defender];
   const events: GameEvent[] = [...pre.events];
 
-  const path = attackPath(def, action.target);
+  // Dội pháo: chọn ô TRƯỚC khi hộ vệ triệt tiêu (rules.md 4.6)
+  const drawn = action.target.kind === 'barrage' ? pickBarrage(def, SPECS[action.shipId].shots ?? 5, rngFor(state, 400)) : undefined;
+  const path = attackPath(def, action.target, drawn);
   events.push({ type: 'ShotFired', player, shipId: action.shipId, attack: action.target.kind, cells: path, source: 'action' });
 
   // Hộ vệ (rules.md 10.2): bộ đếm rest; kích hoạt thì triệt tiêu ceil(0.3 × N) ô ngẫu nhiên trong vùng đòn.
@@ -187,7 +191,7 @@ export function applyAction(state: MatchState, player: PlayerId, action: FireAct
     }
   }
 
-  const { results } = resolveAttack(def, action.target, nullified);
+  const { results } = resolveAttack(def, action.target, nullified, drawn);
   // Không gắn shipId vào CellResolved: người bắn không được biết loại tàu trừ khi tuần dương trúng hoặc tàu chìm.
   for (const r of results) events.push({ type: 'CellResolved', player, cell: r.cell, result: r.result });
 

@@ -1,0 +1,31 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#0B1117;color:#C9D4DC;font:14px monospace}#g{display:grid;grid-template-columns:repeat(1,880px);gap:8px;padding:8px}.c{position:relative}canvas{display:block}.l{position:absolute;left:8px;top:6px;color:#4FC3E8}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script></head><body><div id="g"></div>
+<script type="module">
+import * as THREE from 'three'
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js'
+const P=new URLSearchParams(location.search);const only=P.get('only')
+const D='/design/models/arena/',loader=new GLTFLoader()
+const load=n=>loader.loadAsync(D+n+'.glb').then(g=>g.scene)
+const ships=[['small',['cannon','mg','rocket'],[0,.8,1.6]],['medium',['heavy','torpedo','cannon','missile','autocannon'],[0,.8,1.6]],['large',['heavy','heavy','cannon','cannon','howitzer','autocannon','mg'],[0,.8,1.6]]]
+const CEN=[0,Math.PI,Math.PI/2,-Math.PI/2,0,0,Math.PI]
+const mk=(w,h,title)=>{const wrap=document.createElement('div');wrap.className='c';const cv=document.createElement('canvas');cv.width=w;cv.height=h;wrap.appendChild(cv);const l=document.createElement('div');l.className='l';l.textContent=title;wrap.appendChild(l);document.getElementById('g').appendChild(wrap)
+ const rr=new THREE.WebGLRenderer({canvas:cv,antialias:true});rr.setSize(w,h,false);rr.setClearColor(0x16202a)
+ const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xbcd0e0,0x2a1a1a,1.2));const d=new THREE.DirectionalLight(0xffd8b0,2.4);d.position.set(-60,100,60);sc.add(d);const d2=new THREE.DirectionalLight(0x90b8e0,.8);d2.position.set(60,40,-60);sc.add(d2)
+ const wa=new THREE.Mesh(new THREE.PlaneGeometry(2000,2000),new THREE.MeshStandardMaterial({color:0x14262e,roughness:.8,metalness:.1}));wa.rotation.x=-Math.PI/2;wa.position.y=-.2;sc.add(wa)
+ return {rr,sc,cam:new THREE.PerspectiveCamera(32,w/h,.5,3000)}}
+let done=0
+// 3 tàu mẫu với khí tài gắn vào slot_N, xoay theo tâm cung bắn
+for(const [id,ws] of ships){ if(only&&only!==id)continue
+ const {rr,sc,cam}=mk(880,520,'hull '+id+' + '+ws.join(', '));const h=await load('arena_hull_'+id);sc.add(h)
+ const nodes={};h.traverse(o=>nodes[o.name]=o)
+ for(let i=0;i<ws.length;i++){const s=nodes['slot_'+i];const w=await load('arena_weapon_'+ws[i]);const yaw=w.getObjectByName('yaw');yaw.rotation.y=CEN[i]*0+[0,Math.PI,Math.PI/2,-Math.PI/2,0,0,Math.PI][i];w.position.copy(s.getWorldPosition(new THREE.Vector3()));sc.add(w);const pad=nodes['slot_pad_'+i];if(pad)pad.visible=false}
+ const L={small:90,medium:160,large:260}[id];const dist=L*1.45;const az=parseFloat(P.get('az')||'.72'),el=parseFloat(P.get('el')||'.42');cam.position.set(dist*Math.sin(az),dist*el,dist*Math.cos(az));cam.lookAt(0,L*.05,0);rr.render(sc,cam);done++
+ // trên: dùng lại cùng cảnh
+}
+// hàng khí tài
+if(!only||only==='weap'){const ids=['heavy','cannon','howitzer','torpedo','missile','rocket','autocannon','mg'];const {rr,sc,cam}=mk(1768,420,'khí tài (elevation 0, nhìn 3/4)')
+ for(let i=0;i<ids.length;i++){const w=await load('arena_weapon_'+ids[i]);w.position.set((i-3.5)*24,0,0);w.getObjectByName('yaw').rotation.y=-.5;sc.add(w)}
+ cam.aspect=1768/420;cam.updateProjectionMatrix();cam.position.set(0,45,95);cam.lookAt(0,4,0);rr.render(sc,cam)
+ const {rr:r3,sc:s3,cam:c3}=mk(1768,200,'đạn: shell, bullet, torpedo, missile, rocket');const pj=['shell','bullet','torpedo','missile','rocket'];for(let i=0;i<pj.length;i++){const w=await load('arena_proj_'+pj[i]);w.position.set((i-2)*14,0,0);w.rotation.y=-.6;s3.add(w)}c3.aspect=1768/200;c3.updateProjectionMatrix();c3.position.set(0,12,34);c3.lookAt(0,0,0);r3.render(s3,c3)}
+document.title='done'+done
+</script></body></html>

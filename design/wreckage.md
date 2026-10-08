@@ -91,7 +91,7 @@ Mỗi loại tàu có **một model xác** dùng làm trạng thái cuối khi b
 
 | File | Mô tả |
 |---|---|
-| `models/wrecks/wreck_<id>.glb` | 7 model xác (đã nhân 10 theo `world-scale.md`) |
+| `models/wrecks/wreck_<id>.glb` | 8 model xác (đã nhân 10 theo `world-scale.md`) |
 | `models/wrecks/preview_wrecks.png` | ảnh xem trước (có mặt nước che nửa dưới, đúng như trong cảnh) |
 | `models/_src/make_wrecks.mjs` | nguồn dựng: tái dùng chính builder của tàu nguyên vẹn rồi cắt, nghiêng, hạ |
 
@@ -103,6 +103,7 @@ Mỗi loại tàu có **một model xác** dùng làm trạng thái cuối khi b
 | `wreck_submarine` | 2 mảnh (mũi, thân) | tháp chỉ huy có tiềm vọng, cánh lái, vân gạch cách âm | 5 300 |
 | `wreck_carrier` | 2 mảnh (thân, đuôi) | boong bay với vạch kẻ, đảo chỉ huy, thang máy sọc hazard, máy bay | 7 117 |
 | `wreck_raider` | 1 mảnh lật một phần | thân nhỏ góc cạnh, cột radar, tháp pháo nhỏ | 1 177 |
+| `wreck_dreadnought` | 2 mảnh (mũi, đuôi) | ba tháp pháo ba nòng và tháp chỉ huy nhiều tầng ở mảnh mũi; hai ống khói, hai tháp pháo, sàn trực thăng ở mảnh đuôi | 10 119 |
 | `wreck_escort` | 3 mảnh (thân + boong, thân tách, vòm radar) | hai thân song song, vòm radar to, giàn mồi nhử, CIWS | 7 038 |
 
 - Cấu trúc node: gốc `wreck_<id>`; các nhóm mảnh `section_*` (mỗi nhóm đã đặt sẵn pose cuối, dùng để nội suy từ pose 0 trong hoạt cảnh); điểm neo `fire_N` đã nằm trong đúng mảnh, `smoke_point_<mảnh>`, `float_line`, và neo ô `cell_N` ở gốc (không dịch).

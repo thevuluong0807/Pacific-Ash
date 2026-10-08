@@ -6,7 +6,7 @@ import { manifest } from '../assets/manifest';
 const ART: Record<ShipId, string> = {
   destroyer: manifest.ui_ship_destroyer, cruiser: manifest.ui_ship_cruiser, submarine: manifest.ui_ship_submarine,
   missile: manifest.ui_ship_missile, carrier: manifest.ui_ship_carrier,
-  raider: manifest.ui_ship_raider, escort: manifest.ui_ship_escort,
+  raider: manifest.ui_ship_raider, escort: manifest.ui_ship_escort, dreadnought: manifest.ui_ship_dreadnought,
 };
 
 export function shipSprite(id: ShipId, orientation: Orientation): HTMLElement {

@@ -81,4 +81,9 @@ const fin=m=>{m.node('float_line',[0,0,0]);damage(m);out.push(save(m,OUT))}
  const main=section(m,'section_main',[0,0,0],[[X,12],[Z,-4]],-.05),port=section(m,'section_port_hull',[0,0,-.6],[[X,-28]],-.09,[-.1,0,-.25]),dome=section(m,'section_radome',[.18,.15,0],[[Z,18],[X,22]],-.13,[.4,0,.8])
  distribute(m,kids,i=>{const nm=m.nodes[i].name;if(/^cell_/.test(nm))return -1;if(/^radome/.test(nm))return dome;return m.zOf(i)<-.3?port:main})
  smokeAnchors(m,[[main,'main',[.1,.3,.2]],[port,'port',[0,.2,-.6]],[dome,'radome',[.18,.3,0]]]);fin(m)}
+// ===== SIÊU CHIẾN HẠM: gãy ngang sau tháp chỉ huy, mũi (3 tháp pháo + tháp chỉ huy) ngóc lên, đuôi (2 ống khói + 2 tháp pháo) nghiêng =====
+{const m=prep('dreadnought');const HP=m.HP;dropAll(m,[...HULLISH,'armor_belt_stbd','armor_belt_port',...GENERIC_ANCHORS]);const kids=[...m.nodes[m.root].children]
+ const fore=section(m,'section_fore',[0,0,-.04],[[X,-12],[Z,14]],-.04,[0,0,.05]),aft=section(m,'section_aft',[0,0,-.1],[[X,11],[Z,-16]],-.06,[.08,0,-.2])
+ distribute(m,kids,i=>/^cell_/.test(m.nodes[i].name)?-1:(m.zOf(i)>=-.04?fore:aft))
+ hullSec(m,fore,HP,-.04,1.97,'fore',{lo:true});hullSec(m,aft,HP,-1.97,-.04,'aft',{hi:true});smokeAnchors(m,[[fore,'fore',[0,.35,.3]],[aft,'aft',[0,.25,-.6]]]);fin(m)}
 console.log(out.map(s=>`${s.name}: ${s.tris} tam giác, ${s.nodes} node, ${(s.bytes/1024).toFixed(1)} KB`).join('\n'))

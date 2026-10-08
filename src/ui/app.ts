@@ -3,9 +3,11 @@ import type { ShipPose } from '../render3d/shipModels';
 import type { OnlineClient } from '../net/client';
 import type { ResumeSnapshot, Update } from '../net/protocol';
 import { ProfileStore } from './profiles';
+import { DesignStore } from '../arena/designs';
+import type { ArenaScene, ArenaSetup } from '../render3d/arenaScene';
 import { loadSettings, saveSettings, type Settings } from './settings';
 
-export type ScreenId = 'menu' | 'online' | 'modeSelect' | 'hangar' | 'placement' | 'passDevice' | 'battle' | 'result';
+export type ScreenId = 'menu' | 'online' | 'modeSelect' | 'hangar' | 'placement' | 'passDevice' | 'battle' | 'result' | 'arenaLobby' | 'arena';
 
 export interface ScreenParams {
   menu: undefined;
@@ -16,6 +18,8 @@ export interface ScreenParams {
   passDevice: { to: PlayerId; next: 'placement' | 'battle' };
   battle: undefined;
   result: undefined;
+  arenaLobby: undefined;
+  arena: ArenaSetup;
 }
 
 export interface ScreenInstance {
@@ -80,6 +84,9 @@ export const newSession = (mode: Mode, difficulty: AiLevel, equipDamage = false,
 export class App {
   settings: Settings = loadSettings();
   readonly profiles = new ProfileStore();
+  readonly designs = new DesignStore();
+  /** Cảnh 3D của chế độ Hải chiến (không có khi chạy `?no3d`). */
+  arenaScene?: ArenaScene;
   battleScene?: BattleView3D;
   /** Gắn bởi main.ts để đổi cảnh 3D theo màn hình và áp dụng chất lượng đồ họa. */
   onScreen?: (id: ScreenId) => void;

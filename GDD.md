@@ -26,15 +26,16 @@ Tham chiếu: trận chiến Hồng Kông (Pacific Rim 1). Chỉ lấy cảm gi�
 
 Không có skill rời chọn được. Hai tàu mới có kỹ năng nội tại tự chạy (không cần chọn, không có đòn chủ động). Muốn mạnh hơn thì giữ tàu mạnh sống lâu, canh nhịp hồi chiêu, và bảo vệ tàu nội tại (chúng chìm là mất kỹ năng). Chi tiết: `design/rules.md` mục 10.
 
-## 4. Đội tàu (7 loại; mỗi bên 5 tàu, mỗi loại tối đa 1)
-Đội hình mặc định là 5 tàu cổ điển. Người chơi có thể tự chọn 5 trong 7 loại ở Khí tài/profile.
+## 4. Đội tàu (8 loại; mỗi bên 5 tàu, mỗi loại tối đa 1)
+Đội hình mặc định là 5 tàu cổ điển. Người chơi có thể tự chọn 5 trong 8 loại ở Khí tài/profile.
 | Tàu | Ô | Đòn đánh | Hồi chiêu | Animation 3D |
 |---|---|---|---|---|
 | Khu trục hạm | 2 | Pháo nhanh: 2 phát, chọn 2 ô bất kỳ | 0 | Pháo hạm 2 loạt nhanh, đạn vạch đường sáng, nổ nhỏ |
 | Tuần dương | 3 | Pháo chính: 1 ô chính xác, trúng thì lộ loại tàu | 1 | Pháo nòng lớn, lửa mõm, sóng giật, đạn đạo cung |
 | Tàu ngầm | 3 | Ngư lôi: bắn dọc 1 hàng hoặc cột từ mép lưới, nổ ở tàu đầu tiên gặp | 2 | Camera dưới nước, ngư lôi sủi bọt, nổ cột nước |
 | Tàu tên lửa | 4 | Vùng chữ thập 5 ô | 2 | Phóng thẳng đứng, khói, bay vòng rồi lao xuống, nổ chùm |
-| Tàu sân bay | 5 | Không kích: dải 1x3 ô, chọn hướng | 3 | Máy bay/UAV cất cánh, bay qua, thả bom rải |
+| Tàu sân bay | 5 | Không kích rải thảm: dải 1x4 ô, chọn hướng | 3 | Máy bay/UAV cất cánh, bay qua, thả bom rải |
+| Siêu chiến hạm | 4 | **Dội pháo**: không cần nhắm, tự đánh 5 ô ngẫu nhiên chưa bắn trên lưới địch | 3 | Năm tháp pháo ba nòng quay và xả đạn hàng loạt, rồi cảnh toàn chiến trường nhìn từ trên cao, camera đi vòng 1/6 đường tròn quanh tâm lưới địch |
 | Tàu cắn lén | 1 | **Nội tại**: đầu trận và cứ cách một lượt, tự bắn thêm 1 ô ngẫu nhiên | — | Xuồng tàng hình quay pháo nhỏ, bắn nhanh ít tiếng, đạn mảnh rất nhanh |
 | Tàu hộ vệ | 2×2 (khối vuông) | **Nội tại**: cứ cách một đòn địch đánh vào, triệt tiêu ngẫu nhiên 30% số ô (làm tròn lên); đòn 1 ô bị triệt tiêu hẳn | — | CIWS bắn chặn đạn, giàn mồi nhử bung, nổ lửng lơ giữa trời |
 

@@ -63,7 +63,7 @@ carrier
            takeoff_end (0,0.125,+2.45)
 ```
 - `muzzle` và `launch` đều là bí danh của `cat_start_0` (tàu sân bay không có pháo).
-- Đòn `line3`: máy bay cất cánh rồi bay qua dải mục tiêu (`animations.md` 4.5). Gợi ý: hai máy bay đầu từ `plane_0`, `plane_1` được đưa tới `cat_start_0/1`, chạy hết ray tới `cat_end_*` rồi bay lên; máy bay thứ ba từ `plane_2` cất cánh trên boong (không qua ray). Khi máy bay bay đi: ẩn `plane_N` đã bay. Máy bay không quay lại trong cinematic.
+- Đòn `line3`: máy bay cất cánh rồi bay qua dải mục tiêu (`animations.md` 4.5). Gợi ý: hai máy bay đầu từ `plane_0`, `plane_1` được đưa tới `cat_start_0/1`, chạy hết ray tới `cat_end_*` rồi bay lên; máy bay thứ ba và thứ tư (`plane_2`, `plane_3`) cất cánh trên boong, cách nhau 450 ms (không qua ray); mỗi chiếc rải một quả lên một ô của dải 4 ô. Khi máy bay bay đi: ẩn `plane_N` đã bay. Máy bay không quay lại trong cinematic.
 - `dmg_cell0` = đuôi (đường hạ cánh, thang máy sau) … `dmg_cell4` = mũi (ống phóng). Khi bị trúng: lửa trên boong, máy bay đậu cháy, tấm boong thủng.
 - Tàu sân bay chìm chậm, nghiêng sang một mạn nhiều hơn các tàu khác (thời lượng 1800 ms vẫn giữ, chỉ nghiêng mạnh hơn).
 

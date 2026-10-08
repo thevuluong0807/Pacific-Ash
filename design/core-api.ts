@@ -1,8 +1,8 @@
 // Hợp đồng kiểu cho src/core. Chỉ chữ ký, không cài đặt.
 // Không đổi tên/kiểu khi chưa hỏi người thiết kế. Luật chi tiết: design/rules.md.
 
-export type ShipId = 'destroyer' | 'cruiser' | 'submarine' | 'missile' | 'carrier' | 'raider' | 'escort'
-export type AttackKind = 'rapid' | 'precision' | 'torpedo' | 'cross' | 'line3'
+export type ShipId = 'destroyer' | 'cruiser' | 'submarine' | 'missile' | 'carrier' | 'raider' | 'escort' | 'dreadnought'
+export type AttackKind = 'rapid' | 'precision' | 'torpedo' | 'cross' | 'line3' | 'barrage'
 export type ShipAttack = AttackKind | 'none'            // 'none' = tàu chỉ có kỹ năng nội tại
 export type ShipShape = 'line' | 'square'               // square = khối size×size, không xoay
 export type PassiveKind = 'sneak' | 'guard'
@@ -21,6 +21,7 @@ export interface ShipSpec {                              // đọc từ design/s
   attackNameVi: string
   descVi: string
   passive?: PassiveSpec       // chỉ raider, escort
+  shots?: number              // chỉ dreadnought (barrage): số ô ngẫu nhiên, 5
   anim: AttackKind | 'sneak' | 'guard'
   model: string
   placeholderColor: string
@@ -70,6 +71,7 @@ export type FireTarget =
   | { kind: 'torpedo'; axis: 'row' | 'col'; index: number; from: 'start' | 'end' }
   | { kind: 'cross'; center: Cell }
   | { kind: 'line3'; center: Cell; orientation: Orientation }
+  | { kind: 'barrage' }          // không tham số; core chọn ngẫu nhiên (rules.md mục 4.6). previewCells trả []
 
 export interface FireAction { shipId: ShipId; target: FireTarget }
 

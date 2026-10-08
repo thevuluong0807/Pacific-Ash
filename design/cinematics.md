@@ -1,4 +1,4 @@
-# Cinematic năm đòn đánh
+# Cinematic các đòn đánh (năm đòn đầu, thêm đòn dội pháo ở mục 11)
 
 Shot list chi tiết từng đòn: camera, chuyển động, sự kiện trên từng mốc thời gian. **File này thắng `animations.md` mục 4** về thời lượng và góc máy; các mục khác của `animations.md` (kết quả ô, chìm, đồng bộ UI) vẫn dùng.
 
@@ -107,38 +107,39 @@ Vật thể: ngư lôi hiển thị là **tên lửa-ngư lôi** (`fx_torpedo`):
 | 3. Trúng đích | 4500–6300 | toàn cảnh đường đi: `T(f −2.0, r 0, u +4.5)` ở mép vào đường, nhìn dọc đường, FOV 45°, kéo lùi 0.8 | nếu **trúng**: tên lửa-ngư lôi đầu nổ ở ô trúng (`fx_hit_torpedo`), ba quả sau nổ thứ phát cách 150 ms; nếu **trượt hết**: bốn quả mờ dần ở mép xa, vòng sóng cuối, chìm |
 Ghi chú: cinematic kể chuyện "tàu mình phóng vào đường đã chọn"; khoảng cách thật tới mép lưới không bắt buộc thể hiện (shot 3 và chuyển cảnh che gián đoạn).
 
-## 6. Tàu sân bay — `line3` (tổng 6750 ms, **ba cảnh chính**)
-Ý đồ: gọn và dứt khoát, đúng ba cảnh: **(1) máy bay cất cánh, lia cam theo**; **(2) camera đứng yên ở mặt nước bên địch hướng lên, máy bay bay qua đầu**; **(3) tên lửa rơi xuống**. Bỏ cảnh thiết lập, cảnh bám vòng quanh, cảnh kéo xa và cảnh cận riêng (giảm tổng 25% so với 9000 ms).
+## 6. Tàu sân bay — `line3` (tổng 6450 ms, **hai cảnh: một cú máy liên tục trên trời, rồi cảnh mặt nước thả tên lửa**)
+Ý đồ: gọn và mượt. **Cảnh 1** là **một cú máy liên tục duy nhất** (không cắt, không đổi góc đột ngột): camera lia theo đoàn máy bay từ lúc cất cánh cho tới khi tới vùng mục tiêu. **Cảnh 2** camera **đứng ở mặt nước bên địch**, thấy rõ **mặt biển và sóng** ở tiền cảnh, đoàn máy bay bay ngang trên cao và **thả tên lửa xuống từng ô**. Bỏ các cảnh trời rời rạc cũ (cắt ngang giữa lúc máy bay cất cánh, nhìn lên trời, rồi lại cắt).
 
 ### 6.1 Quy tắc điện ảnh (giữ gọn)
 - **Dải đen 2.39:1** trượt vào trong 450 ms đầu, trượt ra ở 450 ms cuối; tắt khi "Khung điện ảnh" tắt hoặc `prefers-reduced-motion` (`screens.md` mục 10).
-- **Ống kính dài** (FOV 24–34°) cho cả ba cảnh; vật chính đặt ở đường 1/3, chừa khoảng trống phía trước hướng bay. **Độ sâu trường ảnh nông**, nét ở máy bay hoặc tên lửa.
-- Cảnh 1 **lia cam mềm** (ease-in-out); cảnh 2 và cảnh 3 gần như **đứng yên** (không rung, không lia). Âm có hiệu ứng **Doppler** khi máy bay vọt qua; nhịp trống nặng lúc ray bắn.
+- Cảnh 1: **không có cú cắt nào**; camera chuyển động liên tục theo đường cong mượt (ease-in-out), chuyển động **lia (pan) và đẩy theo (dolly)** theo hướng bay; không giật, không xoay đột ngột; FOV đổi chậm 28° → 34°.
+- Cảnh 2: camera **đứng yên** (chỉ nhấp nhô theo sóng, mục 6.2); ống kính FOV 38°; **độ sâu trường ảnh nông**, nét ở máy bay và tên lửa. Âm có hiệu ứng **Doppler** khi máy bay vọt qua; nhịp trống nặng lúc ray bắn.
 
 ### 6.2 Chuỗi cảnh
-| Cảnh | Thời gian | Camera (vị trí, nhìn, FOV) | Sự kiện |
+| Cảnh | Thời gian | Camera | Sự kiện |
 |---|---|---|---|
-| **1. Máy bay cất cánh, lia cam** | 0–2400 | camera **thấp ở mép mũi** pos `(f +2.45, r +0.20, u +0.08)`, nhìn **ngược lại dọc ray** `(f +1.2, r +0.10, u +0.14)`, ống kính dài FOV 24°. Giữ nguyên 0–1150; từ 1150 **lia theo máy bay** (tilt up và pan nhẹ) ngả lên trời theo máy bay đầu tới 2400 | 0–700: đèn ray đỏ → xanh, `jbd_0/1` dựng, hơi nước; **700**: ray bắn (nhịp trống), hai máy bay lao về phía camera; **1150–1300**: máy bay vọt qua đầu camera (Doppler); máy bay thứ ba (`plane_2`) cất cánh trên boong sau 450 ms; `plane_N` đã bay thì ẩn; 1300–2400: camera lia theo, máy bay bay xa thành chấm nhỏ trên trời, xếp đội hình hướng về mục tiêu; thấy **tên lửa dưới cánh** (hero ×2.5) lúc đi qua |
-| **2. Máy bay bay qua, camera đứng yên dưới nước bên địch** | 2400–4350 | camera **đứng yên, thấp sát mặt nước, ở vùng nước của bên bị tấn công (bên địch)**, pos `T(f −2.0, r +1.0, u +0.10)`, **nhìn lên trời** (nghiêng lên khoảng 45°) về điểm `T(f −0.6, r 0, u +3.2)`, FOV 34°; **không lia, không rung** | **2700**: đội hình chữ V của ba máy bay lọt vào khung từ **góc trên bên trái** (hướng tàu sân bay), bay qua đầu camera ở **3300–3600** (cách nhau 200 ms), ra khỏi khung phía bên kia ở khoảng **4200**; Doppler, tia chói nhẹ lửa đuôi (độ mờ ≤ 0.25), vệt khói; thấy rõ **tên lửa dưới cánh** khi bay qua |
-| **3. Tên lửa rơi xuống** | 4350–6750 | camera **thấp bên cạnh dải mục tiêu**, pos `T(f −3.2, r +1.8, u +0.60)`, nhìn dải `T(f 0, r 0, u +0.20)`, FOV 32°, đứng yên hoặc đẩy vào rất chậm 0.3 | máy bay thả tên lửa ở **4350, 4575, 4800** (cách 225 ms; ô ngoài lưới thì không thả); **tên lửa lọt vào khung từ mép trên rồi rơi xuống từng ô** (hero ×1.5, đầu sáng, lửa đuôi, vệt khói rõ ràng); `tImpact` ≈ **5400, 5625, 5850**; mỗi ô nổ theo kết quả; **chậm 0.6×** quanh vụ nổ đầu; 6300–6750 dư âm: khói chùm, dải đen trượt ra, camera trượt về `tactical` |
-Máy bay không quay lại tàu trong cinematic.
+| **1. Một cú máy: cất cánh và bay tới mục tiêu** | 0–3000 | **một đường camera liên tục**. Bắt đầu 0: pos `(f +2.2, r +0.9, u +0.12)` (thấp, cạnh cuối ray bên mạn phải), nhìn `(f +1.4, r +0.1, u +0.15)`, FOV 28°. Từ 700: **lia theo máy bay dẫn đầu** (đặt điểm nhìn = máy bay đầu đàn, làm mượt 400 ms); pos **đẩy tiến về phía bay** với tốc độ 35% tốc độ máy bay và **nâng dần** tới `(f +24, r +1.6, u +1.0)` ở 3000 (ngả từ thấp lên cao, thấy biển và đường chân trời bên dưới), FOV mở 28° → 34° | 0–700: đèn ray đỏ → xanh, `jbd_0/1` dựng, hơi nước; **700**: ray bắn (nhịp trống), hai máy bay lao dọc ray; **900–1000**: máy bay vọt qua camera, Doppler; máy bay thứ ba (`plane_2`) cất cánh trên boong sau 450 ms, máy bay thứ tư (`plane_3`) sau thêm 450 ms; **1000–3000**: camera bám đàn bay, **tên lửa dưới cánh** (hero ×2.5) thấy rõ lúc còn gần; đàn xếp thành **hàng nối đuôi nhau, cách nhau 10 ĐV**, bay cao dần tới độ cao **22 ĐV** (u +2.2), tốc độ **90 ĐV/s**, hướng theo trục dải mục tiêu; thấy mặt biển, sóng và bọt trắng chạy bên dưới; **tới 3000**: đàn tiến vào vùng mục tiêu ở xa, thành các chấm nhỏ ở mép khung |
+| **2. Mặt nước: máy bay thả tên lửa xuống** | 3000–6450 | camera **đứng ở mặt nước, bên cạnh dải mục tiêu**, ở **tâm dải `M`** lùi vuông góc trục dải **4.6 ô về phía gần camera chiến thuật**, lệch `−0.4 ô` theo hướng ngược chiều bay: pos `M + (f −0.4, r +4.6, u +0.35)` (cao 3.5 ĐV so với mặt nước; **mặt biển và sóng chiếm khoảng 1/3 khung dưới**), nhìn `M + (u +1.1)`, FOV **38°** (rộng 5.6 ô, đủ cả dải 4 ô; cao từ u −0.45 đến u +2.65 ô); **đứng yên**, chỉ nhấp nhô theo sóng (nâng hạ ±1.5 ĐV, lăn ±1°, tần số theo biển); vài giọt nước bắn lên ống kính khi có cột nước | **3470–3770**: máy bay dẫn đầu lọt vào khung từ mép trái, bay ngang trên đầu ở độ cao 22 ĐV; **các máy bay nối đuôi nhau cách nhau 10 ĐV**, tốc độ 90 ĐV/s; mỗi máy bay thả **một tên lửa** khi bay qua đúng ô của nó (máy bay `i` thả lên ô `i` của dải, theo chiều tăng của trục): thả ở **3600, 3825, 4050, 4275** (cách 225 ms; ô ngoài lưới thì không thả); **thấy tên lửa tách khỏi giá treo dưới cánh** (kẹp bật, đẩy nhẹ), rơi chúi đầu, **nổ máy ở 250 ms sau khi tách** (lửa đuôi cam, vệt khói trắng đục) rồi **lao xuống ô** (hero ×1.5, đầu sáng, viền tối mỏng); `tImpact` = lúc thả + 1050 ≈ **4650, 4875, 5100, 5325**; mỗi ô nổ theo kết quả (cột nước, lửa), sóng xung kích làm nước ở tiền cảnh rung; **chậm 0.6×** quanh vụ nổ đầu (4600–5200); máy bay cuối ra khỏi khung bên phải ở khoảng 4700; 5600–6450 dư âm: khói chùm trôi theo gió, mặt biển lặng dần; dải đen trượt ra từ 6000 |
+Máy bay không quay lại tàu trong cinematic. Các máy bay thả quả không có ô ngoài lưới thì vẫn bay qua nhưng không có tên lửa tách giá.
 
 ### 6.3 Mốc đồng bộ (để lập trình)
 | Mốc (ms) | Sự kiện |
 |---|---|
 | 0 | dải đen trượt vào (450 ms), cảnh 1 bắt đầu |
-| 700 | ray bắn, máy bay lao |
-| 1150–1300 | máy bay vọt qua đầu camera; camera bắt đầu lia theo |
-| 2400 | cắt sang cảnh 2 (camera dưới nước bên địch) |
-| 2700 | máy bay vào khung |
-| 3300–3600 | máy bay bay qua đầu camera |
-| 4350 | cắt sang cảnh 3; thả quả đầu |
-| 4575, 4800 | thả quả thứ hai và thứ ba |
-| 5400, 5625, 5850 | `tImpact` ba ô |
-| 6300 | dải đen trượt ra; kết thúc 6750 |
+| 700 | ray bắn; camera bắt đầu lia theo máy bay dẫn đầu |
+| 900–1000 | máy bay vọt qua camera |
+| 1150, 1600 | `plane_2`, `plane_3` cất cánh trên boong |
+| 3000 | **cắt duy nhất**: sang cảnh 2 (mặt nước) |
+| 3470 | máy bay dẫn đầu vào khung |
+| 3600, 3825, 4050, 4275 | thả tên lửa thứ 1, 2, 3, 4 (nổ máy sau 250 ms) |
+| 4650, 4875, 5100, 5325 | `tImpact` bốn ô |
+| 4600–5200 | chậm 0.6× |
+| 6000 | dải đen trượt ra; kết thúc 6450 |
 
 ### 6.4 Cài đặt liên quan
 Tùy chọn **"Khung điện ảnh"** (bật/tắt) trong Cài đặt (`screens.md` mục 10), mặc định bật cho cinematic tàu sân bay (các cinematic khác không dùng dải đen).
+- **Cinematic ngắn**: chỉ phát cảnh 2 rút gọn khoảng 2000 ms (máy bay đã ở giữa khung khi bắt đầu, thả ở 300, 525, 750, 975 ms).
+- **Địch bắn**: cảnh 1 theo khung tàu địch; cảnh 2 đặt camera ở mặt nước bên lưới của mình, cùng quy tắc `M`.
 
 ## 7. Bảng tổng
 | Đòn | Tàu | Tổng (ms) | Cảnh mở đầu | Cảnh khai hỏa (rộng + cận) |
@@ -147,7 +148,8 @@ Tùy chọn **"Khung điện ảnh"** (bật/tắt) trong Cài đặt (`screens.
 | precision | Tuần dương | 5250 | đỉnh nhìn thẳng, hơi chéo sau | mạn tàu 100% thân (chao, nổ, ánh sáng) + insert cận đạn pháo lớn |
 | cross | Tàu tên lửa | 6600 | mạn tàu 100% thân, tháp ngẩng | mạn tàu 100% thân + 2 insert cận dãy trước và sau (tên lửa rõ) + chùm parabol |
 | torpedo | Tàu ngầm | 6300 | dưới nước nhìn ngang mạn, camera đi lên liên tục qua mặt nước (không cắt) | trên cao thấy tàu và nơi bắn + insert cận tên lửa-ngư lôi rời ống + rải thảm |
-| line3 | Tàu sân bay | 6750 | cất cánh, lia cam | camera đứng yên dưới nước bên địch nhìn máy bay bay qua, rồi tên lửa rơi xuống |
+| barrage | Siêu chiến hạm | 8400 | quay nòng năm tháp, từ trên chéo sau | mạn tàu 100% thân + 2 insert cận nòng (15 viên đạn) + **toàn chiến trường nhìn từ trên cao, camera đi vòng 1/6 đường tròn quanh tâm lưới địch** |
+| line3 | Tàu sân bay | 6450 | **một cú máy liên tục**: cất cánh, lia theo đàn bay tới mục tiêu | camera đứng ở mặt nước (thấy sóng) nhìn đàn máy bay thả tên lửa xuống từng ô |
 
 ## 8. Biến thể chung
 - **Trượt**: dùng kết quả ô `trượt` (cột nước), không có nhãn lộ tàu.
@@ -212,3 +214,32 @@ Chèn **sau khi "cảnh trúng đích" của đòn địch bắt đầu** và tr
 - Cảnh passive tối đa **5 s** tổng cộng mỗi lượt (tàu cắn lén 1875 ms + hộ vệ 2810 ms = khoảng 4.7 s); nếu cả hai cùng kích hoạt trong một lượt, rút ngắn mỗi cảnh xuống 70% (khoảng 3.3 s tổng).
 - Tốc độ x2 chia đôi mốc; "tắt cinematic": chỉ pop marker và nhật ký ngắn.
 
+
+## 11. Siêu chiến hạm — `barrage` (tổng 8400 ms, ba cảnh)
+Ý đồ: **quay nòng** năm tháp về năm hướng khác nhau, **xả đạn hàng loạt** từ mạn tàu, rồi **cảnh toàn chiến trường**: camera nhìn thẳng từ trên cao xuống, **đi vòng ngang 1/6 đường tròn (60°)** quanh tâm lưới địch trong lúc năm cụm đạn rơi và nổ. Đòn này **không có nhắm**; năm ô do core chọn ngẫu nhiên (`rules.md` mục 4.6), thứ tự `cells[i]` ứng với tháp pháo `i + 1`. Mô hình tàu: `ship-dreadnought.md`.
+
+| Shot | Thời gian | Camera | Sự kiện |
+|---|---|---|---|
+| 1. **Quay nòng, từ trên chéo sau** | 0–1800 | pos `(f −3.0, r +1.8, u +4.6)`, nhìn `(f 0, r 0, u +0.1)`, FOV 40°, trôi chậm tới `(f −2.4, r +1.5, u +4.4)` (thấy cả thân dài 4 ô và các tháp) | **năm tháp xoay về năm hướng khác nhau** (mỗi tháp ngắm ô của nó; góc xoay tối đa 180°/giây, 0–1400 ms, lệch nhau 80 ms), nòng ngẩng 40°; pháo phụ `turret_s*` xoay theo; **năm đường ngắm cam** từ tháp tới hướng ô, tắt khi bắn; còi báo, đèn hazard nhấp nháy |
+| 2. **Mạn tàu, thấy cả thân** | 1800–3900 | pos `(f 0, r +4.2, u +0.45)`, nhìn `(f 0, r 0, u +0.15)`, FOV 42° (thấy 100% thân, đủ khoảng trống phía mũi để thấy đạn bay) | **khai hỏa hàng loạt**: tháp 1 ở **2100**, tháp 2 ở 2250, tháp 3 ở 2400, tháp 4 ở 2700, tháp 5 ở 2850; mỗi tháp nhả **ba viên** cách nhau 40 ms (`fx_muzzle_l`, hero ×2.5, quầng sáng cam), tổng **15 viên**; chớp mõm theo quy tắc giảm chói (mỗi tháp cách nhau tối thiểu 150 ms để không cháy trắng); sóng giật mạnh hai bên thân; **tàu chao** (lăn +4° trong 450 ms, tắt dần 1500 ms, chúi 1.6°, nhấc lên 0.5 ĐV); khói dày; rung 0.08/500 (×10 ĐV); **slow-motion 0.6× từ 2070 đến 2670** |
+| 2a. Insert cận nòng, đội mũi | 2040–2640 | pos `(f +1.5, r +0.9, u +0.5)`, nhìn tháp 2, FOV 32° | thấy ba tháp mũi lần lượt nhả đạn: **ba viên rời nòng rõ ràng**, nòng thụt, vỏ đạn bay, lửa mõm, tháp chao; giữ ≥ 600 ms |
+| 2b. Insert cận nòng, đội lái | 2640–3240 | pos `(f −1.2, r +0.9, u +0.5)`, nhìn tháp 4, FOV 32° | tháp 4 (2700) và tháp 5 (2850) khai hỏa |
+| 3. **Toàn chiến trường, đi vòng 1/6 đường tròn** | 3900–8400 | camera **nhìn thẳng từ trên cao xuống tâm lưới địch** `C`, quỹ đạo ghi dưới | thấy **cả lưới địch** và các cụm đạn bay vòng cung cao lao xuống; năm vụ nổ lần lượt, lửa, khói, cột nước; aftermath |
+Biến thể: nếu chỉ còn `n < 5` ô chưa bắn thì chỉ n tháp đầu (theo thứ tự trên) nhả đạn; các tháp còn lại vẫn quay nòng nhưng không bắn.
+
+### 11.1 Quỹ đạo camera ở shot 3 (tính theo thế giới, đơn vị ĐV)
+- `C` = tâm lưới bị bắn: lưới địch `(0, 0, −75)` khi người chơi bắn; lưới mình `(0, 0, +75)` khi địch bắn. `D` = hướng nằm ngang từ `C` về phía bên bắn (`+Z` nếu `C` là lưới địch, `−Z` nếu là lưới mình).
+- Camera luôn nhìn vào `C` (nhìn xuống), **độ cao y = 110**, **bán kính ngang 60** (độ chúi nhìn xuống khoảng 61°), FOV dọc 45° (cho cái nhìn bao trọn lưới 100 × 100 ĐV, biên rộng).
+- **Quay quanh trục thẳng đứng đi qua `C`**: góc phương vị `φ` đo từ `D`, chạy từ **−30° tới +30°** (tổng **60° = 1/6 vòng**), chiều cố định theo kim đồng hồ nhìn từ trên (từ bên trái sang bên phải của người chơi). Vị trí camera khi `D = +Z`: `(60 sin φ, 110, C.z + 60 cos φ)`; khi `D = −Z` (địch bắn): `(−60 sin φ, 110, C.z − 60 cos φ)` (xoay 180° quanh `C`, cùng chiều quay).
+- Đường cong tốc độ góc: ease-in-out nhẹ (sine); không rung camera xoay, chỉ rung từ vụ nổ (biên độ ≤ 0.6 ĐV, tắt dần).
+- **Vị trí các vụ nổ trên màn hình** (mốc `tImpact`): tháp 1 ở 4500, tháp 2 ở 4650, tháp 3 ở 4800, tháp 4 ở 5100, tháp 5 ở 5250. Đạn bay **cung cao**: đỉnh cao `35 + 0.4 × khoảng cách ngang` ĐV, thời gian bay **2400 ms** (kéo giãn, bản `Mốc chung`), mỗi cụm ba viên cách nhau 40 ms rơi lệch tối đa 0.4 ĐV quanh ô.
+- Đạn **hero ×2.5**: đạn pháo siêu nặng dài 1.0 ĐV thành 2.5, quầng sáng cam, vệt khói trắng đục kéo dài; tại shot này đạn bay **từ ngoài khung vào qua phía trên camera**, nên người chơi thấy đạn đi sượt qua trước khi rơi.
+- Kết quả từng ô theo `CellResolved` (hiệu ứng `env-and-fx.md` mục 8): trượt = cột nước, trúng = nổ và lửa, chìm kéo theo cảnh chìm riêng (`sinking.md`). Năm vụ nổ gần nhau nên **giới hạn hiệu ứng đồng thời**: tối đa 3 cầu lửa lớn sống cùng lúc, các vụ còn lại hạ một bậc (cầu lửa nhỏ), không khung hình nào quá 20% diện tích cháy trắng.
+- Ô bị hộ vệ triệt tiêu (`ShotNullified`): đạn của ô đó **nổ lửng lơ trên không** ở độ cao 60 ĐV (tái dùng hiệu ứng nổ chặn của hộ vệ, `9.2`), không tới mặt nước. Camera không đổi.
+- Tàu bị chìm vì đòn này: cảnh chìm chèn sau shot 3 như mọi đòn (mục 8).
+
+### 11.2 Cài đặt và biến thể
+- **Cinematic ngắn** (mục 10): phát shot 3 rút gọn **2400 ms**, quỹ đạo vẫn 60°, đạn đã ở giữa không trung khi bắt đầu, các vụ nổ ở 300, 420, 540, 780, 900 ms.
+- Tốc độ x2: mọi mốc chia đôi (tổng 4200 ms). Bỏ qua: nhảy tới cuối 150 ms (`animations.md` mục 8). Tắt cinematic: chỉ pop marker năm ô lần lượt, cách nhau 120 ms.
+- Địch bắn: shot 1 và 2 đặt camera theo khung tàu của địch (lật hướng tự nhiên); shot 3 dùng `C` = lưới của mình, `D = −Z`.
+- Âm thanh: xem `audio.md`, hàng "Siêu chiến hạm" trong bảng âm theo sự kiện.

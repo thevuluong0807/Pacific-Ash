@@ -12,8 +12,8 @@ const attacks=[
    [1,'s',-.1,3.0,.8,-.1,0,'0–2250 mạn tàu 100% thân'],[2,'s',-.1,3.2,.5,-.1,0,'2250–3450 khai hỏa'],[3,'s',.95,.95,.4,.91,0,'insert dãy trước'],[4,'s',-1.15,.9,.4,-1.07,0,'insert dãy sau'],[5,'t',-8,0,9,0,0,'3450–5700 chùm parabol'],[6,'t',-3.5,0,2.4,0,0,'5100–6600 chạm đích']],tl:[[0,2250],[2250,3450],[2370,3000],[3000,3450],[3450,5100],[5100,6600]],total:6600,arc:1},
  {t:'TÀU NGẦM — torpedo (6300 ms)',len:2.9,cells:[[0,1],[1,1],[2,1]],lane:1,shots:[
    [1,'s',.4,2.6,-.15,.4,0,'0–2400 camera đi liên tục: dưới nước → lên cao'],[2,'s',.2,2.2,1.7,.8,0,'2400–4500 trên cao, thấy tàu + nơi bắn'],[3,'s',1.9,.7,.25,1.4,0,'insert cận nơi phóng'],[4,'t',-2,0,4.5,3,0,'4500–6300 trúng đích']],tl:[[0,2400],[2400,4500],[2640,3240],[4500,6300]],total:6300},
- {t:'TÀU SÂN BAY — line3 (6750 ms, 3 cảnh)',len:4.9,cells:[[0,1],[1,1],[2,1]],shots:[
-   [1,'s',2.45,.2,.08,1.2,0,'0–2400 cất cánh, lia cam'],[2,'t',-2.0,1.0,.1,-.6,0,'2400–4350 camera đứng yên dưới nước, nhìn lên'],[3,'t',-3.2,1.8,.6,0,0,'4350–6750 tên lửa rơi xuống']],tl:[[0,2400],[2400,4350],[4350,6750]],total:6750,chase:1}]
+ {t:'TÀU SÂN BAY — line3 (6450 ms, 2 cảnh)',len:4.9,cells:[[-1,1],[0,1],[1,1],[2,1]],shots:[
+   [1,'s',2.2,.9,.12,1.4,.1,'0–3000 một cú máy: cất cánh, lia theo đàn bay'],[2,'t',-.4,4.6,.35,0,0,'3000–6450 mặt nước: thả tên lửa xuống từng ô']],tl:[[0,3000],[3000,6450]],total:6450,chase:1}]
 p(`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${PW*2+GAP*3} ${(PH+GAP)*3+GAP+40}" width="${PW*2+GAP*3}" height="${(PH+GAP)*3+GAP+40}" font-family="monospace" font-size="11"><title>cinematic plan</title>
 <rect width="100%" height="100%" fill="#0B1117"/><text x="14" y="26" fill="#4FC3E8" font-size="15">Sơ đồ camera (nhìn từ trên xuống, mũi tàu hướng phải; số = shot; u = độ cao camera; chấm xanh = tàu bắn, lưới = vùng mục tiêu)</text>`)
 attacks.forEach((a,i)=>{

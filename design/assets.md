@@ -3,10 +3,10 @@
 Nguyên tắc: làm được với placeholder thì cứ làm, asset thật thay vào sau, không đổi code. Mọi asset tải qua một bảng ánh xạ khóa → đường dẫn duy nhất (`assets/manifest.ts`). Code không hard-code đường dẫn.
 
 ## 1. Model 3D (.glb)
-> **Xác tàu bị hạ** (chìm một nửa, gãy vỡ nhưng rõ loại tàu): `models/wrecks/wreck_<id>.glb`, 7 model, xem `wreckage.md` mục 3.
+> **Xác tàu bị hạ** (chìm một nửa, gãy vỡ nhưng rõ loại tàu): `models/wrecks/wreck_<id>.glb`, 8 model, xem `wreckage.md` mục 3.
 > **Mảnh xác tàu nổi** (ô trúng 3D): `models/debris/debris_<id>.glb`, 10 mảnh, xem `wreckage.md`.
 > **Tỉ lệ thế giới ×10:** các model đã nhân 10 sẵn (1 ô = 10 đơn vị thế giới), xem `world-scale.md`.
-> **Hiện dùng bản khối cơ bản** của 7 tàu: `design/models/ship_<id>.glb` (xem `ships-basic3d.md`), chép vào `src/assets/models/`. Các cột "Tam giác tối đa" LOD0/1/2 và placeholder hộp dưới đây là kế hoạch cũ cho model chi tiết (tạm hoãn); bản hiện tại (khối mượt, nhiều chi tiết) 1 101–11 351 tam giác, một mức duy nhất.
+> **Hiện dùng bản khối cơ bản** của 8 tàu: `design/models/ship_<id>.glb` (xem `ships-basic3d.md`), chép vào `src/assets/models/`. Các cột "Tam giác tối đa" LOD0/1/2 và placeholder hộp dưới đây là kế hoạch cũ cho model chi tiết (tạm hoãn); bản hiện tại (khối mượt, nhiều chi tiết) 1 101–11 351 tam giác, một mức duy nhất.
 
 Tỉ lệ: 1 ô lưới = 1 đơn vị thế giới theo chiều dài. Gốc tọa độ ở giữa thân tàu, mũi hướng +Z, đáy sát y=0.
 
@@ -18,6 +18,7 @@ Tỉ lệ: 1 ô lưới = 1 đơn vị thế giới theo chiều dài. Gốc t�
 | `ship_missile` | Tàu tên lửa, hai dãy ô phóng thẳng đứng. **Chi tiết: `design/ship-missile.md`** | 4 | LOD0 250k, LOD1 35k, LOD2 8k | hộp 4x0.6x0.5 + lưới ô nhỏ trên boong |
 | `ship_carrier` | Tàu sân bay, boong bay, đảo chỉ huy. **Chi tiết: `design/ship-carrier.md`** | 5 | LOD0 350k, LOD1 50k, LOD2 10k | hộp phẳng 5x0.4x0.9 + khối nhỏ ở bên |
 | `ship_raider` | Tàu cắn lén 1×1, thân tàng hình góc cạnh. **Chi tiết: `design/ship-raider.md`** | 1 | LOD0 60k, LOD1 10k, LOD2 3k | hộp 0.9x0.3x0.1, màu tối |
+| `ship_dreadnought` | Siêu chiến hạm 1×4, 5 tháp pháo ba nòng, tháp chỉ huy chùa, hai ống khói. **Chi tiết: `design/ship-dreadnought.md`** | 4 | khối cơ bản 15k tam giác | `models/ship_dreadnought.glb`, xác `models/wrecks/wreck_dreadnought.glb` |
 | `ship_escort` | Tàu hộ vệ 2×2, hai thân nối boong, vòm radar lớn. **Chi tiết: `design/ship-escort.md`** | 2 (vuông) | LOD0 220k, LOD1 32k, LOD2 7k | hai hộp 1.85x0.55 nối khối 1.0x1.0 |
 | `fx_missile` | Tên lửa | — | 1k | trụ nhỏ |
 | `fx_torpedo` | Ngư lôi | — | 1k | trụ nhỏ |

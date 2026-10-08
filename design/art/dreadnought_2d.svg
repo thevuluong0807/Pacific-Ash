@@ -1,0 +1,45 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 100" width="1600" height="400">
+  <!-- Siêu chiến hạm, 4 ô, nhìn từ trên xuống, mũi hướng +x. 5 tháp pháo ba nòng (3 mũi, 2 lái), tháp chỉ huy nhiều tầng, hai ống khói. -->
+  <title>dreadnought 2D</title>
+  <defs>
+    <linearGradient id="hull" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#7F8C98"/><stop offset="0.28" stop-color="#E9EFF4"/><stop offset="0.55" stop-color="#B4BFC9"/><stop offset="1" stop-color="#6B7885"/></linearGradient>
+    <linearGradient id="deck" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#AEB9C3"/><stop offset="0.45" stop-color="#D5DDE4"/><stop offset="1" stop-color="#97A3AE"/></linearGradient>
+    <linearGradient id="block" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F3F6F9"/><stop offset="1" stop-color="#B9C4CE"/></linearGradient>
+    <g id="ciws"><circle r="3.6" fill="#F1F4F7" stroke="#0B1117" stroke-width="1.6"/><circle cx="-1" cy="-1" r="1.1" fill="#fff"/></g>
+    <g id="heavy3"><circle r="11" fill="#7E8B97" stroke="#0B1117" stroke-width="2.4"/><circle r="7.6" fill="#CBD4DC" stroke="#0B1117" stroke-width="1.4"/><rect x="6" y="-7" width="26" height="3.4" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.3"/><rect x="6" y="-1.7" width="28" height="3.4" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.3"/><rect x="6" y="3.6" width="26" height="3.4" rx="1.2" fill="#46525E" stroke="#0B1117" stroke-width="1.3"/><rect x="29" y="-7.6" width="4.6" height="4.6" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1"/><rect x="31" y="-2.3" width="4.6" height="4.6" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1"/><rect x="29" y="3" width="4.6" height="4.6" rx="1" fill="#2B343C" stroke="#0B1117" stroke-width="1"/></g>
+    <g id="sec"><circle r="3.4" fill="#9AA6B1" stroke="#0B1117" stroke-width="1.4"/><rect x="2" y="-1.9" width="7" height="1.6" fill="#46525E" stroke="#0B1117" stroke-width=".8"/><rect x="2" y="0.4" width="7" height="1.6" fill="#46525E" stroke="#0B1117" stroke-width=".8"/></g>
+  </defs>
+  <path d="M18 41 Q18 36 24 35 L250 30 Q340 32 398 55 Q340 78 250 80 L24 75 Q18 74 18 69 Z" fill="#000" opacity=".32"/>
+  <path d="M14 37 Q14 31 20 30 L246 25 Q336 27 395 50 Q336 73 246 75 L20 70 Q14 69 14 63 Z" fill="url(#hull)" stroke="#0B1117" stroke-width="3" stroke-linejoin="round"/>
+  <path d="M26 30.6 L246 26.6 Q330 28.5 385 44" fill="none" stroke="#fff" stroke-opacity=".75" stroke-width="2" stroke-linecap="round"/>
+  <path d="M20 39 L246 32 Q330 34 384 50 Q330 66 246 68 L20 61 Z" fill="url(#deck)" stroke="#4E5A66" stroke-width="1.6" stroke-linejoin="round"/>
+  <path d="M30 33 L246 28.6 M30 67 L246 71.4" stroke="#39434D" stroke-width="1.6" opacity=".55"/>
+  <rect x="14" y="39" width="34" height="22" rx="2" fill="#8E99A4" stroke="#0B1117" stroke-width="1.8"/>
+  <circle cx="31" cy="50" r="8.6" fill="none" stroke="#F4F7FA" stroke-width="1.4"/>
+  <path d="M28 46 V54 M34 46 V54 M28 50 H34" stroke="#F4F7FA" stroke-width="1.8" stroke-linecap="round"/>
+  <use href="#heavy3" transform="translate(62 50) scale(.7)"/>
+  <use href="#heavy3" transform="translate(94 50) scale(.7)"/>
+  <rect x="116" y="38" width="28" height="24" rx="2.5" fill="url(#block)" stroke="#0B1117" stroke-width="2.2"/>
+  <path d="M117 50 H143" stroke="#4E5A66" stroke-width="1.4"/><use href="#ciws" x="130" y="50"/>
+  <rect x="126" y="31.6" width="14" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+  <rect x="126" y="63.4" width="14" height="5" rx="2.4" fill="#E08A2E" stroke="#0B1117" stroke-width="1.4"/>
+  <rect x="148" y="37" width="28" height="26" rx="3" fill="#39434D" stroke="#0B1117" stroke-width="2.2"/>
+  <ellipse cx="162" cy="50" rx="8.5" ry="9.5" fill="#1B2630" stroke="#0B1117" stroke-width="1.6"/><ellipse cx="162" cy="50" rx="4.6" ry="5.5" fill="#0B1117"/>
+  <rect x="148" y="43" width="28" height="3" fill="#E08A2E" opacity=".9"/>
+  <rect x="180" y="37" width="28" height="26" rx="3" fill="#39434D" stroke="#0B1117" stroke-width="2.2"/>
+  <ellipse cx="194" cy="50" rx="8.5" ry="9.5" fill="#1B2630" stroke="#0B1117" stroke-width="1.6"/><ellipse cx="194" cy="50" rx="4.6" ry="5.5" fill="#0B1117"/>
+  <rect x="180" y="43" width="28" height="3" fill="#E08A2E" opacity=".9"/>
+  <rect x="216.5" y="32.5" width="56" height="40" rx="3.5" fill="#000" opacity=".25"/>
+  <rect x="214" y="30" width="56" height="40" rx="3.5" fill="url(#block)" stroke="#0B1117" stroke-width="2.4"/>
+  <rect x="222" y="35" width="40" height="30" rx="3" fill="#E4EAF0" stroke="#0B1117" stroke-width="1.8"/>
+  <rect x="230" y="39" width="26" height="22" rx="2.5" fill="#CBD4DC" stroke="#0B1117" stroke-width="1.8"/>
+  <rect x="250" y="41.5" width="5" height="17" rx="1.5" fill="#142431" stroke="#0B1117" stroke-width="1.2"/>
+  <rect x="236" y="43" width="12" height="14" rx="2" fill="#8E99A4" stroke="#0B1117" stroke-width="1.5"/>
+  <circle cx="242" cy="50" r="4.2" fill="#C2CCD5" stroke="#0B1117" stroke-width="1.5"/><circle cx="242" cy="50" r="1.5" fill="#0B1117"/>
+  <path d="M216 36 H226 M216 64 H226" stroke="#4E5A66" stroke-width="2.4" stroke-linecap="round"/>
+  <use href="#sec" x="272" y="33"/><use href="#sec" x="272" y="67"/><use href="#sec" x="196" y="30"/><use href="#sec" x="196" y="70"/>
+  <use href="#heavy3" transform="translate(286 50) scale(.7)"/>
+  <use href="#heavy3" transform="translate(318 50) scale(.7)"/>
+  <use href="#heavy3" transform="translate(350 50) scale(.7)"/>
+  <circle cx="386" cy="50" r="2.2" fill="#46525E" stroke="#0B1117" stroke-width="1.2"/>
+</svg>

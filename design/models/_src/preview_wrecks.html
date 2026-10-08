@@ -3,7 +3,7 @@
 <script type="module">
 import * as THREE from 'three'
 import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js'
-const ships=[['destroyer',1.9,2],['cruiser',2.9,3],['submarine',2.9,3],['missile',3.9,4],['carrier',4.9,5],['raider',.9,1],['escort',1.9,4]]
+const ships=[['destroyer',1.9,2],['cruiser',2.9,3],['submarine',2.9,3],['missile',3.9,4],['carrier',4.9,5],['raider',.9,1],['escort',1.9,4],['dreadnought',3.9,4]]
 const params=new URLSearchParams(location.search);const yaw=parseFloat(params.get('yaw')||'0.9'),pitch=parseFloat(params.get('pitch')||'0.45')
 const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});r.setSize(880,420);r.setClearColor(0x16202a)
 const loader=new GLTFLoader();let done=0

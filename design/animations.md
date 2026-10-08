@@ -24,7 +24,7 @@ Cảm giác chung: nặng, chậm vừa đủ, có lực. Đạn nổ có trọn
 | precision | Tuần dương | 2400 | thấp, sau pháo, theo đạn | 1 |
 | torpedo | Tàu ngầm | 3000 | dưới nước theo ngư lôi | 1 (hoặc 0 nếu trượt hết) |
 | cross | Tàu tên lửa | 3400 | tên lửa bay vòng, nhìn xuống vùng đích | tới 5 |
-| line3 | Tàu sân bay | 3600 | cất cánh, rồi đón máy bay bay qua | tới 3 |
+| line3 | Tàu sân bay | 6450 (xem `cinematics.md` 6) | cất cánh, rồi đón máy bay bay qua | tới 4 |
 
 ## 4. Từng đòn
 
@@ -57,12 +57,8 @@ Cảm giác chung: nặng, chậm vừa đủ, có lực. Đạn nổ có trọn
 - 1900–2300: lao xuống, mỗi quả nhắm một ô trong thứ tự `rules.md` mục 4.4 (tâm, lên, phải, xuống, trái), cách nhau 120 ms. Mỗi ô nổ theo kết quả riêng.
 - 2300–3400: aftermath, khói chùm bốc lên, camera về.
 
-### 4.5 line3 — Tàu sân bay (3600 ms)
-- 0–600: camera quét dọc boong, máy bay hoặc UAV tăng tốc, đèn cảnh báo nhấp nháy.
-- 600–1200: cất cánh (hai hoặc ba chiếc), bay lên, tản ra.
-- 1200–2200: camera đổi sang góc nhìn vùng mục tiêu, máy bay bay thẳng hàng qua dải 3 ô theo hướng `orientation`.
-- 2200–2800: thả bom rải: mỗi ô một quả, cách nhau 150 ms theo thứ tự trục tăng; nổ từng ô theo kết quả.
-- 2800–3600: máy bay vọt lên, khói, camera về.
+### 4.5 line3 — Tàu sân bay (bản cũ, đã bị thay)
+> **Đã thay bằng `cinematics.md` mục 6** (rải thảm 4 ô, 6450 ms, hai cảnh: một cú máy liên tục trên trời, rồi cảnh mặt nước thả tên lửa). Không dùng các mốc cũ ở đây.
 
 ## 5. Kết quả mỗi ô (dùng chung)
 - **Trượt**: cột nước vọt lên rồi đổ xuống 500 ms, vòng sóng lan ra, không lửa. Âm thanh nước tung.

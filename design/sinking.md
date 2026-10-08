@@ -8,8 +8,8 @@ Hai phần chạy theo cùng một hàng đợi sự kiện (`animations.md` m�
 
 | File đi kèm | Vai trò |
 |---|---|
-| `art/sunk_states.svg` | Bảng so sánh 7 tàu: nguyên vẹn và sau khi chìm (sprite xám tối + dấu X) |
-| `art/sinking_timelines.svg` | Sơ đồ thời gian hoạt cảnh chìm 3D của 7 tàu (10800 ms) |
+| `art/sunk_states.svg` | Bảng so sánh 7 tàu (siêu chiến hạm chưa có trong ảnh, dùng `sunk_states` suy ra từ sprite `dreadnought_2d.svg` + dấu X): nguyên vẹn và sau khi chìm (sprite xám tối + dấu X) |
+| `art/sinking_timelines.svg` | Sơ đồ thời gian hoạt cảnh chìm 3D của 7 tàu (10800 ms; siêu chiến hạm mô tả bằng bảng ở mục 2.2 và 2.3) |
 | `art/markers.svg` | Marker `sunk` (dấu X) cho một ô |
 | `models/ship_*.glb` | Model dùng cho hoạt cảnh chìm; tên node ở `ships-basic3d.md` |
 
@@ -69,6 +69,7 @@ Mốc ms: 0 / 1800 / 3600 / 5400 / 7200 / 9000 / 10800.
 | **Tàu ngầm** | (0,0,0) | (2,0,−0.03) | (6,2,−0.12) | (10,3,−0.30) | (16,5,−0.60) | (24,6,−1.00) | (30,8,−1.50) |
 | **Tàu sân bay** | (0,0,0) | (0,3,−0.01) | (1,10,−0.03) | (3,22,−0.07) | (−4,34,−0.12) | (−8,42,−0.20) | (−10,48,−0.30) |
 | **Tàu cắn lén** | (0,0,0) | (8,12,−0.01)@1200 | (14,60,−0.03)@2400 | (12,110,−0.04) | (6,178,−0.10) | (6,180,−0.20) | (10,180,−0.45) |
+| **Siêu chiến hạm** | (0,0,0) | (0,2,−0.01) | (1,6,−0.03) | (3,12,−0.07) | (5,18,−0.12) | (8,24,−0.20) | (10,30,−0.32) |
 | **Tàu hộ vệ** | (0,0,0) | (0,2,−0.01) | (2,8,−0.04) | (3,16,−0.12) | (4,24,−0.28) | (5,28,−0.50) | (6,32,−0.80) |
 Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn lén). **Lưu ý quan trọng:** các giá trị chúi, nghiêng lớn và Δy sâu trong bảng này (ví dụ khu trục hạm 78° và −1.2 ô) mô tả **bản cũ tàu chìm hẳn**; chúng chỉ áp dụng tới **mốc hoán đổi sang xác nổi** ở mục 2.8, sau mốc đó tư thế do `wreck_<id>.glb` quyết định (chìm một nửa). Phần "đuôi chìm nốt" bản cũ: tăng Δy thêm khoảng 0.6–1.0 trong 6000 ms rồi biến mất.
 
@@ -127,6 +128,16 @@ Chú ý: nghiêng trên 90° nghĩa là lật úp (tuần dương, tàu cắn l�
 | 7200–10800 | **chìm thẳng xuống** (nổi úp rồi lún), để lại ít dầu |
 - Hiệu ứng riêng: ít lửa, nhiều nước. Âm: một cú nổ nhỏ gọn, tiếng nước ào, tiếng "bộp" khi úp. Máy quay: cận (0.7) rồi lùi nhẹ; đây là tàu nhỏ nên giữ gần.
 
+#### Siêu chiến hạm: "nổ hầm đạn, gãy đôi" (nặng, lâu, nhiều nổ phụ)
+| Mốc | Diễn biến |
+|---|---|
+| 0–1800 | năm tháp pháo **xoay loạn**, nòng chúi xuống, pháo phụ bắn loạn; nổ nhỏ dọc mạn rồi tắt |
+| 1800–3600 | **hầm đạn nổ phụ liên hoàn**: chớp trắng cam phụt từ khe tháp, **tháp 2 và tháp 4 bật nắp** (nắp bay lên 4 ĐV rồi rơi nước), lửa phụt cao từ ống khói |
+| 3600–6600 | **nổ lớn giữa thân** (sau tháp chỉ huy): lửa và khói đen cột cao, thân bắt đầu chúi nhẹ, nghiêng 12° → 24°; **tháp 3 bay khỏi bệ** (ballistic, rơi cách tàu 6–10 ĐV); đèn tắt dần |
+| 6600 | **mốc hoán đổi**: nổ lớn che chỗ ghép, thay bằng `wreck_dreadnought` (gãy đôi, mục 2.8) |
+| 6600–10800 | hai nửa xác dịch về pose cuối, **mũi ngóc lên**, đuôi nghiêng, lửa cháy dai trên cả hai nửa |
+- Hiệu ứng riêng: nhiều nổ phụ (tối đa 3 cầu lửa lớn cùng lúc), tia lửa đạn nổ lép bép, lửa dầu loang rộng. Âm: tiếng nổ hầm đạn trầm, tiếng thép xé khi gãy. Máy quay: lùi xa dần để thấy cả hai nửa, đi vòng nhẹ 20°. **Chìm nhanh hơn tuần dương nhưng nhiều nổ hơn.**
+
 #### Tàu hộ vệ: "vỡ phòng thủ, chìm lệch" 
 | Mốc | Diễn biến |
 |---|---|
@@ -179,6 +190,7 @@ Tàu **không chìm hẳn**. Thay vì biến mất, hoạt cảnh kết thúc �
 | Tàu ngầm | 6600 | **2 mảnh**: mũi: ngóc 32°, nghiêng 20°, Δy −0.03, dịch x +0.1 và z +0.22; thân chính (tháp chỉ huy, tiềm vọng, đuôi): nghiêng 28°, chúi 5°, Δy −0.04. Thay "lặn sâu và biến mất" bằng "nổi lên rồi vỡ đôi tại mặt nước bằng một vụ nổ nén, hai nửa trôi dạt" |
 | Tàu sân bay | 6600 | **2 mảnh**: thân chính (boong bay, đảo chỉ huy, ống phóng): nghiêng 28°, ngóc mũi 5°, Δy −0.06; đuôi (phần đường hạ cánh): nghiêng 40°, chúi 8°, Δy −0.08, dịch x +0.12 và z −0.3 |
 | Tàu cắn lén | 4200 | **1 mảnh lật úp một phần**: nghiêng 58°, ngóc mũi 8°, Δy −0.028; thấy đáy tàu, cột và một phần tháp pháo |
+| Siêu chiến hạm | 6600 | **2 mảnh**: mũi (ba tháp pháo, tháp chỉ huy, cột radar): ngóc mũi 12°, nghiêng 14°, Δy −0.04, dịch z +0.05; đuôi (hai ống khói, hai tháp pháo, sàn trực thăng): chúi 11°, nghiêng −16°, Δy −0.06, dịch x +0.08 và z −0.2 |
 | Tàu hộ vệ | 5400 | **3 mảnh**: boong và cầu và một thân: nghiêng dọc 12°, Δy −0.05; thân kia **tách rời**: nghiêng −28°, Δy −0.09, dịch x −0.1 và z −0.25; **vòm radar bật ra nổi riêng**: nghiêng 18° và 22°, Δy −0.13, dịch x +0.4 và z +0.8 |
 - Mọi mảnh đều **chìm một nửa** (nửa trên lộ ra khỏi mặt nước) và **nổi lềnh bềnh**: biên độ nhấp nhô 0.3 đơn vị thế giới, lắc nhẹ ±3°.
 - Mặt cắt gãy có **tấm kín tối, sườn thép thò ra và viền nóng đỏ** (đã có trong model).

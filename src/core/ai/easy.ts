@@ -37,6 +37,9 @@ export function createEasyAi(seed: number): Player {
         case 'line3':
           target = { kind, center: randomCell(rng), orientation: pick<Orientation>(rng, ['h', 'v']) };
           break;
+        case 'barrage':
+          target = { kind };
+          break;
       }
       const action: FireAction = { shipId, target };
       return action;

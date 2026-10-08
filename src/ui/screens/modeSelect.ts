@@ -24,6 +24,10 @@ export const modeSelectScreen: ScreenFactory<'modeSelect'> = (app, root) => {
           <button class="btn btn--small btn--primary" data-start="hotseat">${S.mode.start}</button>
         </article>
         <article class="card panel">
+          <h2>${S.arena.name}</h2><p>${S.arena.desc}</p>
+          <button class="btn btn--small btn--primary" data-arena>${S.mode.start}</button>
+        </article>
+        <article class="card panel">
           <h2>${S.mode.online.name}</h2><p>${S.mode.online.desc}</p>
           <button class="btn btn--small btn--primary" data-online>${S.mode.start}</button>
         </article>
@@ -48,6 +52,7 @@ export const modeSelectScreen: ScreenFactory<'modeSelect'> = (app, root) => {
       level = t.dataset.level as AiLevel;
       root.querySelectorAll('[data-level]').forEach((b) => b.setAttribute('aria-checked', String(b === t)));
     } else if (t.dataset.start) start(t.dataset.start as 'pve' | 'hotseat');
+    else if (t.hasAttribute('data-arena')) app.go('arenaLobby');
     else if (t.hasAttribute('data-online')) { app.updateSettings({ equipDamage: equip, turnLimit: limit }); app.go('online'); }
     else if (t.hasAttribute('data-back')) app.go('menu');
   });

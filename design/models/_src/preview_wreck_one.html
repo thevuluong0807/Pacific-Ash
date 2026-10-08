@@ -1,0 +1,23 @@
+<!doctype html><html><head><meta charset="utf-8"><style>body{margin:0;background:#0B1117;color:#C9D4DC;font:14px monospace}#g{display:grid;grid-template-columns:repeat(2,880px);gap:8px;padding:8px}.c{position:relative}canvas{display:block}.l{position:absolute;left:8px;top:6px;color:#4FC3E8}</style>
+<script type="importmap">{"imports":{"three":"/node_modules/three/build/three.module.js","three/addons/":"/node_modules/three/examples/jsm/"}}</script></head><body><div id="g"></div>
+<script type="module">
+import * as THREE from 'three'
+import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js'
+const ships=[['dreadnought',3.9,4],['destroyer',1.9,2]]
+const params=new URLSearchParams(location.search);const yaw=parseFloat(params.get('yaw')||'0.9'),pitch=parseFloat(params.get('pitch')||'0.45')
+const r=new THREE.WebGLRenderer({antialias:true,preserveDrawingBuffer:true});r.setSize(880,420);r.setClearColor(0x16202a)
+const loader=new GLTFLoader();let done=0
+for(const [id,len] of ships){
+ const wrap=document.createElement('div');wrap.className='c';const cv=document.createElement('canvas');cv.width=880;cv.height=420;wrap.appendChild(cv);const l=document.createElement('div');l.className='l';l.textContent='wreck_'+id;wrap.appendChild(l);document.getElementById('g').appendChild(wrap)
+ const rr=r;const ctx2=cv.getContext('2d')
+ const sc=new THREE.Scene();sc.add(new THREE.HemisphereLight(0xbcd0e0,0x2a1a1a,1.1));const d=new THREE.DirectionalLight(0xffd8b0,2.2);d.position.set(-30,50,20);sc.add(d);const d2=new THREE.DirectionalLight(0x90b8e0,.8);d2.position.set(30,20,-30);sc.add(d2)
+ const water=new THREE.Mesh(new THREE.PlaneGeometry(400,400),new THREE.MeshStandardMaterial({color:0x14262e,roughness:.8,metalness:.1,transparent:true,opacity:.86}));water.rotation.x=-Math.PI/2;sc.add(water)
+ const cam=new THREE.PerspectiveCamera(35,880/420,.5,1000)
+ const gl=await loader.loadAsync('/design/models/wrecks/wreck_'+id+'.glb');const m=gl.scene
+ if(id==='escort')m.rotation.y=0
+ sc.add(m)
+ const dist=Math.max(len*10,13)*(id==='escort'?1.35:.95)
+ cam.position.set(Math.sin(yaw)*dist*Math.cos(pitch),Math.sin(pitch)*dist,Math.cos(yaw)*dist*Math.cos(pitch));cam.lookAt(0,.8,0)
+ rr.render(sc,cam);ctx2.drawImage(r.domElement,0,0);done++}
+document.title='done'+done
+</script></body></html>

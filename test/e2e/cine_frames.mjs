@@ -1,9 +1,9 @@
 // Chụp khung hình cinematic ở các mốc thời gian cố định (đồng hồ cảnh chạy chậm 0.25×, SwiftShader ~3 fps nên mỗi đòn mất vài phút). Dùng ?debug. Ảnh vào $OUT/frame_<đòn>_<ms>.png. Cần `npm run dev -- --port 4599`.
-// Chạy: OUT=thư-mục node cine_frames.mjs [rapid|precision|cross|torpedo|line3 ...]
+// Chạy: OUT=thư-mục node cine_frames.mjs [rapid|precision|cross|torpedo|line3|barrage ...]
 import puppeteer from 'puppeteer-core';
 const kinds = process.argv.slice(2).length ? process.argv.slice(2) : ['rapid', 'precision', 'cross', 'torpedo', 'line3'];
-const MARKS = { rapid: [800, 1700, 2000, 2500, 3300, 4000], precision: [800, 1900, 2200, 2800, 3600, 4300], cross: [900, 2000, 2500, 3300, 4500, 5300], torpedo: [300, 700, 1100, 1800, 2300, 3000, 4000, 5000, 5700], line3: [300, 1000, 1500, 2200, 2900, 3500, 4000, 4700, 5500, 6500] };
-const SHIP = { rapid: 'destroyer', precision: 'cruiser', cross: 'missile', torpedo: 'submarine', line3: 'carrier' };
+const MARKS = { rapid: [800, 1700, 2000, 2500, 3300, 4000], precision: [800, 1900, 2200, 2800, 3600, 4300], cross: [900, 2000, 2500, 3300, 4500, 5300], torpedo: [300, 700, 1100, 1800, 2300, 3000, 4000, 5000, 5700], line3: [300, 1000, 1500, 2200, 2900, 3300, 3700, 4000, 4700, 5300, 6000], barrage: [500, 1200, 1800, 2200, 2500, 3000, 4000, 4600, 5200, 6500, 8000] };
+const SHIP = { rapid: 'destroyer', precision: 'cruiser', cross: 'missile', torpedo: 'submarine', line3: 'carrier', barrage: 'dreadnought' };
 const browser = await puppeteer.launch({ executablePath: '/usr/bin/google-chrome', headless: 'new', protocolTimeout: 900000, args: ['--no-sandbox', '--use-angle=swiftshader', '--enable-unsafe-swiftshader', '--ignore-gpu-blocklist'] });
 const page = await browser.newPage(); await page.setViewport({ width: 1280, height: 720 });
 const errs = []; page.on('pageerror', (e) => errs.push(e.message));
@@ -21,7 +21,8 @@ const events = {
   precision: [{ type: 'ShotFired', player: 0, shipId: 'cruiser', attack: 'precision', cells: [C(4, 4)] }, { type: 'CellResolved', player: 0, cell: C(4, 4), result: 'hit' }],
   cross: [{ type: 'ShotFired', player: 0, shipId: 'missile', attack: 'cross', cells: [C(5, 5), C(5, 4), C(6, 5), C(5, 6), C(4, 5)] }, ...[C(5, 5), C(5, 4), C(6, 5), C(5, 6), C(4, 5)].map((c, i) => ({ type: 'CellResolved', player: 0, cell: c, result: i % 2 ? 'miss' : 'hit' }))],
   torpedo: [{ type: 'ShotFired', player: 0, shipId: 'submarine', attack: 'torpedo', source: 'action', cells: [0, 1, 2, 3, 4].map((x) => C(x, 4)) }, ...[0, 1, 2, 3].map((x) => ({ type: 'CellResolved', player: 0, cell: C(x, 4), result: 'miss' })), { type: 'CellResolved', player: 0, cell: C(4, 4), result: 'hit' }],
-  line3: [{ type: 'ShotFired', player: 0, shipId: 'carrier', attack: 'line3', source: 'action', cells: [C(3, 5), C(4, 5), C(5, 5)] }, ...[C(3, 5), C(4, 5), C(5, 5)].map((c, i) => ({ type: 'CellResolved', player: 0, cell: c, result: i === 1 ? 'hit' : 'miss' }))],
+  line3: [{ type: 'ShotFired', player: 0, shipId: 'carrier', attack: 'line3', source: 'action', cells: [C(3, 5), C(4, 5), C(5, 5), C(6, 5)] }, ...[C(3, 5), C(4, 5), C(5, 5), C(6, 5)].map((c, i) => ({ type: 'CellResolved', player: 0, cell: c, result: i === 1 ? 'hit' : 'miss' }))],
+  barrage: [{ type: 'ShotFired', player: 0, shipId: 'dreadnought', attack: 'barrage', source: 'action', cells: [C(2, 2), C(7, 1), C(4, 6), C(8, 7), C(1, 8)] }, ...[C(2, 2), C(7, 1), C(4, 6), C(8, 7), C(1, 8)].map((c, i) => ({ type: 'CellResolved', player: 0, cell: c, result: i % 2 ? 'miss' : 'hit' }))],
 };
 for (const k of kinds) {
   await page.evaluate((ev, kind) => {

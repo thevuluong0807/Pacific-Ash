@@ -65,7 +65,7 @@
       "cooldown": 3,
       "attack": "line3",
       "attackNameVi": "Không kích",
-      "descVi": "Đánh dải 3 ô theo hàng hoặc cột.",
+      "descVi": "Rải thảm dải 4 ô liền nhau theo hàng hoặc cột.",
       "anim": "line3",
       "model": "ship_carrier",
       "placeholderColor": "#6A6F76",
@@ -108,6 +108,19 @@
       "anim": "guard",
       "model": "ship_escort",
       "placeholderColor": "#4A5A68"
+    },
+    "dreadnought": {
+      "nameVi": "Siêu chiến hạm",
+      "size": 4,
+      "shape": "line",
+      "cooldown": 3,
+      "attack": "barrage",
+      "attackNameVi": "Dội pháo",
+      "descVi": "Không cần nhắm. Năm tháp pháo cùng khai hỏa, đánh 5 ô ngẫu nhiên chưa bị bắn trên lưới địch.",
+      "shots": 5,
+      "anim": "barrage",
+      "model": "ship_dreadnought",
+      "placeholderColor": "#5C6672"
     }
   },
   "roster": [
@@ -117,12 +130,14 @@
     "missile",
     "carrier",
     "raider",
-    "escort"
+    "escort",
+    "dreadnought"
   ],
   "fleetSize": 5,
   "_notes": {
     "fleet": "Đội hình mặc định (5 tàu cổ điển). Các tàu trong `roster` mà không thuộc `fleet` chỉ dùng được khi người chơi tự chọn trong Khí tài/profile (chọn tối đa `fleetSize` tàu, mỗi loại một chiếc).",
     "shape": "`line` (mặc định): xếp thẳng hàng ngang hoặc dọc, số ô = size. `square`: khối vuông size×size, không xoay (size 2 = 4 ô).",
-    "passive": "Kỹ năng nội tại, tự kích hoạt, không cần chọn tàu. `period` = chu kỳ: kích hoạt rồi nghỉ period−1 lần. Tàu có attack `none` không bao giờ là tàu sẵn sàng (xem rules.md mục 10)."
+    "passive": "Kỹ năng nội tại, tự kích hoạt, không cần chọn tàu. `period` = chu kỳ: kích hoạt rồi nghỉ period−1 lần. Tàu có attack `none` không bao giờ là tàu sẵn sàng (xem rules.md mục 10).",
+    "barrage": "`barrage` (siêu chiến hạm): không có `target`; core chọn `shots` ô ngẫu nhiên đều trong các ô địch chưa có kết quả (rules.md mục 4.6)."
   }
 }

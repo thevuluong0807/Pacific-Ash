@@ -1,5 +1,6 @@
 import type { Board, Cell, FireTarget } from '../../design/core-api';
 import { inGrid, segmentAt, setBlocked } from './board';
+import { randInt } from './rng';
 import { GRID } from './specs';
 
 const keep = (cells: Cell[]) => cells.filter(inGrid);
@@ -28,11 +29,22 @@ export function targetCells(t: FireTarget): Cell[] {
       const { x, y } = t.center;
       return keep(
         t.orientation === 'h'
-          ? [{ x: x - 1, y }, { x, y }, { x: x + 1, y }]
-          : [{ x, y: y - 1 }, { x, y }, { x, y: y + 1 }],
+          ? [{ x: x - 1, y }, { x, y }, { x: x + 1, y }, { x: x + 2, y }]
+          : [{ x, y: y - 1 }, { x, y }, { x, y: y + 1 }, { x, y: y + 2 }], // rải thảm 4 ô: tâm là ô thứ hai của dải (rules.md 4.4)
       );
     }
+    case 'barrage':
+      return []; // ô do core chọn ngẫu nhiên khi bắn (`pickBarrage`), không xem trước được
   }
+}
+
+/** Dội pháo (rules.md 4.6): `shots` ô khác nhau, đều, trong các ô chưa có kết quả (ô `blocked` vẫn được chọn); ít hơn thì lấy hết. Thứ tự = thứ tự rút. */
+export function pickBarrage(board: Board, shots: number, rng: () => number): Cell[] {
+  const free: Cell[] = [];
+  for (let y = 0; y < GRID.height; y++) for (let x = 0; x < GRID.width; x++) if (board.shots[y][x] === 'none') free.push({ x, y });
+  const out: Cell[] = [];
+  while (out.length < shots && free.length) out.push(free.splice(randInt(rng, free.length), 1)[0]);
+  return out;
 }
 
 /** Phân giải một ô trên lưới bên bị bắn (sửa trực tiếp `board`). Ô đã có kết quả: không đổi, trả null. */
@@ -57,7 +69,8 @@ export interface Resolution {
 /**
  * Đường đi của đòn (không sửa `board`): ngư lôi dừng ở đoạn tàu đầu tiên chưa trúng; các đòn khác là cả vùng.
  */
-export function attackPath(board: Board, t: FireTarget): Cell[] {
+export function attackPath(board: Board, t: FireTarget, fixed?: Cell[]): Cell[] {
+  if (t.kind === 'barrage') return fixed ?? [];
   const all = targetCells(t);
   if (t.kind !== 'torpedo') return all;
   const path: Cell[] = [];
@@ -73,8 +86,8 @@ export function attackPath(board: Board, t: FireTarget): Cell[] {
  * Bắn lên `board` (sửa trực tiếp). `nullified` = ô bị hộ vệ triệt tiêu: không phân giải, chỉ đánh dấu `blocked`
  * (rules.md 10.2). Đường ngư lôi không đổi; ô dừng bị triệt tiêu thì không trúng.
  */
-export function resolveAttack(board: Board, t: FireTarget, nullified: ReadonlySet<string> = new Set()): Resolution {
-  const cells = attackPath(board, t);
+export function resolveAttack(board: Board, t: FireTarget, nullified: ReadonlySet<string> = new Set(), fixed?: Cell[]): Resolution {
+  const cells = attackPath(board, t, fixed);
   const results: Resolution['results'] = [];
   for (const cell of cells) {
     if (nullified.has(`${cell.x},${cell.y}`)) {

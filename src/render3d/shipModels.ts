@@ -8,10 +8,10 @@ const SPECS = loadSpecs();
 /** [dài, cao, rộng] của hộp placeholder (design/assets.md mục 1: tỉ lệ 1 ô = 1 đơn vị). Model thật thay vào qua manifest. */
 const DIMS: Record<ShipId, [number, number, number]> = {
   destroyer: [1.9, 0.095, 0.38], cruiser: [2.9, 0.105, 0.4], submarine: [2.9, 0.22, 0.22], missile: [3.9, 0.105, 0.42], carrier: [4.9, 0.205, 0.8],
-  raider: [0.8, 0.07, 0.26], escort: [1.7, 0.1, 1.55],
+  raider: [0.8, 0.07, 0.26], escort: [1.7, 0.1, 1.55], dreadnought: [3.9, 0.12, 0.5],
 };
 /** Mớn nước: đáy thân ở y = -draft; mạn khô (đỉnh thân) = h - draft (design/ship-*.md mục 2.1). */
-const DRAFT: Record<ShipId, number> = { destroyer: 0.045, cruiser: 0.05, submarine: 0.155, missile: 0.05, carrier: 0.08, raider: 0.035, escort: 0.045 };
+const DRAFT: Record<ShipId, number> = { destroyer: 0.045, cruiser: 0.05, submarine: 0.155, missile: 0.05, carrier: 0.08, raider: 0.035, escort: 0.045, dreadnought: 0.062 };
 
 /** Tâm tàu so với tâm ô gốc: `line` lệch (size-1)/2 dọc hướng, `square` lệch (size-1)/2 cả hai trục. */
 export function footprintCenter(id: ShipId, orientation: Orientation): { dx: number; dz: number } {
@@ -22,7 +22,7 @@ export function footprintCenter(id: ShipId, orientation: Orientation): { dx: num
 export interface ShipPose { id: ShipId; origin: { x: number; y: number }; orientation: Orientation; sunk?: boolean }
 
 /** Bộ phận chuyển động mà cinematic cần (tên theo điểm neo trong design/ship-*.md). */
-export interface Turret { yaw: THREE.Object3D; pitch: THREE.Object3D; muzzle: THREE.Object3D; recoil: THREE.Object3D }
+export interface Turret { yaw: THREE.Object3D; pitch: THREE.Object3D; muzzle: THREE.Object3D; recoil: THREE.Object3D; /** tháp nhiều nòng (siêu chiến hạm: 3): miệng từng nòng */ muzzles?: THREE.Object3D[] }
 export interface RigParts {
   turrets: Turret[];
   launchers: { base: THREE.Object3D; pitch: THREE.Object3D; muzzle: THREE.Object3D }[];
@@ -127,9 +127,18 @@ function boxShip(id: ShipId): ShipRig {
       parts.launch = empty(g, 0, top, 0.6);
       break;
     }
+    case 'dreadnought': { // năm tháp ba nòng: ba ở mũi, hai ở lái (placeholder)
+      for (const z of [1.58, 1.2, 0.84, -1.05, -1.5]) {
+        const tu = turret(g, top, z, 3, 0.15, d);
+        tu.muzzles = [-1, 0, 1].map((k) => empty(tu.recoil, k * 0.03, 0, 0.15));
+        parts.turrets.push(tu);
+      }
+      parts.launch = empty(g, 0, top, 1.58);
+      break;
+    }
     case 'carrier':
-      for (let i = 0; i < 3; i++) {
-        const p = planeMesh(); p.position.set(i < 2 ? (i ? -0.12 : 0.12) : 0.25, top + 0.012, i < 2 ? 1.3 : -0.4); g.add(p);
+      for (let i = 0; i < 4; i++) {
+        const p = planeMesh(); p.position.set(i < 2 ? (i ? -0.12 : 0.12) : i === 2 ? 0.25 : -0.25, top + 0.012, i < 2 ? 1.3 : -0.4); g.add(p);
         parts.planes.push(p);
       }
       for (const x of [0.12, -0.12]) { parts.catStart.push(empty(g, x, top + 0.02, 1.3)); parts.catEnd.push(empty(g, x, top + 0.02, 2.28)); }

@@ -26,7 +26,7 @@ function makeHost() {
     const r = placeholderShip(id); r.position.set(x, 0, z); r.rotation.y = heading; host.scene.add(r); r.updateMatrixWorld(true); rigs.set(`own:${id}`, r);
   };
   addOwn('destroyer', -3, 10, Math.PI / 2); addOwn('cruiser', 0, 12, Math.PI / 2); addOwn('missile', 2, 8, Math.PI / 2);
-  addOwn('submarine', 0, 5, Math.PI / 2); addOwn('carrier', 0, 14, Math.PI / 2);
+  addOwn('submarine', 0, 5, Math.PI / 2); addOwn('carrier', 0, 14, Math.PI / 2); addOwn('dreadnought', 3, 16, Math.PI / 2);
   return host;
 }
 
@@ -59,7 +59,7 @@ async function run(events: GameEvent[], over: Partial<CineOpts> = {}, skipAt?: n
 }
 
 function fireEvents(shipId: ShipId, target: FireAction['target'], p1 = [ship('destroyer', 0, 0), ship('cruiser', 0, 2), ship('submarine', 0, 4), ship('missile', 0, 6), ship('carrier', 0, 8)]) {
-  const m = match(undefined, p1);
+  const m = match(shipId === 'dreadnought' ? dreadFleet() : undefined, p1);
   const a: FireAction = { shipId, target };
   assert.ok(isValidAction(m, 0, a));
   return applyAction(m, 0, a).events;
@@ -137,13 +137,24 @@ test('torpedo trượt hết: 10 ô, không nổ, vẫn kết thúc 6300', async
   near(at(r.log, 'TurnChanged')[0], 6300, 80);
 });
 
-test('line3: ba ô chạm ≈5400, 5625, 5850; tổng 6750', async () => {
+test('line3: bốn ô chạm ≈4650, 4875, 5100, 5325; tổng 6450', async () => {
   const ev = fireEvents('carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'h' });
   const r = await run(ev, { reduced: true });
   const cr = at(r.log, 'CellResolved');
-  assert.equal(cr.length, 3);
-  [5400, 5625, 5850].forEach((t, i) => near(cr[i], t));
-  near(at(r.log, 'TurnChanged')[0], 6750, 80);
+  assert.equal(cr.length, 4);
+  [4650, 4875, 5100, 5325].forEach((t, i) => near(cr[i], t));
+  near(at(r.log, 'TurnChanged')[0], 6450, 80);
+});
+
+const dreadFleet = () => [ship('dreadnought', 0, 0), ship('cruiser', 0, 2), ship('submarine', 0, 4), ship('missile', 0, 6), ship('carrier', 0, 8)];
+test('barrage: 5 ô chạm ≈4500, 4650, 4800, 5100, 5250; tổng 8400', async () => {
+  const m = match(dreadFleet(), [ship('destroyer', 0, 0), ship('cruiser', 0, 2), ship('submarine', 0, 4), ship('missile', 0, 6), ship('carrier', 0, 8)]);
+  const ev = applyAction(m, 0, { shipId: 'dreadnought', target: { kind: 'barrage' } }).events;
+  const r = await run(ev, { reduced: true });
+  const cr = at(r.log, 'CellResolved');
+  assert.equal(cr.length, 5);
+  [4500, 4650, 4800, 5100, 5250].forEach((t, i) => near(cr[i], t));
+  near(at(r.log, 'TurnChanged')[0], 8400, 80);
 });
 
 test('line3 sát mép: chỉ 2 ô thả', async () => {
@@ -224,6 +235,7 @@ test('cinematic ngắn: ≈1.8 s, vẫn phát đủ event', async () => {
     ['missile', { kind: 'cross', center: { x: 5, y: 5 } }],
     ['submarine', { kind: 'torpedo', axis: 'row', index: 4, from: 'start' }],
     ['carrier', { kind: 'line3', center: { x: 4, y: 4 }, orientation: 'h' }],
+    ['dreadnought', { kind: 'barrage' }],
   ] as [ShipId, FireAction['target']][]) {
     const ev = fireEvents(id, target);
     const r = await run(ev, { short: true });

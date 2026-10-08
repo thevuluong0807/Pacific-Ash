@@ -7,6 +7,7 @@ import { glare } from './glare';
 import { type CamPose, Frame, V, deg, key, lerp, lerpV, prog, smooth, wp } from './cineUtil';
 import { buildRapid, buildPrecision, buildCross, buildTorpedo } from './cineStrikes';
 import { buildLine3 } from './cineCarrier';
+import { buildBarrage } from './cineBarrage';
 import { buildSneak, buildGuard } from './cinePassive';
 import { planSink, SINK_BLOCK_MS, SINK_BLOCK_BG_MS, SINK_TOTAL_MS } from './cineSink';
 
@@ -590,6 +591,7 @@ export class Cinematic {
         case 'cross': this.endU = buildCross(this, ctx); break;
         case 'torpedo': this.endU = buildTorpedo(this, ctx); break;
         case 'line3': this.endU = buildLine3(this, ctx); break;
+        case 'barrage': this.endU = buildBarrage(this, ctx); break;
       }
       if (G) {
         if (!Number.isFinite(this.gs)) this.setGuard(Math.min(lastImpact, this.endU * 0.6), G);
@@ -621,7 +623,7 @@ export class Cinematic {
     this.shot(0, 3000, (t) => ({ pos: c.T.P(-3.0 + 0.4 * prog(t, 0, 1800), 0.5, 3.2), look: c.C.clone(), fov: 36 }));
     const order = c.shot.cells;
     let last = 0;
-    const style = c.shot.attack === 'rapid' || c.shot.attack === 'precision' || c.shot.attack === 'sneak' ? 'shell' : c.shot.attack === 'line3' ? 'bomb' : 'missile';
+    const style = c.shot.attack === 'rapid' || c.shot.attack === 'precision' || c.shot.attack === 'sneak' || c.shot.attack === 'barrage' ? 'shell' : c.shot.attack === 'line3' ? 'bomb' : 'missile';
     order.forEach((cell, i) => {
       const ti = (c.shot.attack === 'torpedo' ? 300 : 650) + (i + 1) * (c.shot.attack === 'torpedo' ? 900 / order.length : 120);
       const w = c.cw(cell).setY(0.03 * K);

@@ -4,6 +4,7 @@ import type { ScreenFactory } from '../app';
 import { icon } from '../sprites';
 import { shipSprite } from '../shipArt';
 import { strings as S } from '../strings';
+import { mountShipyard } from './shipyard';
 
 const SPECS = loadSpecs();
 const esc = (t: string) => t.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
@@ -17,8 +18,10 @@ export const hangarScreen: ScreenFactory<'hangar'> = (app, root) => {
 
   root.innerHTML = `
     <div class="page">
-      <header class="page__head"><h1>${S.hangar.title}</h1></header>
-      <div class="hangar2">
+      <header class="page__head"><h1>${S.hangar.title}</h1>
+        <div class="seg" role="tablist"><button class="seg__btn" role="tab" data-tab="fleet" aria-selected="true">${S.arena.fleetTab}</button><button class="seg__btn" role="tab" data-tab="yard" aria-selected="false">${S.arena.yardTab}</button></div></header>
+      <div data-pane="yard" hidden></div>
+      <div class="hangar2" data-pane="fleet">
         <section class="panel" data-plist></section>
         <section class="panel" data-pdetail></section>
         <section class="panel hangar2__ships" data-ships></section>
@@ -82,11 +85,21 @@ export const hangarScreen: ScreenFactory<'hangar'> = (app, root) => {
     if (focus) root.querySelector<HTMLElement>(focus)?.focus();
   }
 
+  let yard: { dispose(): void; setActive(on: boolean): void } | null = null;
+  const showTab = (tab: 'fleet' | 'yard') => {
+    root.querySelectorAll<HTMLElement>('[data-tab]').forEach((b) => b.setAttribute('aria-selected', String(b.dataset.tab === tab)));
+    q('[data-pane="fleet"]').hidden = tab !== 'fleet';
+    q('[data-pane="yard"]').hidden = tab !== 'yard';
+    root.querySelector<HTMLElement>('.page__foot [disabled]')?.toggleAttribute('hidden', tab !== 'fleet');
+    if (tab === 'yard' && !yard) yard = mountShipyard(app, q('[data-pane="yard"]'));
+    yard?.setActive(tab === 'yard');
+  };
   root.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('button');
     if (!t) return;
     const d = t.dataset;
     if (t.hasAttribute('data-back')) return app.go('menu');
+    if (d.tab) return showTab(d.tab as 'fleet' | 'yard');
     armedDelete = d.pdel !== undefined ? armedDelete : false;
     if (d.psel) { selected = d.psel; render(`[data-psel="${d.psel}"]`); }
     else if (d.pnew !== undefined) { selected = store.create().id; render('[data-pname]'); root.querySelector<HTMLInputElement>('[data-pname]')?.select(); }
@@ -115,7 +128,7 @@ export const hangarScreen: ScreenFactory<'hangar'> = (app, root) => {
   });
   render();
   return {
-    dispose() {},
+    dispose() { yard?.dispose(); },
     key: (e) => { if (e.key === 'Escape' && !(e.target as HTMLElement).matches('input')) app.go('menu'); },
   };
 };

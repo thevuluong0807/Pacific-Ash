@@ -12,7 +12,7 @@ Tổng quan nghệ thuật và lý do: `GDD.md`. Đọc `GDD.md` mục 2 trướ
 
 ## 2. Thứ tự đọc
 1. `design/rules.md` — luật chơi chính xác từng trường hợp biên. Nguồn sự thật duy nhất cho `core/`.
-2. `design/ships.json` — dữ liệu 7 tàu (5 cổ điển + 2 tàu nội tại). `core/` đọc file này, không hard-code.
+2. `design/ships.json` — dữ liệu 8 tàu (5 cổ điển + 2 tàu nội tại + siêu chiến hạm). `core/` đọc file này, không hard-code.
 3. `design/core-api.ts` — hợp đồng kiểu và chữ ký hàm. Không đổi tên/kiểu khi chưa hỏi.
 4. `design/screens.md` — màn hình, wireframe, luồng chuyển.
 5. `design/tokens.json` — màu, font, khoảng cách, breakpoint, thời lượng. UI đọc từ đây, không viết màu trực tiếp trong CSS/TS.
@@ -30,6 +30,7 @@ Tổng quan nghệ thuật và lý do: `GDD.md`. Đọc `GDD.md` mục 2 trướ
 17. `design/wreckage.md` — ô trúng ở 3D: mảnh xác tàu nổi (10 glb) kèm hiệu ứng; trúng đủ thì cả con tàu 3D cháy nổ rồi thành **xác tàu chìm một nửa** (7 glb `wreck_*`, gãy vỡ nhưng rõ loại tàu).
 18. `design/maps.md` — hai map (áp dụng cho cả gameplay), bố cục cảnh chờ dồn hai bên, mục "Chọn map" trong Cài đặt.
 19. `design/logo.md` — logo mới (hầm hố, cháy nổ), emblem, cách dùng, chuyển động mở màn.
+20. `design/ship-dreadnought.md` — siêu chiến hạm 1×4 (`barrage`: 5 ô ngẫu nhiên, không nhắm): sprite `dreadnought_2d.svg`, model `ship_dreadnought.glb`, xác `wreck_dreadnought.glb`; cinematic `cinematics.md` mục 11 (camera trên cao đi vòng 1/6 đường tròn quanh tâm lưới địch).
 Sprite và icon: `design/art/*.svg` dùng thẳng được, không vẽ lại.
 
 ## 3. Ràng buộc kỹ thuật (không thương lượng)

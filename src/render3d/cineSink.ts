@@ -20,7 +20,7 @@ export const SINK_TOTAL_MS = SINK_BLOCK_MS + SINK_TAIL_MS;
 
 const SPECS = loadSpecs();
 /** Mốc hoán đổi tàu nguyên vẹn → xác (sinking.md 2.8). */
-const SWAP: Record<ShipId, number> = { destroyer: 5400, cruiser: 7200, missile: 6000, submarine: 6600, carrier: 6600, raider: 4200, escort: 5400 };
+const SWAP: Record<ShipId, number> = { destroyer: 5400, cruiser: 7200, missile: 6000, submarine: 6600, carrier: 6600, raider: 4200, escort: 5400, dreadnought: 6600 };
 
 /** Gắn model xác vào rig (ẩn model nguyên vẹn) và trả hàm `show(u)`: u 0..1 dịch các `section_*` từ pose 0 tới pose cuối. Không có model xác thì không làm gì. */
 function wreckSwap(rig: THREE.Object3D, id: ShipId) {
@@ -106,7 +106,7 @@ export function planSink(cn: Cinematic, sunk: Extract<GameEvent, { type: 'ShipSu
     for (const t of [900, 2700, 4500]) if (t < swapT) at(t, () => fx.ring(wp(rig).setY(0), (0.8 + len * 0.4), 0.9, 0x9fb4c2)); // vòng sóng quanh thân
     at(3600, () => fx.setOil(`${o}:${id}`, wp(rig).setY(0), (0.6 + len * 0.25) * K)); // dầu loang từ 3600 ms, lan dần đến hết ván
     for (const t of [2400, 5400, 8400]) at(t, () => fx.debrisBurst(wp(rig).add(V(0, 0.2 * K, 0)), 8)); // tối đa 40 mảnh nổi trên nước
-    if (id !== 'escort' && id !== 'destroyer' && id !== 'raider') rangeT(3300, 3900, (u) => parts.turrets.forEach((tu, i) => { cn.snap(tu.yaw); tu.yaw.rotation.y = deg(i % 2 ? -30 : 30) * smooth(u); tu.pitch.rotation.x = deg(10) * smooth(u); })); // tháp pháo xoay lệch ±30°, nòng rũ 10°
+    if (id !== 'escort' && id !== 'destroyer' && id !== 'raider' && id !== 'dreadnought') rangeT(3300, 3900, (u) => parts.turrets.forEach((tu, i) => { cn.snap(tu.yaw); tu.yaw.rotation.y = deg(i % 2 ? -30 : 30) * smooth(u); tu.pitch.rotation.x = deg(10) * smooth(u); })); // tháp pháo xoay lệch ±30°, nòng rũ 10°
     cn.registerWreck(rig, id, o, side, show);
 
     // ---- riêng từng tàu ----
@@ -186,6 +186,19 @@ export function planSink(cn: Cinematic, sunk: Extract<GameEvent, { type: 'ShipSu
         if (tu) at(150, () => { explode(wp(tu.yaw), false); cn.fly(tu.yaw, V(rnd(-0.1, 0.1), 0.6, rnd(-0.1, 0.1)).multiplyScalar(K), 0.7 * K, 8); }); // pháo nhỏ văng khỏi bệ
         for (const t of [1200, 1900, 2600]) at(t, () => { fx.splash(wp(rig).setY(0), false); cn.shake(0.04); }); // cú nổ làm nước văng quanh thân nhỏ
         cn.shot(0, 4200, (tt) => { const F = rigFrame(), k = smooth(prog(tt, 0, 4200)); return pose(F.P(lerp(-1.2, -1.8, k), lerp(1.7, 2.5, k), lerp(0.9, 1.4, k)), wp(rig), 38); }, 300, 1); // tàu nhỏ nên giữ gần
+        break;
+      }
+      case 'dreadnought': { // nổ hầm đạn, gãy đôi (sinking.md 2.3): nặng, lâu, nhiều nổ phụ
+        parts.turrets.forEach((tu, i) => { cn.snap(tu.yaw); rangeT(0, 1800, (u) => { tu.yaw.rotation.y = Math.sin(u * 9 + i * 1.9) * 1.8 * (1 - 0.3 * u); tu.pitch.rotation.x = deg(12) * smooth(u); }); }); // năm tháp xoay loạn, nòng chúi xuống
+        for (const [t, k] of [[0, 0], [450, 3], [900, 1], [1350, 2]] as const) at(t, () => explode(fire(k))); // nổ nhỏ dọc mạn rồi tắt
+        for (let i = 0; i < 8; i++) { const sx = nd(`turret_s${i + 1}`); if (sx) { cn.snap(sx); rangeT(0, 1800, (u) => { sx.rotation.y = Math.sin(u * 14 + i) * 1.2; }); } } // pháo phụ bắn loạn
+        for (const [t, i] of [[1800, 0], [2100, 2], [2400, 4], [2700, 1], [3000, 3]] as const) { const tu = parts.turrets[i]; if (tu) at(t, () => { explode(wp(tu.yaw).add(V(0, 0.1 * K, 0)), true); fx.light(wp(tu.yaw), 140, 300, 0xfff0d0); }); } // hầm đạn nổ phụ liên hoàn: chớp trắng cam từ khe tháp
+        for (const [t, n] of [[1800, 'turret_roof_2'], [2700, 'turret_roof_4']] as const) { const r = nd(n); if (r) at(t, () => cn.fly(r, V(rnd(-0.05, 0.05), 0.63, rnd(-0.05, 0.05)).multiplyScalar(K), 0.5 * K, 5)); } // tháp 2 và 4 bật nắp: bay lên 4 ĐV rồi rơi
+        rangeT(1800, 3600, () => { for (const n of ['funnel_1', 'funnel_2']) { const f = nd(n); if (f && Math.random() < 0.35) fx.burst({ pos: wp(f), count: 2, tex: 'fire', size: [0.4, 1.0], life: [0.3, 0.6], additive: true, vel: V(0, 2.8, 0), spread: 0.5, color: 0xff9a2a }); } }); // lửa phụt cao từ ống khói
+        at(3600, () => { const p = wp(nd('tower_base') ?? rig).add(V(0, 0.2 * K, -0.5 * K)); explode(p, true); fx.burst({ pos: p, count: 12, tex: 'smoke', size: [0.8, 2.8], life: [1.6, 2.6], opacity: 0.75, color: 0x0b0b0b, vel: V(0, 2.4, 0), spread: 0.8 }); }); // nổ lớn giữa thân, sau tháp chỉ huy
+        rangeT(3600, 6600, () => { if (Math.random() < 0.5) fx.burst({ pos: wp(rig).add(V(rnd(-0.3, 0.3), 0.4, rnd(-0.4, 0.4)).multiplyScalar(K)), tex: 'smoke', size: [0.6, 2.4], life: [1.5, 2.5], opacity: 0.75, color: 0x0b0b0b, vel: V(0.1, 0.9, 0) }); }); // cột khói đen cao
+        const t3 = parts.turrets[2];
+        if (t3) at(4200, () => { explode(wp(t3.yaw), true); cn.fly(t3.yaw, V(rnd(0.3, 0.4), 0.9, rnd(-0.1, 0.1)).multiplyScalar(K), 0.9 * K, 3); }); // tháp 3 bay khỏi bệ, rơi cách tàu 6–10 ĐV
         break;
       }
       case 'escort': {
