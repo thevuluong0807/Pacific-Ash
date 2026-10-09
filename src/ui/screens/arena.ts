@@ -16,11 +16,12 @@ export const arenaScreen: ScreenFactory<'arena'> = (app, root, setup: ArenaSetup
   const scene = app.arenaScene;
   if (!scene) {
     showToast(app.root, 'Hải chiến cần đồ họa 3D (bỏ ?no3d).', 'alert');
-    queueMicrotask(() => app.go('arenaLobby'));
+    queueMicrotask(() => app.go('arenaRoom', {}));
     return { dispose() {} };
   }
   scene.start(setup);
-  const sim = scene.sim!, me = sim.ships[scene.me];
+  const sim = scene.sim!, me = sim.ships[scene.me], net = setup.online?.net;
+  let toRoom = false;
 
   root.innerHTML = `
     <div class="arena">
@@ -144,6 +145,7 @@ export const arenaScreen: ScreenFactory<'arena'> = (app, root, setup: ArenaSetup
 
     if (!el.score.hidden) el.score.innerHTML = board();
     if (sim.over && !endShown && sim.time - sim.over.at > 2.5) showEnd();
+    if (scene.netClosed && !endShown) { endShown = true; showToast(app.root, S.arena.closed, 'alert'); app.go('arenaRoom', {}); }
   };
 
   function showEnd() {
@@ -152,16 +154,18 @@ export const arenaScreen: ScreenFactory<'arena'> = (app, root, setup: ArenaSetup
     el.end.hidden = false;
     el.end.innerHTML = `<div class="panel endcard"><h1 class="${won ? 'is-win' : 'is-lose'}">${w === null ? H.draw : won ? H.win : H.lose}</h1>
       <h2>${H.score}</h2><div class="ah-score--in">${board()}</div>
-      <div class="actions"><button class="btn btn--small btn--primary" data-again>${H.again}</button><button class="btn btn--small" data-leave>${H.leave}</button></div></div>`;
-    el.end.querySelector<HTMLElement>('[data-again]')!.focus();
+      <div class="actions">${net ? `<button class="btn btn--small btn--primary" data-room>${S.arena.backRoom}</button>` : `<button class="btn btn--small btn--primary" data-again>${H.again}</button>`}<button class="btn btn--small" data-leave>${H.leave}</button></div></div>`;
+    el.end.querySelector<HTMLElement>('[data-again], [data-room]')!.focus();
   }
 
-  const setPause = (on: boolean) => { scene.paused = on; el.pause.hidden = !on; if (on) { scene.releaseAll(); q<HTMLElement>('[data-resume]').focus(); } };
+  const setPause = (on: boolean) => { if (!net) scene.paused = on; // online: server không dừng được, chỉ hiện menu
+     el.pause.hidden = !on; if (on) { scene.releaseAll(); q<HTMLElement>('[data-resume]').focus(); } };
   root.addEventListener('click', (e) => {
     const t = (e.target as HTMLElement).closest<HTMLElement>('button');
     if (!t) return;
     if (t.hasAttribute('data-resume')) setPause(false);
-    else if (t.hasAttribute('data-leave')) app.go('arenaLobby');
+    else if (t.hasAttribute('data-leave')) { if (net) { net.send({ t: 'aLeave' }); net.close(); } app.go('modeSelect'); }
+    else if (t.hasAttribute('data-room') && net) { toRoom = true; app.go('arenaRoom', { net }); }
     else if (t.hasAttribute('data-again')) app.go('arena', { ...setup, seed: (Date.now() ^ (Math.random() * 0x7fffffff)) >>> 0 });
     else {
       const w = (t.closest('[data-w]') as HTMLElement | null)?.dataset.w;
@@ -177,6 +181,7 @@ export const arenaScreen: ScreenFactory<'arena'> = (app, root, setup: ArenaSetup
   return {
     dispose() {
       cancelAnimationFrame(raf);
+      if (net && !toRoom && !net.closed) { net.send({ t: 'aLeave' }); net.close(); }
       removeEventListener('keyup', keyUp);
       removeEventListener('blur', blur);
       scene.releaseAll();

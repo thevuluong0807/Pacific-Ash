@@ -1,5 +1,7 @@
 import * as THREE from 'three';
 import type { MapId } from '../ui/settings';
+import type { OnlineClient } from '../net/client';
+import { applySnap, type ArenaSnap } from '../arena/snap';
 import { WEAPONS, type WeaponId } from '../arena/data';
 import { trajectory } from '../arena/ballistics';
 import { ArenaBot } from '../arena/bot';
@@ -13,7 +15,11 @@ import { ArenaFx } from './arenaFx';
 import { TEAM_COLORS, buildArenaShip, type ArenaRig } from './arenaShips';
 import { buildGlbProj, buildGlbShip, type GlbRig, type ProjKindId } from './arenaGlb';
 
-export interface ArenaSetup { players: SimPlayer[]; seed: number; map: MapId }
+export interface ArenaSetup {
+  players: SimPlayer[]; seed: number; map: MapId;
+  /** Trận online: kết nối tới server (chạy mô phỏng thật) và chỗ ngồi của mình. */
+  online?: { net: OnlineClient; you: number };
+}
 export interface FeedItem { at: number; text: string; team: number }
 
 const STEP = 1 / 60;
@@ -28,7 +34,13 @@ export class ArenaScene implements RenderScene {
   readonly camera = new THREE.PerspectiveCamera(62, 1.6, 1, 60000);
   sim?: ArenaSim;
   /** Tàu của người chơi (luôn là chỗ 0). */
-  readonly me = 0;
+  me = 0;
+  /** Trận online: server đóng phòng / mất kết nối. */
+  netClosed = false;
+  private net?: OnlineClient;
+  private snaps: ArenaSnap[] = [];
+  private remoteIn: PlayerInput[] = [];
+  private netSel: number | null = null; private netExit = false; private netFire = false; private netAt = 0;
   paused = false;
   showAim = true;
   feed: FeedItem[] = [];
@@ -70,7 +82,6 @@ export class ArenaScene implements RenderScene {
   private dragging = false;
   private specCycle = 0;
   private fpPos = new THREE.Vector3();
-  private fpPoseSmooth = { theta: 0, el: 0 };
   private dom?: HTMLElement;
   private smokeT = 0;
 
@@ -136,7 +147,12 @@ export class ArenaScene implements RenderScene {
     this.setMap(setup.map);
     this.map = setup.map;
     this.sim = new ArenaSim(setup.seed, setup.players);
-    this.bots = this.sim.ships.map((s) => (s.bot ? new ArenaBot(s.id, s.bot, setup.seed) : null));
+    this.net?.subscribe(null);
+    this.net = setup.online?.net; this.me = setup.online?.you ?? 0; this.netClosed = false; this.snaps = []; this.remoteIn = []; this.netSel = null; this.netExit = false; this.netFire = false;
+    this.sim.remote = !!this.net;
+    this.bots = this.sim.ships.map((s) => (!this.net && s.bot ? new ArenaBot(s.id, s.bot, setup.seed) : null));
+    this.net?.subscribe((m) => { if (m.t === 'aSnap') this.snaps.push(m.s); else if (m.t === 'aClosed') this.netClosed = true; });
+    if (this.net) this.net.onClose = () => { this.netClosed = true; };
     this.inputs = this.sim.ships.map(() => NO_INPUT);
     this.feed = []; this.acc = 0; this.tick = 0; this.paused = false; this.hitConfirm = 99; this.hurt = 99; this.aim = null;
     this.blend = 0; this.spectateId = -1; this.keys.clear(); this.firing = false;
@@ -155,6 +171,8 @@ export class ArenaScene implements RenderScene {
 
   /** Dọn trận cũ (rời màn hình). */
   clear() {
+    this.net?.subscribe(null);
+    this.net = undefined; this.me = 0;
     for (const r of this.rigs) this.scene.remove(r.root);
     this.rigs = [];
     for (const v of this.projViews.values()) this.scene.remove(v.obj);
@@ -232,7 +250,8 @@ export class ArenaScene implements RenderScene {
     const fine = 0.45 * (this.camera.fov / 52); // rad/s
     this.aimT.beta += ((k.has('a') || k.has('ArrowLeft') ? 1 : 0) - (k.has('d') || k.has('ArrowRight') ? 1 : 0)) * fine * dt;
     this.aimT.el += ((k.has('w') || k.has('ArrowUp') ? 1 : 0) - (k.has('s') || k.has('ArrowDown') ? 1 : 0)) * fine * dt;
-    this.aimT.el = clamp(this.aimT.el, w.elMin, w.elHi);
+    // camera được nhìn xuống/lên rộng hơn giới hạn nòng (cối chỉ ngẩng 35–80° nhưng vẫn phải thấy địch); sim tự kẹp đích ngẩng vào giới hạn nòng
+    this.aimT.el = clamp(this.aimT.el, Math.min(w.elMin, -0.3), Math.max(w.elHi, 0.35));
     if (sp.half < Math.PI) this.aimT.beta = clamp(this.aimT.beta, sp.center - sp.half, sp.center + sp.half);
   }
 
@@ -260,12 +279,14 @@ export class ArenaScene implements RenderScene {
         this.acc -= STEP;
         const mineAlive = sim.ships[this.me].alive;
         if (mineAlive) this.inputs[this.me] = this.humanInput(); else { this.inputs[this.me] = NO_INPUT; this.pendingSelect = null; this.pendingExit = false; }
-        if (this.tick % 3 === 0) sim.ships.forEach((s, i) => { const b = this.bots[i]; if (b && s.alive) this.inputs[i] = b.think(sim, s, STEP * 3); else if (i !== this.me && !s.alive) this.inputs[i] = NO_INPUT; });
+        if (this.net) { sim.ships.forEach((_, i) => { if (i !== this.me) this.inputs[i] = this.remoteIn[i] ?? NO_INPUT; }); const hi = this.inputs[this.me]; if (hi.select !== null) this.netSel = hi.select; if (hi.exit) this.netExit = true; if (hi.fire) this.netFire = true; }
+        else if (this.tick % 3 === 0) sim.ships.forEach((s, i) => { const b = this.bots[i]; if (b && s.alive) this.inputs[i] = b.think(sim, s, STEP * 3); else if (i !== this.me && !s.alive) this.inputs[i] = NO_INPUT; });
         sim.step(STEP, this.inputs);
         this.tick++;
         this.handle(sim.drain());
       }
     }
+    if (this.net) this.netSync(sim);
     this.syncWeaponMode(dt);
     this.syncShips(dt);
     this.syncProjectiles(dt);
@@ -275,6 +296,21 @@ export class ArenaScene implements RenderScene {
     this.fx.setViewport((this.renderer?.domElement.height ?? 800) * 0.5 / Math.tan((this.camera.fov * Math.PI) / 360));
     this.fx.update(this.paused ? 0 : dt);
     this.world.update(this.paused ? 0 : dt, this.clock, this.camera);
+  }
+
+  /** Trận online: áp bản chụp mới nhất của server (phát lại các sự kiện kèm theo), gửi phím của mình 30 lần/giây. */
+  private netSync(sim: ArenaSim) {
+    if (this.snaps.length) {
+      const list = this.snaps; this.snaps = [];
+      for (const sn of list) this.handle(sn.ev);
+      this.remoteIn = applySnap(sim, list[list.length - 1]);
+    }
+    const now = performance.now();
+    if (now - this.netAt < 33) return;
+    this.netAt = now;
+    const cur = this.inputs[this.me] ?? NO_INPUT;
+    this.net!.send({ t: 'aInput', i: { up: cur.up, down: cur.down, left: cur.left, right: cur.right, fire: cur.fire || this.netFire, select: this.netSel, exit: this.netExit, aim: cur.aim } });
+    this.netSel = null; this.netExit = false; this.netFire = false;
   }
 
   // ---- sự kiện mô phỏng ----
@@ -457,10 +493,10 @@ export class ArenaScene implements RenderScene {
       const slot = me.control ?? this.lastSlot, ms = me.mounts[slot];
       if (me.control !== null) this.lastSlot = me.control;
       const spc = me.hull.slots[slot], w = ms.weapon ? WEAPONS[ms.weapon] : null;
-      const base1 = toWorld(me, spc.x, spc.z), th = me.h + ms.beta;
+      const base1 = toWorld(me, spc.x, spc.z), th = me.h + this.aimT.beta; // camera/tâm ngắm theo chuột (tốc độ thường); nòng thật đuổi theo sau với độ trễ riêng
       const fy = this.rigs[me.id].root.position.y;
-      this.fpPoseSmooth.theta = th; this.fpPoseSmooth.el = ms.el;
-      const d = new THREE.Vector3(Math.cos(ms.el) * Math.sin(th), Math.sin(ms.el), Math.cos(ms.el) * Math.cos(th));
+      const el = this.aimT.el;
+      const d = new THREE.Vector3(Math.cos(el) * Math.sin(th), Math.sin(el), Math.cos(el) * Math.cos(th));
       const up = new THREE.Vector3(0, 1, 0);
       // sau và trên nòng một đoạn để thấy nòng ở đáy khung hình mà không bị che; chênh vài chục đơn vị so với tầm bắn nên lệch song song không đáng kể
       const p1 = new THREE.Vector3(base1.x, fy + spc.y + 2.2, base1.z).addScaledVector(d, -(8 + spc.size * 4)).addScaledVector(up, 5 + spc.size * 1.5);

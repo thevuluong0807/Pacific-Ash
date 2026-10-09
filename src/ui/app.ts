@@ -1,13 +1,13 @@
 import type { AiLevel, Cell, CellMark, CellView, ShipAttack, ShipId, GameEvent, MatchState, PlacedShip, Player, PlayerId } from '../../design/core-api';
 import type { ShipPose } from '../render3d/shipModels';
 import type { OnlineClient } from '../net/client';
-import type { ResumeSnapshot, Update } from '../net/protocol';
+import type { ArenaRoomInfo, ResumeSnapshot, Update } from '../net/protocol';
 import { ProfileStore } from './profiles';
 import { DesignStore } from '../arena/designs';
 import type { ArenaScene, ArenaSetup } from '../render3d/arenaScene';
 import { loadSettings, saveSettings, type Settings } from './settings';
 
-export type ScreenId = 'menu' | 'online' | 'modeSelect' | 'hangar' | 'placement' | 'passDevice' | 'battle' | 'result' | 'arenaLobby' | 'arena';
+export type ScreenId = 'menu' | 'online' | 'modeSelect' | 'hangar' | 'placement' | 'passDevice' | 'battle' | 'result' | 'arenaRoom' | 'arena';
 
 export interface ScreenParams {
   menu: undefined;
@@ -18,7 +18,7 @@ export interface ScreenParams {
   passDevice: { to: PlayerId; next: 'placement' | 'battle' };
   battle: undefined;
   result: undefined;
-  arenaLobby: undefined;
+  arenaRoom: { net?: OnlineClient; first?: ArenaRoomInfo };
   arena: ArenaSetup;
 }
 
@@ -94,6 +94,10 @@ export class App {
   session: Session = newSession('pve', 'medium');
   /** Mã phòng từ link mời (`?room=`): sảnh online tự vào khi mở. */
   pendingRoom?: string;
+  /** Mã phòng Hải chiến từ link mời (`?arena=`): sảnh Hải chiến tự vào khi mở. */
+  pendingArena?: string;
+  /** Tab đang chọn ở màn chọn chế độ. */
+  modeTab: 'tactic' | 'arena' = 'tactic';
   /** Thông tin nối lại lưu từ lần trước (mở lại trang giữa trận online). */
   pendingResume?: { server: string; code: string; token: string; graceMs: number };
   private current?: ScreenInstance;

@@ -91,6 +91,8 @@ export class ArenaSim {
   events: SimEvent[] = [];
   time = 0;
   over: { winner: number | null; at: number } | null = null;
+  /** Bản phía client của trận online: chỉ ngoại suy chuyển động/ngắm giữa hai bản chụp của server; không bắn, không va chạm, không sát thương. */
+  remote = false;
   readonly rand: () => number;
   private pid = 1;
 
@@ -124,6 +126,7 @@ export class ArenaSim {
   step(dt: number, inputs: PlayerInput[]) {
     this.time += dt;
     for (const s of this.ships) if (s.alive) { this.control(s, inputs[s.id] ?? NO_INPUT, dt); this.move(s, dt); this.mountsStep(s, dt); }
+    if (this.remote) { this.projMotion(dt); this.events = []; return; }
     this.collide();
     this.projStep(dt);
     if (!this.over) {
@@ -136,6 +139,7 @@ export class ArenaSim {
 
   // ---- điều khiển ----
   private control(s: ShipState, inp: PlayerInput, dt: number) {
+    if (this.remote) inp = { ...inp, select: null, exit: false, fire: false }; // chọn/thoát/bắn do server quyết
     if (s.control !== null && inp.exit) this.leave(s, false);
     if (inp.select !== null && s.control === null) {
       const m = s.mounts[inp.select];
@@ -298,6 +302,11 @@ export class ArenaSim {
   }
 
   // ---- đạn ----
+  /** Phía client: chỉ dời đạn theo vật lý (bản chụp của server cấp/xóa đạn). */
+  private projMotion(dt: number) {
+    this.projs = this.projs.filter((p) => { stepBall(p.b, p.spec, dt); if (p.spec.kind === 'torpedo') p.b.y = -1; p.age += dt; return p.age < p.spec.life && p.b.y > -2; });
+  }
+
   private projStep(dt: number) {
     const out: Projectile[] = [];
     for (const p of this.projs) {

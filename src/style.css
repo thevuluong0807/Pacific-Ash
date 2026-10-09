@@ -488,3 +488,31 @@ select:focus-visible { outline: 2px solid var(--color-friendly); }
 .arena table { width: 100%; border-collapse: collapse; font-size: var(--size-sm); } .arena th, .arena td { padding: .25rem .5rem; text-align: left; } .arena tr.is-me { color: var(--color-friendly); } .arena td small { color: var(--color-textDim); }
 .endcard { min-width: min(36rem, 92vw); display: flex; flex-direction: column; gap: var(--space-sm); } .endcard h1 { font-size: var(--size-xxl); } .endcard h1.is-win { color: var(--color-ready); } .endcard h1.is-lose { color: var(--color-alert); }
 .arena .overlay[hidden] { display: none; }
+.seg--tabs { display: flex; gap: var(--space-sm); } .seg--tabs .seg__btn { flex: 1; display: flex; flex-direction: column; align-items: flex-start; gap: .2rem; padding: .7rem 1rem; text-transform: none; } .seg--tabs b { font: 700 var(--size-lg) var(--font-heading); letter-spacing: .12em; text-transform: uppercase; } .seg--tabs small { font: 400 var(--size-xs) var(--font-body); color: var(--color-textDim); }
+.seg--tabs .seg__btn[aria-selected="true"] { background: rgba(79,195,232,.08); }
+[data-pane][hidden] { display: none; }
+.lrow__end { display: flex; gap: .5rem; align-items: center; justify-content: flex-end; } .lrow .tag { margin-left: .4rem; }
+.lrow--me { grid-template-columns: 2rem 1fr 1fr 11rem; }
+
+.mysetup { display: flex; flex-wrap: wrap; gap: var(--space-md); align-items: end; } .mysetup .field { min-width: 14rem; } .mysetup small { color: var(--color-textDim); }
+
+/* ===== Phòng Hải chiến (giao diện chung cho ghép trận / custom) ===== */
+.room .rtop { display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-md); align-items: stretch; }
+.room .rcard { display: flex; flex-direction: column; gap: .6rem; height: 100%; }
+.room .rcard .field { display: flex; flex-direction: column; gap: .25rem; margin: 0; } .room .rcard .field input, .room .rcard .field select { width: 100%; min-height: 2.5rem; }
+.rcode { display: flex; align-items: baseline; gap: .8rem; } .rcode__lbl { color: var(--color-textDim); font: 500 var(--size-sm) var(--font-mono); text-transform: uppercase; }
+.roomcode { font: 700 2.2rem/1 var(--font-heading); letter-spacing: .3em; color: var(--color-friendly); }
+.rcard__row { display: flex; gap: .5rem; align-items: center; margin-top: auto; } .rcard__row .field--inline { flex: 1; min-width: 0; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+.room .rseats { display: flex; flex-direction: column; gap: .4rem; }
+.arow { display: grid; grid-template-columns: 2.2rem minmax(9rem, 1.1fr) minmax(0, 1.6fr) 11rem 6.5rem; gap: .75rem; align-items: center; min-height: 3rem; padding: .25rem .6rem; border: 1px solid rgba(122,138,153,.25); }
+.arow.is-me { border-color: var(--color-friendly); background: rgba(79,195,232,.06); } .arow.is-off { opacity: .55; }
+.arow__n { font: 700 var(--size-lg) var(--font-heading); color: var(--color-textDim); }
+.arow__name { display: flex; align-items: center; gap: .4rem; min-width: 0; flex-wrap: wrap; } .arow__name .tag { margin-left: 0; }
+.arow__design { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; } .arow__design small { color: var(--color-textDim); }
+.arow__team { display: flex; align-items: center; gap: .4rem; font: 500 var(--size-sm) var(--font-mono); } .arow select { width: 100%; }
+.arow .btn { width: 100%; justify-content: center; }
+.room .rset { display: grid; grid-template-columns: 9rem 1fr; gap: .7rem 1rem; align-items: center; } .rset__note { grid-column: 1 / -1; color: var(--color-textDim); }
+.room .rset .seg { flex-wrap: wrap; }
+.room .page__foot { align-items: center; } .room .page__foot .hint { margin-right: auto; }
+@media (max-width: 860px) { .room .rtop { grid-template-columns: 1fr; } .arow { grid-template-columns: 2rem 1fr 7rem; } .arow__design { display: none; } .arow > :nth-child(5) { grid-column: 2 / -1; } .room .rset { grid-template-columns: 1fr; } }

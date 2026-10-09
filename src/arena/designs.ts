@@ -4,7 +4,8 @@ import { HULLS, PRESET_DESIGNS, normalizeDesign, type HullId, type ShipDesign } 
 export type TeamMode = 'ffa' | 't2' | 't3';
 export type BotLevel = 'easy' | 'medium' | 'hard';
 export interface LobbySlot { on: boolean; design: string; team: number }
-export interface LobbyCfg { mine: string; mineTeam: number; mode: TeamMode; level: BotLevel; slots: LobbySlot[] }
+export type LobbyKind = 'queue' | 'custom';
+export interface LobbyCfg { kind: LobbyKind; name: string; mine: string; mineTeam: number; mode: TeamMode; level: BotLevel; slots: LobbySlot[] }
 
 const KEY = 'pacific-ash.arena.designs';
 const LKEY = 'pacific-ash.arena.lobby';
@@ -57,7 +58,7 @@ export class DesignStore {
 }
 
 const defaultLobby = (): LobbyCfg => ({
-  mine: PRESET_DESIGNS[1].id, mineTeam: 0, mode: 'ffa', level: 'medium',
+  kind: 'custom', name: 'Thủy thủ', mine: PRESET_DESIGNS[1].id, mineTeam: 0, mode: 'ffa', level: 'medium',
   slots: [
     { on: true, design: 'random', team: 1 }, { on: true, design: 'random', team: 0 }, { on: true, design: 'random', team: 1 },
     { on: false, design: 'random', team: 0 }, { on: false, design: 'random', team: 1 },

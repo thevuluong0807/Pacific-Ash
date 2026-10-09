@@ -39,7 +39,8 @@ Mở `http://localhost:8787`. Cổng đổi bằng biến môi trường `PORT`.
 1. Chọn **Chơi**, rồi chọn chế độ:
    - **PvE vs AI**: đấu với máy, ba mức dễ / vừa / khó.
    - **Hot-seat**: hai người chung một máy, chuyền tay nhau (có màn che để không lộ lưới).
-   - **Hải chiến**: lái một chiến hạm (góc nhìn thứ ba, cầm khí tài thì chuyển sang góc nhìn thứ nhất), tối đa 6 tàu, đánh đơn hoặc chia đội; hiện chơi với máy. Phím: `W/S` ga, `A/D` bánh lái, `1`–`7` hoặc `Q/E` cầm khí tài (lúc đó **di chuột** để xoay/ngẩng nòng, `W/A/S/D` tinh chỉnh), `Space`/chuột trái bắn, `X`/`Esc` thoát khí tài, `T` đường đạn, `Tab` bảng điểm. Thiết kế tàu ở **Khí tài → Chế tạo tàu**.
+   - Hai tab: **Chiến thuật** (bắn tàu theo lượt: PvE, Hot-seat, Online) và **Hải chiến** (bên dưới).
+   - **Hải chiến**: một phòng chung, đổi bằng công tắc **Ghép trận online** (phòng công khai: không thêm máy, mỗi người một đội, tự bắt đầu sau đếm ngược khi có từ 2 người) / **Custom nội bộ** (phòng riêng: chủ phòng thêm máy, chia đội, chỉnh độ khó). Vào là có sẵn mã phòng 5 ký tự và link `?arena=MÃ` để gửi bạn bè (hoặc nhập mã ở ô "Vào bằng mã phòng"). Cần `npm run server`; không nối được thì rơi về phòng nội bộ chỉ chơi với máy. Lái một chiến hạm (góc nhìn thứ ba, cầm khí tài thì chuyển sang góc nhìn thứ nhất), tối đa 6 tàu, đánh đơn hoặc chia đội; hiện chơi với máy. Phím: `W/S` ga, `A/D` bánh lái, `1`–`7` hoặc `Q/E` cầm khí tài (lúc đó **di chuột** để xoay/ngẩng nòng, `W/A/S/D` tinh chỉnh), `Space`/chuột trái bắn, `X`/`Esc` thoát khí tài, `T` đường đạn, `Tab` bảng điểm. Thiết kế tàu ở **Khí tài → Chế tạo tàu**.
    - **Online**: xem bên dưới.
 2. **Xếp tàu**: chọn tối đa 5 tàu trong 8 loại, kéo tàu vào lưới (hoặc chạm tàu rồi chạm ô). Nút **Xoay** hoặc phím `R` đổi hướng. **Ngẫu nhiên** xếp giúp bạn.
 3. **Trận đấu**: tới lượt, chọn một tàu sẵn sàng ở cột trái, nhắm vào lưới địch rồi bấm **Bắn**. Đánh chìm hết tàu địch trước là thắng.

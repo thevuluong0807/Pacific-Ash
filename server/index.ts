@@ -7,6 +7,7 @@ import type { FireAction, MatchState, PlacedShip, PlayerId } from '../design/cor
 import { applyAction, createAi, isValidAction, newMatch, readyShips, runPassivesAtMatchStart, runPassivesAtTurnStart, skipTurn } from '../src/core';
 import { freshShip, isBlocked, isValidPlacement } from '../src/core/board';
 import { loadSpecs } from '../src/core/specs';
+import { createArena, type ArenaConn } from './arena';
 import { CODE_ALPHABET, CODE_LENGTH, normalizeCode, type C2S, type ResumeSnapshot, type S2C, type Update } from '../src/net/protocol';
 
 /**
@@ -32,7 +33,7 @@ interface Room {
   drop: (ReturnType<typeof setTimeout> | null)[]; // hạn nối lại của từng chỗ ngồi
   matched: boolean;                        // đã đủ hai người (qua giai đoạn chờ ở sảnh)
 }
-interface Conn { ws: WebSocket; room?: Room; me?: PlayerId; alive: boolean; turnLimitQ?: number }
+interface Conn extends ArenaConn { ws: WebSocket; room?: Room; me?: PlayerId; alive: boolean; turnLimitQ?: number }
 
 const rooms = new Map<string, Room>();
 const conns = new Map<WebSocket, Conn>();
@@ -97,6 +98,7 @@ function leave(c: Conn) {
 
 /** Mất kết nối ngoài ý muốn: giữ chỗ trong thời gian nối lại thay vì xử thua ngay. */
 function dropped(c: Conn) {
+  arena.leave(c);
   for (const [k, q] of queues) if (q === c) queues.delete(k);
   const room = c.room;
   if (!room || c.me === undefined || room.players[c.me] !== c.ws) return;
@@ -192,7 +194,10 @@ function snapshot(room: Room, p: PlayerId): ResumeSnapshot {
   };
 }
 
+const arena = createArena(send);
+
 function onMessage(c: Conn, m: C2S) {
+  if (m.t.startsWith('a') && arena.handle(c, m, (msg) => err(c.ws, msg))) return;
   switch (m.t) {
     case 'ping': return send(c.ws, { t: 'pong' });
     case 'create': {
@@ -284,7 +289,7 @@ export function startServer(port: number, opts: { unitMs?: number } = {}) {
   // Giữ kết nối qua proxy và dọn kết nối chết
   const hb = setInterval(() => { for (const c of conns.values()) { if (!c.alive) { c.ws.terminate(); continue; } c.alive = false; c.ws.ping(); } }, 25000);
   hb.unref();
-  return new Promise<{ port: number; close(): void }>((res) => http.listen(port, () => res({ port: (http.address() as { port: number }).port, close: () => { clearInterval(hb); for (const r of [...rooms.values()]) closeRoom(r); for (const c of conns.values()) c.ws.terminate(); wss.close(); http.close(); } })));
+  return new Promise<{ port: number; close(): void }>((res) => http.listen(port, () => res({ port: (http.address() as { port: number }).port, close: () => { clearInterval(hb); for (const r of [...rooms.values()]) closeRoom(r); arena.closeAll(); for (const c of conns.values()) c.ws.terminate(); wss.close(); http.close(); } })));
 }
 
 if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {

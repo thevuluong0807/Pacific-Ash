@@ -30,8 +30,8 @@ import { placementScreen } from './ui/screens/placement';
 import { passDeviceScreen } from './ui/screens/passDevice';
 import { battleScreen } from './ui/screens/battle';
 import { resultScreen } from './ui/screens/result';
-import { arenaLobbyScreen } from './ui/screens/arenaLobby';
 import { arenaScreen } from './ui/screens/arena';
+import { arenaRoomScreen } from './ui/screens/arenaRoom';
 
 applyTokens();
 // Favicon: emblem khiên thép (logo.md mục 5)
@@ -55,8 +55,8 @@ app.register('placement', placementScreen);
 app.register('passDevice', passDeviceScreen);
 app.register('battle', battleScreen);
 app.register('result', resultScreen);
-app.register('arenaLobby', arenaLobbyScreen);
 app.register('arena', arenaScreen);
+app.register('arenaRoom', arenaRoomScreen);
 if (engine) {
   app.battleScene = battleScene;
   app.arenaScene = arenaScene;
@@ -78,7 +78,7 @@ if (engine) {
     fade.style.opacity = '1';
     setTimeout(() => { swap(); fade.style.opacity = '0'; }, 300);
   };
-  const waiting = (id: ScreenId) => id === 'menu' || id === 'modeSelect' || id === 'online' || id === 'arenaLobby';
+  const waiting = (id: ScreenId) => id === 'menu' || id === 'modeSelect' || id === 'online' || id === 'arenaRoom';
   const gameplay = (id: ScreenId) => id === 'placement' || id === 'battle' || id === 'result';
   const menuFor = () => menuScenes[app.settings.map];
   // Đổi map giữa lúc chơi: nếu đang phát cinematic thì chờ xong; mờ chuyển 600 ms; trạng thái trận giữ nguyên (maps.md mục 1).
@@ -103,7 +103,7 @@ if (engine) {
     screen = id;
     if (gameplay(id) && shown !== battleScene) battleScene.setMap(app.settings.map); // vào gameplay từ màn khác: nạp đúng map ngay
     switch (id) {
-      case 'menu': case 'modeSelect': case 'online': case 'arenaLobby': show(menuFor()); break;
+      case 'menu': case 'modeSelect': case 'online': case 'arenaRoom': show(menuFor()); break;
       case 'arena': show(arenaScene); break;
       case 'hangar': case 'passDevice': show(blankScene); break; // Hangar: phòng xưởng tối trung tính, không đổi theo map
       case 'placement': show(battleScene, () => battleScene.setMode('placement')); battleScene.setMode('placement'); break;
@@ -124,6 +124,7 @@ if (new URLSearchParams(location.search).has('debug')) (window as unknown as { _
 const qs = new URLSearchParams(location.search);
 if (qs.get('server')) app.updateSettings({ onlineServer: qs.get('server')! });
 const saved = resumeStore.load();
-if (qs.get('room')) { app.pendingRoom = qs.get('room')!; app.go('online'); }
+if (qs.get('arena')) { app.pendingArena = qs.get('arena')!; app.go('arenaRoom', {}); }
+else if (qs.get('room')) { app.pendingRoom = qs.get('room')!; app.go('online'); }
 else if (saved) { app.pendingResume = saved; app.go('online'); } // trận online đang dở: tự nối lại
 else app.go('menu');
