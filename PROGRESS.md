@@ -513,4 +513,5 @@ Mô phỏng chưa đo cân bằng (AI ngẫu nhiên không phản ánh người 
 - `src/net/client.ts` `defaultServer()` ưu tiên `import.meta.env.VITE_SERVER_URL`; `.env.production` đặt `wss://ws.vrealm.dev`.
 - Kiểm: `tsc` sạch; `test/online.test.ts` + `test/arena_online.test.ts` 10/10 sau tách; `wrangler dev --local`: tạo phòng + 1 máy + bắt đầu → 60 bản chụp/3 s (20 Hz, `Date.now()` chạy đúng trong DO); Origin lạ bị 403.
 - Giới hạn gói free: 100k request/ngày, mỗi 20 tin nhắn WebSocket **đến** tính 1 request (phím 30 Hz ≈ 90 req/phút/người ≈ 18 giờ-người/ngày); tin đi (bản chụp) không tính. DO đang có kết nối thì không ngủ. Phòng mất khi DO bị thu hồi/redeploy.
-- Chưa: tạo Workers Build (auto-deploy từ GitHub) trong dashboard + `wrangler deploy` lần đầu, kiểm 2 trình duyệt chơi qua `wss://ws.vrealm.dev`.
+- **Đã lên**: Workers Build `pacific-ash-server` (repo `Pacific-Ash`, nhánh `main`, không build command, deploy `npx wrangler deploy`, root `/`) → auto-deploy mỗi push. `https://ws.vrealm.dev/health` 200; tạo phòng + 1 máy qua `wss://ws.vrealm.dev` nhận 59 bản chụp/3 s. Bundle Pages đã chứa `wss://ws.vrealm.dev`.
+- Chưa: kiểm tay 2 trình duyệt thật chơi cùng phòng qua https://pacificash.vrealm.dev (mới kiểm bằng client script); nối lại khi rớt mạng.
