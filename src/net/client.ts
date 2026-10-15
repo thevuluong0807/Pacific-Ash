@@ -85,6 +85,8 @@ export class OnlineClient {
 
 /** Địa chỉ server mặc định: cùng máy chủ với trang (server phục vụ luôn client); chạy dev hoặc mở file thì dùng cổng 8787. */
 export function defaultServer(): string {
+  const fixed = import.meta.env.VITE_SERVER_URL; // client host riêng (Cloudflare Pages) → server online ở nơi khác
+  if (fixed) return fixed;
   const { protocol, hostname, host, port } = location;
   if (protocol !== 'http:' && protocol !== 'https:') return 'ws://localhost:8787';
   if ((hostname === 'localhost' || hostname === '127.0.0.1') && port !== '8787') return 'ws://localhost:8787';

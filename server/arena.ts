@@ -1,4 +1,4 @@
-import type { WebSocket } from 'ws';
+import type { Sock } from './sock';
 import { HULLS, MAX_PLAYERS, PRESET_DESIGNS, normalizeDesign, type ShipDesign } from '../src/arena/data';
 import { ArenaBot } from '../src/arena/bot';
 import type { BotLevel, TeamMode } from '../src/arena/designs';
@@ -11,8 +11,8 @@ import { CODE_ALPHABET, CODE_LENGTH, normalizeCode, type ArenaRoomInfo, type C2S
  * Server giữ mô phỏng `ArenaSim` (60 Hz, tất định), nhận phím của từng người, chạy bot cho chỗ máy, gửi bản chụp 20 Hz.
  * Rớt mạng giữa trận: chỗ đó chuyển sang máy chơi tiếp (chưa có nối lại).
  */
-export interface ArenaConn { ws: WebSocket; arena?: { room: ArenaRoom; seat: number } }
-type Send = (ws: WebSocket | null | undefined, m: S2C) => void;
+export interface ArenaConn { ws: Sock; arena?: { room: ArenaRoom; seat: number } }
+type Send = (ws: Sock | null | undefined, m: S2C) => void;
 
 interface Seat { bot: boolean; conn: ArenaConn | null; name: string; design: ShipDesign; team: number; in: PlayerInput; sel: number | null; exit: boolean }
 export interface ArenaRoom {

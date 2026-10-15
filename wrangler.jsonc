@@ -1,0 +1,9 @@
+{
+  "name": "pacific-ash-server",
+  "main": "server/worker.ts",
+  "compatibility_date": "2026-05-01",
+  "routes": [{ "pattern": "ws.vrealm.dev", "custom_domain": true }],
+  "durable_objects": { "bindings": [{ "name": "HUB", "class_name": "Hub" }] },
+  // gói free chỉ cho Durable Object dùng SQLite
+  "migrations": [{ "tag": "v1", "new_sqlite_classes": ["Hub"] }]
+}
